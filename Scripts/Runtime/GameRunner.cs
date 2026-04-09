@@ -83,6 +83,15 @@ namespace Baboomz
             AddChild(_cameraTracker);
             _cameraTracker.Init(State);
 
+            // Explosions
+            var explosions = new ExplosionRenderer();
+            explosions.Name = "Explosions";
+            AddChild(explosions);
+            explosions.Init(State, _cameraTracker);
+
+            // Sky background color
+            RenderingServer.SetDefaultClearColor(new Color(0.31f, 0.70f, 0.96f));
+
             State.Phase = MatchPhase.Playing;
             GD.Print("Match phase set to Playing — simulation ticking");
         }
