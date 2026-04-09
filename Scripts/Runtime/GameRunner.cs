@@ -47,8 +47,12 @@ namespace Baboomz
 
         private void SetupAll()
         {
-            // Renderers will be added here as they are ported
-            // For now, just start the playing phase directly
+            // Input
+            var inputBridge = new InputBridge();
+            inputBridge.Name = "InputBridge";
+            AddChild(inputBridge);
+            inputBridge.SetState(State);
+
             State.Phase = MatchPhase.Playing;
             GD.Print("Match phase set to Playing — simulation ticking");
         }
