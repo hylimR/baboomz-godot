@@ -15,6 +15,7 @@ namespace Baboomz
         // Renderers
         internal PlayerRenderer[] playerRenderers;
         private CameraTracker _cameraTracker;
+        private AudioBridge _audioBridge;
         private readonly Dictionary<int, ProjectileRenderer> _projectileRenderers = new();
         private readonly HashSet<int> _knownProjectileIds = new();
 
@@ -89,6 +90,12 @@ namespace Baboomz
             AddChild(explosions);
             explosions.Init(State, _cameraTracker);
 
+            // Audio
+            _audioBridge = new AudioBridge();
+            _audioBridge.Name = "Audio";
+            AddChild(_audioBridge);
+            _audioBridge.Init(State);
+
             // Sky background color
             RenderingServer.SetDefaultClearColor(new Color(0.31f, 0.70f, 0.96f));
 
@@ -134,6 +141,7 @@ namespace Baboomz
                     AddChild(pr);
                     pr.Init(proj.Id, State);
                     _projectileRenderers[proj.Id] = pr;
+                    _audioBridge?.OnProjectileFired();
                 }
             }
 
