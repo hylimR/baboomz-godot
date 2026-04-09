@@ -1,0 +1,7 @@
+.godot/
+*.import
+Export/
+bin/
+obj/
+*.user
+*.suo
