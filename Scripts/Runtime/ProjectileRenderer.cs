@@ -57,7 +57,7 @@ namespace Baboomz
 
                     // Update trail (points in local space relative to parent)
                     _trail.AddPoint(GlobalPosition);
-                    while (_trail.PointCount > MaxTrailPoints)
+                    while (_trail.GetPointCount() > MaxTrailPoints)
                         _trail.RemovePoint(0);
 
                     // Rotate sprite to face velocity direction
