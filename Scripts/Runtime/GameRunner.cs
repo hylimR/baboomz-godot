@@ -96,11 +96,34 @@ namespace Baboomz
             AddChild(_audioBridge);
             _audioBridge.Init(State);
 
+            // Trajectory preview
+            var trajectory = new TrajectoryPreview();
+            trajectory.Name = "TrajectoryPreview";
+            AddChild(trajectory);
+            trajectory.Init(State);
+
+            // Kill feed
+            var killFeed = new KillFeed();
+            killFeed.Name = "KillFeed";
+            AddChild(killFeed);
+            killFeed.Init(State);
+
+            // Countdown (sets phase to Waiting, then Playing after 3s)
+            var countdown = new MatchCountdown();
+            countdown.Name = "Countdown";
+            AddChild(countdown);
+            countdown.Init(State);
+
+            // Death slow-mo
+            var deathSlowMo = new DeathSlowMo();
+            deathSlowMo.Name = "DeathSlowMo";
+            AddChild(deathSlowMo);
+            deathSlowMo.Init(State);
+
             // Sky background color
             RenderingServer.SetDefaultClearColor(new Color(0.31f, 0.70f, 0.96f));
 
-            State.Phase = MatchPhase.Playing;
-            GD.Print("Match phase set to Playing — simulation ticking");
+            GD.Print("Match setup complete — countdown started");
         }
 
         public override void _Process(double delta)
