@@ -11,6 +11,9 @@ namespace Baboomz
     {
         public GameState State { get; private set; }
 
+        // Renderers
+        internal PlayerRenderer[] playerRenderers;
+
         // Match config
         private GameConfig _matchConfig;
         private bool _matchResultShown;
@@ -52,6 +55,23 @@ namespace Baboomz
             inputBridge.Name = "InputBridge";
             AddChild(inputBridge);
             inputBridge.SetState(State);
+
+            // Terrain
+            var terrain = new GodotTerrainBridge();
+            terrain.Name = "Terrain";
+            AddChild(terrain);
+            terrain.Init(State);
+
+            // Players
+            playerRenderers = new PlayerRenderer[State.Players.Length];
+            for (int i = 0; i < State.Players.Length; i++)
+            {
+                var pr = new PlayerRenderer();
+                pr.Name = State.Players[i].Name;
+                AddChild(pr);
+                pr.Init(i, State);
+                playerRenderers[i] = pr;
+            }
 
             State.Phase = MatchPhase.Playing;
             GD.Print("Match phase set to Playing — simulation ticking");
