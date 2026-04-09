@@ -1,0 +1,38 @@
+{
+  "id": "w5_l1",
+  "name": "Candy Clouds",
+  "worldId": "sky_fortress",
+  "worldIndex": 4,
+  "levelIndex": 0,
+  "parTime": 90,
+  "introDialog": "Cogsworth's fortress! It looks like... candy? Don't be fooled — the gaps are deadly!",
+  "victoryDialog": "Steady footing on the clouds. The fortress interior awaits.",
+  "terrain": {
+    "seed": 50101,
+    "mapWidth": 240,
+    "minHeight": 0.3,
+    "maxHeight": 0.7,
+    "hillFrequency": 0.15,
+    "islandCount": 4,
+    "indestructibleFloorHeight": 0
+  },
+  "playerSpawn": { "x": -100, "groundOffset": 2 },
+  "enemies": [
+    { "type": "flyer", "x": -20, "groundOffset": 10, "difficulty": "normal" },
+    { "type": "flyer", "x": 20, "groundOffset": 10, "difficulty": "normal" },
+    { "type": "flyer", "x": 60, "groundOffset": 10, "difficulty": "normal" },
+    { "type": "bomber", "x": 10, "groundOffset": 0, "difficulty": "normal" },
+    { "type": "bomber", "x": 50, "groundOffset": 0, "difficulty": "normal" }
+  ],
+  "structures": [],
+  "objectives": { "type": "eliminate_all" },
+  "difficulty": {
+    "hpMultiplier": 1.7,
+    "damageMultiplier": 1.4,
+    "speedMultiplier": 1.2
+  },
+  "hiddenObjective": {
+    "type": "cannon_only",
+    "bonusCurrency": 50
+  }
+}

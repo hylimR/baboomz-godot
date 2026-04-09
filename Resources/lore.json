@@ -1,0 +1,315 @@
+{
+  "world": {
+    "name": "Aethermoor",
+    "description": "A floating archipelago of sky-islands suspended by the Aether Core — a crystalline engine of unknown origin buried deep beneath the central island. For centuries, the islands drifted peacefully, connected by rope bridges and steam-powered dirigibles."
+  },
+  "characters": [
+    {
+      "id": "pip",
+      "name": "Pip",
+      "role": "player",
+      "description": "A young apprentice engineer from the Verdant Reach, barely old enough to hold a cannon. When Cogsworth's forces seized the Aether Core to power a doomsday weapon, Pip was the only militia member who escaped the initial raid. Armed with salvaged weapons and a knack for improvisation, Pip fights across all five biomes to reach the Sky Fortress.",
+      "personality": "Plucky, determined, occasionally in over their head. Makes nervous jokes before boss fights. Gender-neutral (referred to as they/them or just Pip)."
+    },
+    {
+      "id": "cogsworth",
+      "name": "Baron Cogsworth",
+      "role": "antagonist",
+      "description": "Once the Chief Engineer of Aethermoor, Cogsworth grew obsessed with the Aether Core's potential to reshape reality. When the Council refused to let him experiment on it, he staged a coup with his army of automata. He wears a brass-and-crystal exosuit that channels Aether energy directly — making him both brilliant and unstable.",
+      "personality": "Grandiose, condescending, genuinely believes he is saving Aethermoor by perfecting it. Calls Pip little one or pup. His dialog hints at a past mentorship — he taught at the academy where Pip studied."
+    },
+    {
+      "id": "voss",
+      "name": "Magistrate Voss",
+      "role": "informant",
+      "description": "The seventh Council member. Voss voted to grant Cogsworth access to the Aether Core because he genuinely believed the research would benefit Aethermoor. He was wrong. Now trapped on the Sky Fortress as Cogsworth's logistician, Voss secretly feeds intel to the militia through coded supply manifests. He is not brave — he is guilty, and guilt makes people useful. Pip never meets him directly, but his sabotage explains why certain weapon crates appear at suspiciously convenient moments during boss fights.",
+      "personality": "Nervous, guilt-ridden, meticulous. Communicates only through coded supply drops. His loyalty is to atonement, not any faction."
+    }
+  ],
+  "bosses": [
+    {
+      "id": "iron_sentinel",
+      "name": "The Iron Sentinel",
+      "worldIndex": 0,
+      "description": "Cogsworth's first-generation war machine: a stationary turret with rotating barrels, planted at the border of the Verdant Reach to cut off the militia's supply lines. Simple but relentless. Its design is deliberately archaic — Cogsworth considers it practice for Pip.",
+      "title": "THE TIRELESS WATCHER",
+      "quote": "Approach vector detected. Commencing suppressive fire. Have a pleasant day."
+    },
+    {
+      "id": "sand_wyrm",
+      "name": "The Sand Wyrm",
+      "worldIndex": 1,
+      "description": "Not actually built by Cogsworth — it is a relic from the ancient Gear Wars, reactivated when Cogsworth's Aether siphoning destabilized the Expanse. It hunts by vibration, burrowing through sand and erupting beneath its target. Defeating it earns Pip the respect of the Desert Scavengers, who provide intel on Cogsworth's northern operations.",
+      "title": "THE DEVOURER BENEATH",
+      "quote": "The ground trembles. That is not the wind."
+    },
+    {
+      "id": "glacial_cannon",
+      "name": "The Glacial Cannon",
+      "worldIndex": 2,
+      "description": "A defense turret corrupted into an offensive weapon. Originally built by the Frostspire monks to prevent avalanches, Cogsworth's engineers reversed its cooling mechanism to create an ice barrage system. It summons Shielder drones to protect itself — echoing the monks' protective philosophy turned hostile.",
+      "title": "THE FROZEN SIEGE",
+      "quote": "The mountain does not forgive trespassers. Neither does its gun."
+    },
+    {
+      "id": "forge_colossus",
+      "name": "The Forge Colossus",
+      "worldIndex": 3,
+      "description": "Cogsworth's crowning mechanical achievement before the exosuit. A walking foundry that repairs itself from terrain scrap and spawns smaller automata mid-battle. Its stomp attack reshapes the terrain, and its mortar barrage forces constant movement. Destroying it cuts off Cogsworth's supply of new machines.",
+      "title": "THE MOLTEN GUARDIAN",
+      "quote": "The sound of grinding gears echoes from the caldera. Something massive is waking up."
+    },
+    {
+      "id": "baron_cogsworth",
+      "name": "Baron Cogsworth",
+      "worldIndex": 4,
+      "description": "The final confrontation atop the Sky Fortress. Cogsworth channels Aether energy through his brass-and-crystal exosuit in three phases: composed precision, erratic bombardment, and desperate all-out assault. His mental state deteriorates with each phase as the Aether Core destabilizes.",
+      "title": "THE MAD ENGINEER",
+      "quote": "You dare challenge ME? I built this city's engines! I AM this city's engine! Now hold still — this won't hurt. Much."
+    }
+  ],
+  "mobs": [
+    {
+      "id": "bomber",
+      "name": "Bomber",
+      "description": "Disposable drones loaded with unstable Aether charges. They fly toward threats and detonate. Cogsworth mass-produces them because they are cheap."
+    },
+    {
+      "id": "shielder",
+      "name": "Shielder",
+      "description": "Heavy shield-bearing automata that protect key assets. They do not attack directly but absorb enormous damage. The monks' design, perverted."
+    },
+    {
+      "id": "flyer",
+      "name": "Flyer",
+      "description": "Reconnaissance drones repurposed for combat. Fast and fragile. They strafe with light weapons."
+    },
+    {
+      "id": "healer",
+      "name": "Healer",
+      "description": "Support automata originally designed for field medicine. Cogsworth reprogrammed them to repair other machines. Destroying them first is always the right call."
+    }
+  ],
+  "weapons": [
+    {
+      "id": "cannon",
+      "name": "Cannon",
+      "origin": "Standard-issue Aethermoor Militia sidearm. Crude, reliable, and older than anyone alive. Every cadet gets one on their first day — and most never need another."
+    },
+    {
+      "id": "shotgun",
+      "name": "Shotgun",
+      "origin": "Designed by Desert Scavengers for clearing sandstorm wreckage. Four barrels, four chances to hit something. Elegance was never the point."
+    },
+    {
+      "id": "rocket",
+      "name": "Rocket",
+      "origin": "Reverse-engineered from a crashed Cogsworth supply dirigible. The militia's first real answer to armored automata."
+    },
+    {
+      "id": "cluster",
+      "name": "Cluster Bomb",
+      "origin": "An unstable prototype that fragments on impact. The inventor called it \"controlled chaos.\" Nobody else agreed on the \"controlled\" part."
+    },
+    {
+      "id": "dynamite",
+      "name": "Dynamite",
+      "origin": "Quarry blasting charges repurposed for war. The bouncing was originally a defect. Someone decided it was a feature."
+    },
+    {
+      "id": "napalm",
+      "name": "Napalm",
+      "origin": "Distilled Aether fuel, weaponized. Burns hot enough to melt sand into glass. Banned by the Council — but the Council doesn't exist anymore."
+    },
+    {
+      "id": "airstrike",
+      "name": "Airstrike",
+      "origin": "A pre-war signal flare recalibrated to call down a dirigible bombing run. One shot, five problems."
+    },
+    {
+      "id": "drill",
+      "name": "Drill",
+      "origin": "Frostspire mining equipment. The monks used it to tunnel through frozen bedrock. Turns out it tunnels through anything."
+    },
+    {
+      "id": "blowtorch",
+      "name": "Blowtorch",
+      "origin": "Every engineer's favorite tool. Low damage, but it carves terrain like warm butter. Pip's personal favorite."
+    },
+    {
+      "id": "holy_hand_grenade",
+      "name": "Holy Hand Grenade",
+      "origin": "Found in a sealed vault beneath the Aether Core chamber. The inscription reads: \"And the Lord did grin.\" Nobody knows who wrote it. Nobody asks."
+    },
+    {
+      "id": "sheep",
+      "name": "Sheep",
+      "origin": "Not actually a sheep. An automaton disguised as livestock for covert demolition. Cogsworth denies involvement. The evidence disagrees."
+    },
+    {
+      "id": "banana_bomb",
+      "name": "Banana Bomb",
+      "origin": "Candy Biome contraband. The prismatic Aether crystals in the casing fragment into six explosive shards. Smells faintly of caramel."
+    },
+    {
+      "id": "freeze_grenade",
+      "name": "Freeze Grenade",
+      "origin": "Glacial Cannon coolant, compressed into a throwable capsule. The Frostspire monks would be furious if they knew."
+    },
+    {
+      "id": "sticky_bomb",
+      "name": "Sticky Bomb",
+      "origin": "Scavenger improvisation: explosive gel in a leather pouch. Sticks to anything. Getting it off is someone else's problem."
+    },
+    {
+      "id": "lightning_rod",
+      "name": "Lightning Rod",
+      "origin": "A copper staff that channels ambient Aether into a directed beam. The chain effect was an accident — a happy one, if you're holding it."
+    },
+    {
+      "id": "boomerang",
+      "name": "Boomerang",
+      "origin": "Carved from indestructible terrain fragments. Nobody knows why it comes back. Theories range from magnetism to spite."
+    },
+    {
+      "id": "gravity_bomb",
+      "name": "Gravity Bomb",
+      "origin": "Prototype Aether Core containment device, miniaturized and inverted. Creates a localized gravity well that pulls everything inward before detonation."
+    },
+    {
+      "id": "ricochet_disc",
+      "name": "Ricochet Disc",
+      "origin": "A Forge Colossus gear plate, sharpened and thrown. Bounces off terrain with alarming enthusiasm. Three ricochets guaranteed. Four if you're unlucky."
+    },
+    {
+      "id": "magma_ball",
+      "name": "Magma Ball",
+      "origin": "Solidified lava from the Magma Crucible, packed with slow-release thermal Aether. Melts terrain back to its molten state on contact."
+    },
+    {
+      "id": "gust_cannon",
+      "name": "Gust Cannon",
+      "origin": "Repurposed dirigible thruster. Zero damage, maximum displacement. The art of war without the war — just the art."
+    },
+    {
+      "id": "harpoon",
+      "name": "Harpoon",
+      "origin": "Salvaged from a derelict Aether-whaling vessel that crashed in the Frostspire Peaks. The barbed bolt was designed to anchor into sky-leviathans mid-flight — piercing clean through hide, bone, and hull. The militia discovered it punches through automata just as well."
+    },
+    {
+      "id": "flak_cannon",
+      "name": "Flak Cannon",
+      "origin": "Anti-airship defense battery from the Gear Wars era, miniaturized by Cogsworth's own engineers before the coup. Fires a timed shell that bursts mid-air into a hail of shrapnel. The Automata Corps used them to shoot down militia supply dirigibles — until Pip liberated one from a wrecked Bomber nest."
+    }
+  ],
+  "biomes": [
+    {
+      "id": "verdant_reach",
+      "name": "The Verdant Reach",
+      "worldIndex": 0,
+      "terrain": "grasslands",
+      "description": "The agricultural heartland. Rolling hills, windmills, and terraced farms. Aether energy here is gentle, nurturing abundant plant life. The militia recruits here.",
+      "thematicArc": "Can I even do this? — learning the ropes"
+    },
+    {
+      "id": "sunken_expanse",
+      "name": "The Sunken Expanse",
+      "worldIndex": 1,
+      "terrain": "desert",
+      "description": "Once a lush valley, drained when Cogsworth diverted Aether flow to power his weapons. Now a desolate wasteland of sand and scrap metal, where the Sand Wyrm — a burrowing automaton left from the old wars — hunts anything that moves.",
+      "thematicArc": "I am on my own out here — survival in hostile territory"
+    },
+    {
+      "id": "frostspire_peaks",
+      "name": "The Frostspire Peaks",
+      "worldIndex": 2,
+      "terrain": "arctic",
+      "description": "The highest islands, where Aether energy crystallizes into frost. The Glacial Cannon was built as a defense emplacement during the Gear Wars but was corrupted by Cogsworth's engineers into an offensive weapon.",
+      "thematicArc": "I am getting stronger — mastering advanced weapons and skills"
+    },
+    {
+      "id": "magma_crucible",
+      "name": "The Magma Crucible",
+      "worldIndex": 3,
+      "terrain": "volcanic",
+      "description": "Deep volcanic islands where Aether energy becomes heat. Cogsworth's primary forge and weapons factory. The Forge Colossus is his masterwork: a walking foundry that builds smaller machines from scrap during battle.",
+      "thematicArc": "This is bigger than me — facing the war machine at full scale"
+    },
+    {
+      "id": "sky_fortress",
+      "name": "Cogsworth's Sky Fortress",
+      "worldIndex": 4,
+      "terrain": "candy",
+      "description": "A massive airship permanently docked at the highest island. The candy colors are actually exotic Aether crystals that coat every surface in prismatic light. Beautiful and deadly.",
+      "thematicArc": "Time to end this — confronting the source directly"
+    },
+    {
+      "id": "dragon_quarter",
+      "name": "The Dragon Quarter",
+      "worldIndex": 5,
+      "terrain": "chinatown",
+      "description": "A densely packed district of tiered pagodas and neon-lit market stalls, built atop the oldest sky-island in the archipelago. During the Festival of Gears, the quarter erupted with firework-powered automata — celebratory machines that Cogsworth later weaponized. Remnant firecrackers still detonate unpredictably among the rooftops, launching anyone nearby across the district.",
+      "thematicArc": "The world fights back — chaos from all sides"
+    },
+    {
+      "id": "clockwork_foundry",
+      "name": "The Clockwork Foundry",
+      "worldIndex": 6,
+      "terrain": "clockwork_foundry",
+      "description": "The Automata Corps' primary assembly line, buried beneath the central island. Cathedral-sized gears grind without pause, and the ambient Aether energy accelerates every mechanical process — including weapon cycling. Cogsworth built the foundry to be self-sustaining: it mines, smelts, and assembles automata in a single continuous loop. Destroying its control node would cripple production for months.",
+      "thematicArc": "Behind enemy lines — striking at the heart of the machine"
+    },
+    {
+      "id": "sunken_ruins",
+      "name": "The Sunken Ruins",
+      "worldIndex": 7,
+      "terrain": "sunken_ruins",
+      "description": "The flooded remains of Old Aethermoor — the original settlement that existed before the islands rose. Ancient enchantments still linger in the waterlogged stone, weakening gravity and creating treacherous whirlpool currents. The ruins hold pre-Gear Wars technology that neither faction fully understands, including the prototype Aether anchors that first lifted the archipelago into the sky.",
+      "thematicArc": "Uncovering the past — secrets that predate the conflict"
+    }
+  ],
+  "factions": [
+    {
+      "id": "aethermoor_council",
+      "name": "The Aethermoor Council",
+      "description": "The governing body of Aethermoor for three centuries. Seven elected engineers, each representing a biome's interests. They maintained the Aether Core under strict neutrality — no biome could weaponize it. When Cogsworth demanded unrestricted access, they voted 6-1 against. He staged the coup the next morning. The six dissenting members are presumed dead.",
+      "quote": "The Core serves all, or it serves none."
+    },
+    {
+      "id": "verdant_militia",
+      "name": "The Verdant Militia",
+      "description": "A ragtag defense force recruited from farmhands, mechanics, and academy students. Before the coup, they guarded grain shipments. Now they are the last organized resistance. Their fighters know every hill and burrow of the Verdant Reach. Pip was its youngest member by three years.",
+      "quote": "Roots hold."
+    },
+    {
+      "id": "desert_scavengers",
+      "name": "The Desert Scavengers",
+      "description": "Nomadic salvagers who strip Gear Wars wreckage for parts and trade. They owe loyalty to no faction but respect anyone who can survive the Sunken Expanse. When Pip defeats the Sand Wyrm — a threat the Scavengers avoided for decades — they share intelligence on Cogsworth's northern operations and gift Pip the Sticky Bomb design.",
+      "quote": "If you can carry it, you can keep it."
+    },
+    {
+      "id": "frostspire_order",
+      "name": "The Frostspire Order",
+      "description": "An engineering-monastic order that maintained the Frostspire Peaks' defensive systems for generations. Their philosophy: build to protect, never to attack. Cogsworth's engineers seized their Glacial Cannon and reversed it. The surviving monks retreated into hidden ice caverns. If Pip finds them, they teach the Freeze Grenade technique — their philosophy distilled into a weapon that disables rather than destroys.",
+      "quote": "Build to protect, never to attack."
+    },
+    {
+      "id": "automata_corps",
+      "name": "Cogsworth's Automata Corps",
+      "description": "Not a faction of people — a factory line. Cogsworth's army is entirely mechanical: Bombers, Shielders, Flyers, and Healers mass-produced in the Magma Crucible's foundries. The Forge Colossus is both their general and their assembly line. Destroying it cuts off the supply of new machines. Every automaton Pip fights after the Crucible is one that will not be replaced.",
+      "quote": "Unit online. Objective: suppress. Emotion: none."
+    }
+  ],
+  "history": [
+    {
+      "id": "gear_wars",
+      "title": "The Gear Wars",
+      "description": "Two centuries before Cogsworth's coup, Aethermoor nearly destroyed itself. The original discoverers of the Aether Core split into two camps: those who wanted to use it to power machines and those who wanted to study it. The resulting war lasted eleven years and left the Sunken Expanse a wasteland — it was once called the Green Valley. The Sand Wyrm is a relic from that conflict, a tunnel-borer that lost its shutdown codes when its creators died. The war ended when the survivors formed the Council and agreed the Core would serve all biomes equally."
+    },
+    {
+      "id": "cogsworth_coup",
+      "title": "Cogsworth's Coup",
+      "description": "Baron Cogsworth, Chief Engineer of Aethermoor, grew obsessed with the Aether Core's potential to reshape reality. When the Council refused to let him experiment on it, voting 6-1 against, he staged a coup the next morning with his army of automata. The six dissenting council members are presumed dead. Magistrate Voss, the one who voted in his favor, now serves as his reluctant quartermaster aboard the Sky Fortress."
+    }
+  ]
+}

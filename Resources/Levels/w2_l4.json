@@ -1,0 +1,38 @@
+{
+  "id": "w2_l4",
+  "name": "Sandstorm Siege",
+  "worldId": "scorched_dunes",
+  "worldIndex": 1,
+  "levelIndex": 3,
+  "parTime": 120,
+  "introDialog": "Sandstorm! The wind is fierce — compensate your aim or you'll miss everything!",
+  "victoryDialog": "The storm lifts. Ahead lies the Sand Wyrm's lair...",
+  "terrain": {
+    "seed": 20401,
+    "mapWidth": 220,
+    "minHeight": 0.25,
+    "maxHeight": 0.5,
+    "hillFrequency": 0.04,
+    "islandCount": 0,
+    "indestructibleFloorHeight": 0
+  },
+  "playerSpawn": { "x": -90, "groundOffset": 2 },
+  "enemies": [
+    { "type": "bomber", "x": -20, "groundOffset": 0, "difficulty": "normal" },
+    { "type": "bomber", "x": 10, "groundOffset": 0, "difficulty": "normal" },
+    { "type": "bomber", "x": 40, "groundOffset": 0, "difficulty": "normal" },
+    { "type": "bomber", "x": 70, "groundOffset": 0, "difficulty": "normal" },
+    { "type": "walker", "x": 0, "groundOffset": 0, "difficulty": "normal" },
+    { "type": "walker", "x": 25, "groundOffset": 0, "difficulty": "normal" },
+    { "type": "walker", "x": 55, "groundOffset": 0, "difficulty": "normal" },
+    { "type": "walker", "x": 80, "groundOffset": 0, "difficulty": "normal" }
+  ],
+  "structures": [],
+  "objectives": { "type": "eliminate_all" },
+  "difficulty": {
+    "hpMultiplier": 1.15,
+    "damageMultiplier": 1.1,
+    "speedMultiplier": 1.0,
+    "windStrengthOverride": 6.0
+  }
+}

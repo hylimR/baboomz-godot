@@ -1,0 +1,99 @@
+{
+  "id": "level_tutorial",
+  "name": "Boot Camp",
+  "worldId": "tutorial",
+  "worldIndex": 0,
+  "levelIndex": 0,
+  "parTime": 300,
+  "introDialog": "Welcome, recruit! Let's learn the basics of combat.",
+  "victoryDialog": "You've completed basic training! You're ready for battle.",
+  "isTutorial": true,
+  "terrain": {
+    "seed": 99999,
+    "mapWidth": 120,
+    "minHeight": 0.25,
+    "maxHeight": 0.35,
+    "hillFrequency": 0.3,
+    "islandCount": 0,
+    "indestructibleFloorHeight": 0.05
+  },
+  "playerSpawn": { "x": -40, "groundOffset": 2 },
+  "enemies": [
+    { "type": "turret", "x": 30, "groundOffset": 2, "difficulty": "easy", "hpOverride": 50 }
+  ],
+  "structures": [],
+  "objectives": { "type": "eliminate_all" },
+  "difficulty": {
+    "hpMultiplier": 0.5,
+    "damageMultiplier": 0.3,
+    "speedMultiplier": 0.5
+  },
+  "tutorialSteps": [
+    {
+      "stepId": 1,
+      "title": "Move",
+      "description": "Press D to move right.",
+      "actionType": "move_right",
+      "threshold": 5.0
+    },
+    {
+      "stepId": 2,
+      "title": "Jump",
+      "description": "Press SPACE to jump.",
+      "actionType": "jump",
+      "threshold": 1.0
+    },
+    {
+      "stepId": 3,
+      "title": "Aim",
+      "description": "Press W to aim upward.",
+      "actionType": "aim_up",
+      "threshold": 20.0
+    },
+    {
+      "stepId": 4,
+      "title": "Fire!",
+      "description": "Hold Left Mouse to charge, release to fire!",
+      "actionType": "charge_and_fire",
+      "threshold": 1.0
+    },
+    {
+      "stepId": 5,
+      "title": "Switch Weapon",
+      "description": "Press 2 to switch to the Rocket.",
+      "actionType": "switch_weapon",
+      "threshold": 1.0,
+      "targetWeaponSlot": 1
+    },
+    {
+      "stepId": 6,
+      "title": "Use Skill",
+      "description": "Press Q to use your Teleport skill!",
+      "actionType": "use_skill",
+      "threshold": 1.0,
+      "targetSkillSlot": 0
+    },
+    {
+      "stepId": 7,
+      "title": "Switch to Drill",
+      "description": "Press 4 to select the Drill weapon.",
+      "actionType": "switch_weapon",
+      "threshold": 1.0,
+      "targetWeaponSlot": 3
+    },
+    {
+      "stepId": 8,
+      "title": "Destroy Terrain",
+      "description": "Fire the Drill into the ground to carve a path!",
+      "actionType": "destroy_terrain",
+      "threshold": 50.0
+    },
+    {
+      "stepId": 9,
+      "title": "Eliminate the Target",
+      "description": "Use any weapon to defeat the training dummy!",
+      "actionType": "kill_enemy",
+      "threshold": 1.0
+    }
+  ]
+}

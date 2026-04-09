@@ -1,0 +1,38 @@
+{
+  "id": "w4_l3",
+  "name": "Eruption Zone",
+  "worldId": "magma_crucible",
+  "worldIndex": 3,
+  "levelIndex": 2,
+  "parTime": 120,
+  "introDialog": "Volcanic vents! The ground crumbles around you — survive 120 seconds in this chaos!",
+  "victoryDialog": "You survived the eruption! Not many can say that.",
+  "terrain": {
+    "seed": 40301,
+    "mapWidth": 200,
+    "minHeight": 0.2,
+    "maxHeight": 0.65,
+    "hillFrequency": 0.06,
+    "islandCount": 1,
+    "indestructibleFloorHeight": 0
+  },
+  "playerSpawn": { "x": -70, "groundOffset": 2 },
+  "enemies": [
+    { "type": "flyer", "x": 0, "groundOffset": 10, "difficulty": "normal" },
+    { "type": "flyer", "x": 30, "groundOffset": 10, "difficulty": "normal" },
+    { "type": "flyer", "x": 55, "groundOffset": 10, "difficulty": "normal" },
+    { "type": "flyer", "x": 80, "groundOffset": 10, "difficulty": "normal" },
+    { "type": "bomber", "x": 20, "groundOffset": 0, "difficulty": "normal" },
+    { "type": "bomber", "x": 60, "groundOffset": 0, "difficulty": "normal" }
+  ],
+  "structures": [],
+  "objectives": {
+    "type": "survive_time",
+    "timeLimit": 120
+  },
+  "difficulty": {
+    "hpMultiplier": 1.5,
+    "damageMultiplier": 1.3,
+    "speedMultiplier": 1.15
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "id": "w3_l5",
+  "name": "Glacial Cannon",
+  "worldId": "frostbite_peaks",
+  "worldIndex": 2,
+  "levelIndex": 4,
+  "parTime": 180,
+  "introDialog": "The Glacial Cannon — it fires ice barrages and summons Shielders. Dodge the frost zones!",
+  "victoryDialog": "The ice fortress crumbles! The heat of the Magma Crucible lies ahead.",
+  "terrain": {
+    "seed": 30501,
+    "mapWidth": 200,
+    "minHeight": 0.25,
+    "maxHeight": 0.8,
+    "hillFrequency": 0.12,
+    "islandCount": 2,
+    "indestructibleFloorHeight": 0.1
+  },
+  "playerSpawn": { "x": -80, "groundOffset": 2 },
+  "enemies": [],
+  "structures": [
+    { "type": "platform", "x": 60, "y": 55, "width": 25, "height": 3 },
+    { "type": "platform", "x": -40, "y": 35, "width": 15, "height": 2 },
+    { "type": "platform", "x": 20, "y": 40, "width": 15, "height": 2 }
+  ],
+  "objectives": {
+    "type": "defeat_boss",
+    "bossType": "glacial_cannon"
+  },
+  "boss": {
+    "bossType": "glacial_cannon",
+    "bossHP": 350,
+    "bossX": 65,
+    "phaseThresholds": [0.6, 0.5, 0.3],
+    "reinforcements": [
+      { "type": "shielder", "x": 30, "groundOffset": 0, "difficulty": "normal" },
+      { "type": "shielder", "x": 50, "groundOffset": 0, "difficulty": "normal" },
+      { "type": "shielder", "x": 40, "groundOffset": 0, "difficulty": "hard" }
+    ]
+  },
+  "difficulty": {
+    "hpMultiplier": 1.3,
+    "damageMultiplier": 1.2,
+    "speedMultiplier": 1.1
+  }
+}

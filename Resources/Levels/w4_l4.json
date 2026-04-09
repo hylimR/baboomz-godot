@@ -1,0 +1,39 @@
+{
+  "id": "w4_l4",
+  "name": "The Crucible",
+  "worldId": "magma_crucible",
+  "worldIndex": 3,
+  "levelIndex": 3,
+  "parTime": 150,
+  "introDialog": "Every type of enemy in one arena. This is the ultimate test before the Colossus!",
+  "victoryDialog": "All of Cogsworth's forces defeated! Only the Forge Colossus remains.",
+  "terrain": {
+    "seed": 40401,
+    "mapWidth": 200,
+    "minHeight": 0.3,
+    "maxHeight": 0.6,
+    "hillFrequency": 0.05,
+    "islandCount": 0,
+    "indestructibleFloorHeight": 0.1
+  },
+  "playerSpawn": { "x": -80, "groundOffset": 2 },
+  "enemies": [
+    { "type": "walker", "x": -10, "groundOffset": 0, "difficulty": "normal" },
+    { "type": "walker", "x": 50, "groundOffset": 0, "difficulty": "normal" },
+    { "type": "turret", "x": 20, "groundOffset": 2, "difficulty": "normal" },
+    { "type": "turret", "x": 70, "groundOffset": 2, "difficulty": "normal" },
+    { "type": "bomber", "x": 5, "groundOffset": 0, "difficulty": "normal" },
+    { "type": "bomber", "x": 60, "groundOffset": 0, "difficulty": "normal" },
+    { "type": "shielder", "x": 30, "groundOffset": 0, "difficulty": "normal" },
+    { "type": "shielder", "x": 75, "groundOffset": 0, "difficulty": "normal" },
+    { "type": "flyer", "x": 15, "groundOffset": 10, "difficulty": "normal" },
+    { "type": "flyer", "x": 55, "groundOffset": 10, "difficulty": "normal" }
+  ],
+  "structures": [],
+  "objectives": { "type": "eliminate_all" },
+  "difficulty": {
+    "hpMultiplier": 1.5,
+    "damageMultiplier": 1.3,
+    "speedMultiplier": 1.15
+  }
+}

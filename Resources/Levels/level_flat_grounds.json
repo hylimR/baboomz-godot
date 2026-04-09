@@ -1,0 +1,19 @@
+{
+  "id": "level_flat_grounds",
+  "name": "Flat Grounds",
+  "terrain": {
+    "seed": 42,
+    "mapWidth": 100,
+    "minHeight": 0.45,
+    "maxHeight": 0.55,
+    "hillFrequency": 0.3,
+    "islandCount": 0,
+    "indestructibleFloorHeight": 0.05
+  },
+  "playerSpawn": { "x": -35, "groundOffset": 2 },
+  "enemies": [
+    { "type": "walker", "x": 30, "groundOffset": 0, "difficulty": "easy" }
+  ],
+  "structures": [],
+  "objectives": { "type": "eliminate_all" }
+}

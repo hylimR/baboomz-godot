@@ -1,0 +1,47 @@
+{
+  "id": "w5_l5",
+  "name": "Baron Cogsworth",
+  "worldId": "sky_fortress",
+  "worldIndex": 4,
+  "levelIndex": 4,
+  "parTime": 240,
+  "introDialog": "You've come far, little Pip. But the Aether Core's power is MINE!",
+  "victoryDialog": "The Aether Core pulses with light. Aethermoor is saved... for now.",
+  "terrain": {
+    "seed": 50501,
+    "mapWidth": 220,
+    "minHeight": 0.25,
+    "maxHeight": 0.7,
+    "hillFrequency": 0.08,
+    "islandCount": 3,
+    "indestructibleFloorHeight": 0.1
+  },
+  "playerSpawn": { "x": -90, "groundOffset": 2 },
+  "enemies": [],
+  "structures": [
+    { "type": "platform", "x": -50, "y": 35, "width": 15, "height": 2 },
+    { "type": "platform", "x": 0, "y": 45, "width": 12, "height": 2 },
+    { "type": "platform", "x": 50, "y": 40, "width": 15, "height": 2 },
+    { "type": "platform", "x": 80, "y": 50, "width": 20, "height": 3 }
+  ],
+  "objectives": {
+    "type": "defeat_boss",
+    "bossType": "baron_cogsworth"
+  },
+  "boss": {
+    "bossType": "baron_cogsworth",
+    "bossHP": 500,
+    "bossX": 80,
+    "phaseThresholds": [0.66, 0.33, 0.1],
+    "reinforcements": [
+      { "type": "flyer", "x": -30, "groundOffset": 10, "difficulty": "hard" },
+      { "type": "shielder", "x": 30, "groundOffset": 0, "difficulty": "hard" },
+      { "type": "healer", "x": 60, "groundOffset": 0, "difficulty": "hard" }
+    ]
+  },
+  "difficulty": {
+    "hpMultiplier": 1.7,
+    "damageMultiplier": 1.4,
+    "speedMultiplier": 1.2
+  }
+}

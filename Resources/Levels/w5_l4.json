@@ -1,0 +1,41 @@
+{
+  "id": "w5_l4",
+  "name": "Sky Bridge",
+  "worldId": "sky_fortress",
+  "worldIndex": 4,
+  "levelIndex": 3,
+  "parTime": 150,
+  "introDialog": "The final approach — a narrow bridge packed with everything Cogsworth has left!",
+  "victoryDialog": "The bridge is clear. Baron Cogsworth awaits in the throne room...",
+  "terrain": {
+    "seed": 50401,
+    "mapWidth": 200,
+    "minHeight": 0.4,
+    "maxHeight": 0.55,
+    "hillFrequency": 0.02,
+    "islandCount": 0,
+    "indestructibleFloorHeight": 0.2
+  },
+  "playerSpawn": { "x": -80, "groundOffset": 2 },
+  "enemies": [
+    { "type": "walker", "x": -20, "groundOffset": 0, "difficulty": "hard" },
+    { "type": "walker", "x": 30, "groundOffset": 0, "difficulty": "hard" },
+    { "type": "turret", "x": 10, "groundOffset": 2, "difficulty": "hard" },
+    { "type": "turret", "x": 60, "groundOffset": 2, "difficulty": "hard" },
+    { "type": "bomber", "x": 0, "groundOffset": 0, "difficulty": "hard" },
+    { "type": "bomber", "x": 50, "groundOffset": 0, "difficulty": "hard" },
+    { "type": "shielder", "x": 20, "groundOffset": 0, "difficulty": "hard" },
+    { "type": "shielder", "x": 70, "groundOffset": 0, "difficulty": "hard" },
+    { "type": "flyer", "x": 15, "groundOffset": 10, "difficulty": "hard" },
+    { "type": "flyer", "x": 55, "groundOffset": 10, "difficulty": "hard" },
+    { "type": "healer", "x": 40, "groundOffset": 0, "difficulty": "normal" },
+    { "type": "healer", "x": 75, "groundOffset": 0, "difficulty": "normal" }
+  ],
+  "structures": [],
+  "objectives": { "type": "eliminate_all" },
+  "difficulty": {
+    "hpMultiplier": 1.7,
+    "damageMultiplier": 1.4,
+    "speedMultiplier": 1.2
+  }
+}

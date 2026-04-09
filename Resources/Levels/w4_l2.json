@@ -1,0 +1,40 @@
+{
+  "id": "w4_l2",
+  "name": "Forge Works",
+  "worldId": "magma_crucible",
+  "worldIndex": 3,
+  "levelIndex": 1,
+  "parTime": 120,
+  "introDialog": "The forge floor — flyers above, shielders below, walkers everywhere. Pick your targets!",
+  "victoryDialog": "The forge is quiet... for now. Something rumbles deeper in the crucible.",
+  "terrain": {
+    "seed": 40201,
+    "mapWidth": 220,
+    "minHeight": 0.25,
+    "maxHeight": 0.7,
+    "hillFrequency": 0.08,
+    "islandCount": 2,
+    "indestructibleFloorHeight": 0
+  },
+  "playerSpawn": { "x": -90, "groundOffset": 2 },
+  "enemies": [
+    { "type": "flyer", "x": 0, "groundOffset": 10, "difficulty": "normal" },
+    { "type": "flyer", "x": 35, "groundOffset": 10, "difficulty": "normal" },
+    { "type": "flyer", "x": 65, "groundOffset": 10, "difficulty": "normal" },
+    { "type": "shielder", "x": 20, "groundOffset": 0, "difficulty": "normal" },
+    { "type": "shielder", "x": 50, "groundOffset": 0, "difficulty": "normal" },
+    { "type": "walker", "x": 10, "groundOffset": 0, "difficulty": "normal" },
+    { "type": "walker", "x": 75, "groundOffset": 0, "difficulty": "normal" }
+  ],
+  "structures": [
+    { "type": "platform", "x": -20, "y": 45, "width": 18, "height": 2 },
+    { "type": "platform", "x": 40, "y": 50, "width": 18, "height": 2 },
+    { "type": "platform", "x": 80, "y": 45, "width": 18, "height": 2 }
+  ],
+  "objectives": { "type": "eliminate_all" },
+  "difficulty": {
+    "hpMultiplier": 1.5,
+    "damageMultiplier": 1.3,
+    "speedMultiplier": 1.15
+  }
+}

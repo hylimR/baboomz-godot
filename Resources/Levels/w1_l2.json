@@ -1,0 +1,34 @@
+{
+  "id": "w1_l2",
+  "name": "Hilltop Sentries",
+  "worldId": "verdant_fields",
+  "worldIndex": 0,
+  "levelIndex": 1,
+  "parTime": 90,
+  "introDialog": "Watch the hills — Cogsworth's turrets have the high ground. Arc your shots!",
+  "victoryDialog": "Turrets down! You're getting the hang of this, Pip.",
+  "terrain": {
+    "seed": 10201,
+    "mapWidth": 200,
+    "minHeight": 0.3,
+    "maxHeight": 0.7,
+    "hillFrequency": 0.15,
+    "islandCount": 2,
+    "indestructibleFloorHeight": 0
+  },
+  "playerSpawn": { "x": -80, "groundOffset": 2 },
+  "enemies": [
+    { "type": "turret", "x": 20, "groundOffset": 2, "difficulty": "easy" },
+    { "type": "turret", "x": 60, "groundOffset": 2, "difficulty": "easy" },
+    { "type": "walker", "x": 40, "groundOffset": 0, "difficulty": "easy" }
+  ],
+  "structures": [
+    { "type": "platform", "x": 20, "y": 45, "width": 15, "height": 2 }
+  ],
+  "objectives": { "type": "eliminate_all" },
+  "difficulty": {
+    "hpMultiplier": 1.0,
+    "damageMultiplier": 1.0,
+    "speedMultiplier": 1.0
+  }
+}

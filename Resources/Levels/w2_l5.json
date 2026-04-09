@@ -1,0 +1,45 @@
+{
+  "id": "w2_l5",
+  "name": "Sand Wyrm",
+  "worldId": "scorched_dunes",
+  "worldIndex": 1,
+  "levelIndex": 4,
+  "parTime": 180,
+  "introDialog": "The ground trembles... The Sand Wyrm burrows beneath. Hit it when it surfaces!",
+  "victoryDialog": "The Wyrm is scrap metal! Onward to the frozen peaks!",
+  "terrain": {
+    "seed": 20501,
+    "mapWidth": 200,
+    "minHeight": 0.3,
+    "maxHeight": 0.45,
+    "hillFrequency": 0.02,
+    "islandCount": 0,
+    "indestructibleFloorHeight": 0.15
+  },
+  "playerSpawn": { "x": -80, "groundOffset": 2 },
+  "enemies": [],
+  "structures": [
+    { "type": "platform", "x": -40, "y": 30, "width": 12, "height": 2 },
+    { "type": "platform", "x": 0, "y": 35, "width": 10, "height": 2 },
+    { "type": "platform", "x": 40, "y": 30, "width": 12, "height": 2 }
+  ],
+  "objectives": {
+    "type": "defeat_boss",
+    "bossType": "sand_wyrm"
+  },
+  "boss": {
+    "bossType": "sand_wyrm",
+    "bossHP": 300,
+    "bossX": 50,
+    "phaseThresholds": [0.66, 0.33],
+    "reinforcements": [
+      { "type": "bomber", "x": -30, "groundOffset": 0, "difficulty": "normal" },
+      { "type": "bomber", "x": 80, "groundOffset": 0, "difficulty": "normal" }
+    ]
+  },
+  "difficulty": {
+    "hpMultiplier": 1.15,
+    "damageMultiplier": 1.1,
+    "speedMultiplier": 1.0
+  }
+}

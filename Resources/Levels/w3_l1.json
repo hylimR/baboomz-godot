@@ -1,0 +1,33 @@
+{
+  "id": "w3_l1",
+  "name": "Frozen Trail",
+  "worldId": "frostbite_peaks",
+  "worldIndex": 2,
+  "levelIndex": 0,
+  "parTime": 90,
+  "introDialog": "Brrr! The Shielders carry armored fronts — you'll need to flank them or blast around!",
+  "victoryDialog": "Shield or no shield, they all fall. But the ice gets thicker ahead.",
+  "terrain": {
+    "seed": 30101,
+    "mapWidth": 200,
+    "minHeight": 0.3,
+    "maxHeight": 0.65,
+    "hillFrequency": 0.08,
+    "islandCount": 0,
+    "indestructibleFloorHeight": 0
+  },
+  "playerSpawn": { "x": -80, "groundOffset": 2 },
+  "enemies": [
+    { "type": "walker", "x": 0, "groundOffset": 0, "difficulty": "normal" },
+    { "type": "walker", "x": 25, "groundOffset": 0, "difficulty": "normal" },
+    { "type": "walker", "x": 50, "groundOffset": 0, "difficulty": "normal" },
+    { "type": "shielder", "x": 70, "groundOffset": 0, "difficulty": "normal" }
+  ],
+  "structures": [],
+  "objectives": { "type": "eliminate_all" },
+  "difficulty": {
+    "hpMultiplier": 1.3,
+    "damageMultiplier": 1.2,
+    "speedMultiplier": 1.1
+  }
+}

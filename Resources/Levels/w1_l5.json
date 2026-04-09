@@ -1,0 +1,44 @@
+{
+  "id": "w1_l5",
+  "name": "Iron Sentinel",
+  "worldId": "verdant_fields",
+  "worldIndex": 0,
+  "levelIndex": 4,
+  "parTime": 150,
+  "introDialog": "So, the militia sends a pup? My Iron Sentinel will crush you!",
+  "victoryDialog": "Impossible! No matter — the Dunes will swallow you whole!",
+  "terrain": {
+    "seed": 10501,
+    "mapWidth": 180,
+    "minHeight": 0.35,
+    "maxHeight": 0.55,
+    "hillFrequency": 0.03,
+    "islandCount": 0,
+    "indestructibleFloorHeight": 0.15
+  },
+  "playerSpawn": { "x": -70, "groundOffset": 2 },
+  "enemies": [],
+  "structures": [
+    { "type": "platform", "x": -50, "y": 35, "width": 20, "height": 3 },
+    { "type": "platform", "x": 50, "y": 35, "width": 20, "height": 3 }
+  ],
+  "objectives": {
+    "type": "defeat_boss",
+    "bossType": "iron_sentinel"
+  },
+  "boss": {
+    "bossType": "iron_sentinel",
+    "bossHP": 200,
+    "bossX": 60,
+    "phaseThresholds": [0.5],
+    "reinforcements": [
+      { "type": "walker", "x": -40, "groundOffset": 0, "difficulty": "easy" },
+      { "type": "walker", "x": 80, "groundOffset": 0, "difficulty": "easy" }
+    ]
+  },
+  "difficulty": {
+    "hpMultiplier": 1.0,
+    "damageMultiplier": 1.0,
+    "speedMultiplier": 1.0
+  }
+}

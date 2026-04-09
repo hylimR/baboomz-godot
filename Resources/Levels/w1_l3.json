@@ -1,0 +1,38 @@
+{
+  "id": "w1_l3",
+  "name": "Minefield March",
+  "worldId": "verdant_fields",
+  "worldIndex": 0,
+  "levelIndex": 2,
+  "parTime": 90,
+  "introDialog": "Careful! The ground is littered with mines. Lure the walkers into them!",
+  "victoryDialog": "Minefield cleared! The road ahead leads to Swarm Valley.",
+  "terrain": {
+    "seed": 10301,
+    "mapWidth": 200,
+    "minHeight": 0.3,
+    "maxHeight": 0.65,
+    "hillFrequency": 0.08,
+    "islandCount": 0,
+    "indestructibleFloorHeight": 0
+  },
+  "playerSpawn": { "x": -80, "groundOffset": 2 },
+  "enemies": [
+    { "type": "walker", "x": 10, "groundOffset": 0, "difficulty": "easy" },
+    { "type": "walker", "x": 35, "groundOffset": 0, "difficulty": "normal" },
+    { "type": "walker", "x": 60, "groundOffset": 0, "difficulty": "normal" },
+    { "type": "turret", "x": 75, "groundOffset": 2, "difficulty": "easy" }
+  ],
+  "structures": [],
+  "objectives": { "type": "eliminate_all" },
+  "difficulty": {
+    "hpMultiplier": 1.0,
+    "damageMultiplier": 1.0,
+    "speedMultiplier": 1.0,
+    "mineCountOverride": 6
+  },
+  "hiddenObjective": {
+    "type": "no_mines_triggered",
+    "bonusCurrency": 50
+  }
+}

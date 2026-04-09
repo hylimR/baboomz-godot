@@ -1,0 +1,57 @@
+{
+  "id": "w2_l3",
+  "name": "Excavation Site",
+  "worldId": "scorched_dunes",
+  "worldIndex": 1,
+  "levelIndex": 2,
+  "parTime": 90,
+  "introDialog": "They're coming in waves! Hold your position at the excavation site!",
+  "victoryDialog": "All waves repelled. But the sandstorm is rolling in...",
+  "terrain": {
+    "seed": 20301,
+    "mapWidth": 180,
+    "minHeight": 0.3,
+    "maxHeight": 0.6,
+    "hillFrequency": 0.05,
+    "islandCount": 0,
+    "indestructibleFloorHeight": 0.2
+  },
+  "playerSpawn": { "x": -60, "groundOffset": 2 },
+  "enemies": [],
+  "structures": [
+    { "type": "platform", "x": -30, "y": 40, "width": 25, "height": 3 }
+  ],
+  "objectives": {
+    "type": "survive_waves",
+    "waveCount": 3,
+    "waves": [
+      {
+        "delay": 0,
+        "enemies": [
+          { "type": "walker", "x": 40, "groundOffset": 0, "difficulty": "normal" },
+          { "type": "walker", "x": 60, "groundOffset": 0, "difficulty": "normal" }
+        ]
+      },
+      {
+        "delay": 8,
+        "enemies": [
+          { "type": "bomber", "x": 50, "groundOffset": 0, "difficulty": "normal" },
+          { "type": "bomber", "x": 70, "groundOffset": 0, "difficulty": "normal" }
+        ]
+      },
+      {
+        "delay": 8,
+        "enemies": [
+          { "type": "turret", "x": 55, "groundOffset": 2, "difficulty": "normal" },
+          { "type": "walker", "x": 40, "groundOffset": 0, "difficulty": "normal" },
+          { "type": "walker", "x": 75, "groundOffset": 0, "difficulty": "normal" }
+        ]
+      }
+    ]
+  },
+  "difficulty": {
+    "hpMultiplier": 1.15,
+    "damageMultiplier": 1.1,
+    "speedMultiplier": 1.0
+  }
+}

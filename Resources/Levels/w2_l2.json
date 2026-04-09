@@ -1,0 +1,37 @@
+{
+  "id": "w2_l2",
+  "name": "Canyon Run",
+  "worldId": "scorched_dunes",
+  "worldIndex": 1,
+  "levelIndex": 1,
+  "parTime": 120,
+  "introDialog": "A narrow canyon — turrets above, walkers below. High-arc shots are your only option!",
+  "victoryDialog": "Canyon secured. Cogsworth's excavation site is just ahead.",
+  "terrain": {
+    "seed": 20201,
+    "mapWidth": 180,
+    "minHeight": 0.15,
+    "maxHeight": 0.85,
+    "hillFrequency": 0.2,
+    "islandCount": 0,
+    "indestructibleFloorHeight": 0
+  },
+  "playerSpawn": { "x": -70, "groundOffset": 2 },
+  "enemies": [
+    { "type": "turret", "x": 0, "groundOffset": 2, "difficulty": "normal" },
+    { "type": "turret", "x": 30, "groundOffset": 2, "difficulty": "normal" },
+    { "type": "turret", "x": 60, "groundOffset": 2, "difficulty": "normal" },
+    { "type": "walker", "x": 15, "groundOffset": 0, "difficulty": "normal" },
+    { "type": "walker", "x": 45, "groundOffset": 0, "difficulty": "normal" }
+  ],
+  "structures": [
+    { "type": "platform", "x": 0, "y": 55, "width": 20, "height": 2 },
+    { "type": "platform", "x": 50, "y": 50, "width": 20, "height": 2 }
+  ],
+  "objectives": { "type": "eliminate_all" },
+  "difficulty": {
+    "hpMultiplier": 1.15,
+    "damageMultiplier": 1.1,
+    "speedMultiplier": 1.0
+  }
+}

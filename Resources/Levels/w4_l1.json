@@ -1,0 +1,33 @@
+{
+  "id": "w4_l1",
+  "name": "Ember Path",
+  "worldId": "magma_crucible",
+  "worldIndex": 3,
+  "levelIndex": 0,
+  "parTime": 90,
+  "introDialog": "The foundry! Flyers hover above — aim high and hit fast, they're fragile!",
+  "victoryDialog": "Flyers down! But they're quick little pests. More ahead in the forge.",
+  "terrain": {
+    "seed": 40101,
+    "mapWidth": 200,
+    "minHeight": 0.2,
+    "maxHeight": 0.7,
+    "hillFrequency": 0.1,
+    "islandCount": 1,
+    "indestructibleFloorHeight": 0
+  },
+  "playerSpawn": { "x": -80, "groundOffset": 2 },
+  "enemies": [
+    { "type": "turret", "x": 15, "groundOffset": 2, "difficulty": "normal" },
+    { "type": "turret", "x": 55, "groundOffset": 2, "difficulty": "normal" },
+    { "type": "flyer", "x": 30, "groundOffset": 10, "difficulty": "easy" },
+    { "type": "flyer", "x": 70, "groundOffset": 10, "difficulty": "easy" }
+  ],
+  "structures": [],
+  "objectives": { "type": "eliminate_all" },
+  "difficulty": {
+    "hpMultiplier": 1.5,
+    "damageMultiplier": 1.3,
+    "speedMultiplier": 1.15
+  }
+}

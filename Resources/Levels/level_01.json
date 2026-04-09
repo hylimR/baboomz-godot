@@ -1,0 +1,22 @@
+{
+  "id": "level_01",
+  "name": "Tutorial Valley",
+  "terrain": {
+    "seed": 12345,
+    "mapWidth": 200,
+    "minHeight": 0.3,
+    "maxHeight": 0.7,
+    "hillFrequency": 1.5,
+    "islandCount": 2,
+    "indestructibleFloorHeight": 0.1
+  },
+  "playerSpawn": { "x": -80, "groundOffset": 2 },
+  "enemies": [
+    { "type": "turret", "x": 30, "groundOffset": 2, "difficulty": "easy" },
+    { "type": "walker", "x": 60, "groundOffset": 0, "difficulty": "normal" }
+  ],
+  "structures": [
+    { "type": "platform", "x": 20, "y": 50, "width": 30, "height": 3 }
+  ],
+  "objectives": { "type": "eliminate_all" }
+}

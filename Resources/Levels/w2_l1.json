@@ -1,0 +1,33 @@
+{
+  "id": "w2_l1",
+  "name": "Desert Outpost",
+  "worldId": "scorched_dunes",
+  "worldIndex": 1,
+  "levelIndex": 0,
+  "parTime": 90,
+  "introDialog": "The desert... Cogsworth's Bombers lob grenades that bounce everywhere. Stay sharp!",
+  "victoryDialog": "Outpost cleared. These Bombers are tricky — their grenades bounce off everything.",
+  "terrain": {
+    "seed": 20101,
+    "mapWidth": 200,
+    "minHeight": 0.25,
+    "maxHeight": 0.5,
+    "hillFrequency": 0.06,
+    "islandCount": 0,
+    "indestructibleFloorHeight": 0
+  },
+  "playerSpawn": { "x": -80, "groundOffset": 2 },
+  "enemies": [
+    { "type": "turret", "x": 10, "groundOffset": 2, "difficulty": "normal" },
+    { "type": "turret", "x": 50, "groundOffset": 2, "difficulty": "normal" },
+    { "type": "bomber", "x": 30, "groundOffset": 0, "difficulty": "easy" },
+    { "type": "bomber", "x": 65, "groundOffset": 0, "difficulty": "easy" }
+  ],
+  "structures": [],
+  "objectives": { "type": "eliminate_all" },
+  "difficulty": {
+    "hpMultiplier": 1.15,
+    "damageMultiplier": 1.1,
+    "speedMultiplier": 1.0
+  }
+}

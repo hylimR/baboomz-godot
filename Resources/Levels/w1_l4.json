@@ -1,0 +1,37 @@
+{
+  "id": "w1_l4",
+  "name": "Swarm Valley",
+  "worldId": "verdant_fields",
+  "worldIndex": 0,
+  "levelIndex": 3,
+  "parTime": 120,
+  "introDialog": "A whole swarm of them in the valley! Use the high ground to your advantage!",
+  "victoryDialog": "The valley is clear. But something big awaits at the end of the road...",
+  "terrain": {
+    "seed": 10401,
+    "mapWidth": 220,
+    "minHeight": 0.2,
+    "maxHeight": 0.75,
+    "hillFrequency": 0.12,
+    "islandCount": 1,
+    "indestructibleFloorHeight": 0
+  },
+  "playerSpawn": { "x": -90, "groundOffset": 2 },
+  "enemies": [
+    { "type": "walker", "x": -20, "groundOffset": 0, "difficulty": "easy" },
+    { "type": "walker", "x": 0, "groundOffset": 0, "difficulty": "normal" },
+    { "type": "walker", "x": 20, "groundOffset": 0, "difficulty": "normal" },
+    { "type": "walker", "x": 40, "groundOffset": 0, "difficulty": "normal" },
+    { "type": "walker", "x": 60, "groundOffset": 0, "difficulty": "normal" },
+    { "type": "walker", "x": 80, "groundOffset": 0, "difficulty": "easy" },
+    { "type": "turret", "x": 30, "groundOffset": 2, "difficulty": "normal" },
+    { "type": "turret", "x": 70, "groundOffset": 2, "difficulty": "normal" }
+  ],
+  "structures": [],
+  "objectives": { "type": "eliminate_all" },
+  "difficulty": {
+    "hpMultiplier": 1.0,
+    "damageMultiplier": 1.0,
+    "speedMultiplier": 1.0
+  }
+}

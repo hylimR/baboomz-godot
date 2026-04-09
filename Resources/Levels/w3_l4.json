@@ -1,0 +1,64 @@
+{
+  "id": "w3_l4",
+  "name": "Blizzard Gauntlet",
+  "worldId": "frostbite_peaks",
+  "worldIndex": 2,
+  "levelIndex": 3,
+  "parTime": 150,
+  "introDialog": "Three waves incoming! Hold the high ground and don't let them overwhelm you!",
+  "victoryDialog": "All waves crushed. The Glacial Cannon awaits at the peak.",
+  "terrain": {
+    "seed": 30401,
+    "mapWidth": 200,
+    "minHeight": 0.3,
+    "maxHeight": 0.75,
+    "hillFrequency": 0.1,
+    "islandCount": 1,
+    "indestructibleFloorHeight": 0
+  },
+  "playerSpawn": { "x": -80, "groundOffset": 2 },
+  "enemies": [],
+  "structures": [
+    { "type": "platform", "x": -60, "y": 50, "width": 25, "height": 3 }
+  ],
+  "objectives": {
+    "type": "survive_waves",
+    "waveCount": 3,
+    "waves": [
+      {
+        "delay": 0,
+        "enemies": [
+          { "type": "walker", "x": 30, "groundOffset": 0, "difficulty": "normal" },
+          { "type": "walker", "x": 50, "groundOffset": 0, "difficulty": "normal" },
+          { "type": "walker", "x": 70, "groundOffset": 0, "difficulty": "normal" },
+          { "type": "walker", "x": 85, "groundOffset": 0, "difficulty": "normal" }
+        ]
+      },
+      {
+        "delay": 10,
+        "enemies": [
+          { "type": "shielder", "x": 40, "groundOffset": 0, "difficulty": "normal" },
+          { "type": "shielder", "x": 60, "groundOffset": 0, "difficulty": "normal" },
+          { "type": "shielder", "x": 80, "groundOffset": 0, "difficulty": "normal" },
+          { "type": "turret", "x": 55, "groundOffset": 2, "difficulty": "normal" },
+          { "type": "turret", "x": 75, "groundOffset": 2, "difficulty": "normal" }
+        ]
+      },
+      {
+        "delay": 10,
+        "enemies": [
+          { "type": "bomber", "x": 35, "groundOffset": 0, "difficulty": "normal" },
+          { "type": "bomber", "x": 65, "groundOffset": 0, "difficulty": "normal" },
+          { "type": "walker", "x": 45, "groundOffset": 0, "difficulty": "hard" },
+          { "type": "walker", "x": 55, "groundOffset": 0, "difficulty": "hard" },
+          { "type": "walker", "x": 80, "groundOffset": 0, "difficulty": "normal" }
+        ]
+      }
+    ]
+  },
+  "difficulty": {
+    "hpMultiplier": 1.3,
+    "damageMultiplier": 1.2,
+    "speedMultiplier": 1.1
+  }
+}

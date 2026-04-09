@@ -1,0 +1,35 @@
+{
+  "id": "w3_l2",
+  "name": "Ice Bridges",
+  "worldId": "frostbite_peaks",
+  "worldIndex": 2,
+  "levelIndex": 1,
+  "parTime": 120,
+  "introDialog": "Narrow ice bridges connect the islands. Destroy them to isolate the enemy!",
+  "victoryDialog": "Bridges shattered! Tactical destruction at its finest.",
+  "terrain": {
+    "seed": 30201,
+    "mapWidth": 240,
+    "minHeight": 0.2,
+    "maxHeight": 0.7,
+    "hillFrequency": 0.18,
+    "islandCount": 4,
+    "indestructibleFloorHeight": 0
+  },
+  "playerSpawn": { "x": -100, "groundOffset": 2 },
+  "enemies": [
+    { "type": "turret", "x": -20, "groundOffset": 2, "difficulty": "normal" },
+    { "type": "turret", "x": 40, "groundOffset": 2, "difficulty": "normal" },
+    { "type": "shielder", "x": 10, "groundOffset": 0, "difficulty": "normal" },
+    { "type": "shielder", "x": 60, "groundOffset": 0, "difficulty": "normal" },
+    { "type": "walker", "x": -10, "groundOffset": 0, "difficulty": "normal" },
+    { "type": "walker", "x": 70, "groundOffset": 0, "difficulty": "normal" }
+  ],
+  "structures": [],
+  "objectives": { "type": "eliminate_all" },
+  "difficulty": {
+    "hpMultiplier": 1.3,
+    "damageMultiplier": 1.2,
+    "speedMultiplier": 1.1
+  }
+}
