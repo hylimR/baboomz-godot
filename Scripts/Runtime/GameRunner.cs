@@ -120,6 +120,22 @@ namespace Baboomz
             AddChild(deathSlowMo);
             deathSlowMo.Init(State);
 
+            // HUD (on a CanvasLayer so it renders above everything)
+            var hudLayer = new CanvasLayer();
+            hudLayer.Name = "HUDLayer";
+            hudLayer.Layer = 10;
+            AddChild(hudLayer);
+
+            var hud = new GameHUD();
+            hud.Name = "GameHUD";
+            hudLayer.AddChild(hud);
+            hud.BuildUI();
+
+            var hudBridge = new HUDBridge();
+            hudBridge.Name = "HUDBridge";
+            AddChild(hudBridge);
+            hudBridge.Init(State, hud);
+
             // Sky background color
             RenderingServer.SetDefaultClearColor(new Color(0.31f, 0.70f, 0.96f));
 
