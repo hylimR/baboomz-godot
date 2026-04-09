@@ -1,4 +1,5 @@
 using Godot;
+using System.Collections.Generic;
 using Baboomz.Simulation;
 
 namespace Baboomz
@@ -13,6 +14,9 @@ namespace Baboomz
 
         // Renderers
         internal PlayerRenderer[] playerRenderers;
+        private CameraTracker _cameraTracker;
+        private readonly Dictionary<int, ProjectileRenderer> _projectileRenderers = new();
+        private readonly HashSet<int> _knownProjectileIds = new();
 
         // Match config
         private GameConfig _matchConfig;
@@ -73,6 +77,12 @@ namespace Baboomz
                 playerRenderers[i] = pr;
             }
 
+            // Camera
+            _cameraTracker = new CameraTracker();
+            _cameraTracker.Name = "Camera";
+            AddChild(_cameraTracker);
+            _cameraTracker.Init(State);
+
             State.Phase = MatchPhase.Playing;
             GD.Print("Match phase set to Playing — simulation ticking");
         }
@@ -84,6 +94,7 @@ namespace Baboomz
             if (State.Phase == MatchPhase.Playing)
             {
                 GameSimulation.Tick(State, (float)delta);
+                SyncProjectileRenderers();
             }
 
             // Match end detection
@@ -98,6 +109,36 @@ namespace Baboomz
                     _matchResultShown = true;
                     GD.Print($"Match ended! Winner: {State.WinnerIndex}");
                 }
+            }
+        }
+
+        private void SyncProjectileRenderers()
+        {
+            // Spawn renderers for new projectiles
+            foreach (var proj in State.Projectiles)
+            {
+                if (proj.Alive && !_knownProjectileIds.Contains(proj.Id))
+                {
+                    _knownProjectileIds.Add(proj.Id);
+                    var pr = new ProjectileRenderer();
+                    pr.Name = $"Projectile_{proj.Id}";
+                    AddChild(pr);
+                    pr.Init(proj.Id, State);
+                    _projectileRenderers[proj.Id] = pr;
+                }
+            }
+
+            // Clean up dead renderers
+            var dead = new List<int>();
+            foreach (var kvp in _projectileRenderers)
+            {
+                if (!IsInstanceValid(kvp.Value) || kvp.Value.IsQueuedForDeletion())
+                    dead.Add(kvp.Key);
+            }
+            foreach (int id in dead)
+            {
+                _projectileRenderers.Remove(id);
+                _knownProjectileIds.Remove(id);
             }
         }
 
