@@ -16,6 +16,7 @@ namespace Baboomz
         internal PlayerRenderer[] playerRenderers;
         private CameraTracker _cameraTracker;
         private AudioBridge _audioBridge;
+        private MatchResultPanel _matchResultPanel;
         private readonly Dictionary<int, ProjectileRenderer> _projectileRenderers = new();
         private readonly HashSet<int> _knownProjectileIds = new();
 
@@ -136,6 +137,16 @@ namespace Baboomz
             AddChild(hudBridge);
             hudBridge.Init(State, hud);
 
+            // PauseMenu (on HUD layer so it renders above game)
+            var pauseMenu = new PauseMenu();
+            pauseMenu.Name = "PauseMenu";
+            hudLayer.AddChild(pauseMenu);
+
+            // MatchResultPanel (on HUD layer, hidden until match ends)
+            _matchResultPanel = new MatchResultPanel();
+            _matchResultPanel.Name = "MatchResultPanel";
+            hudLayer.AddChild(_matchResultPanel);
+
             // Sky background color
             RenderingServer.SetDefaultClearColor(new Color(0.31f, 0.70f, 0.96f));
 
@@ -163,6 +174,7 @@ namespace Baboomz
                 {
                     _matchResultShown = true;
                     GD.Print($"Match ended! Winner: {State.WinnerIndex}");
+                    _matchResultPanel?.ShowResult(State);
                 }
             }
         }
