@@ -91,6 +91,12 @@ namespace Baboomz
             AddChild(explosions);
             explosions.Init(State, _cameraTracker);
 
+            // Terrain debris (biome-colored chunks on every explosion)
+            var debris = new TerrainDebrisRenderer();
+            debris.Name = "TerrainDebris";
+            AddChild(debris);
+            debris.Init(State);
+
             // Audio
             _audioBridge = new AudioBridge();
             _audioBridge.Name = "Audio";
