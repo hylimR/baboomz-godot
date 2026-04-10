@@ -224,6 +224,52 @@ namespace Baboomz.Tests.Editor
         }
 
         [Test]
+        public void Rehook_FailedGrapple_DoesNotConsumeResourcesOrClearWindow()
+        {
+            // Regression test for #32: rope re-hook returned true on failure, letting
+            // players spam grapple every frame with zero cost until an anchor was found.
+            // A failed re-hook must leave energy, cooldown, and the rehook window
+            // unchanged so repeat presses cannot exploit the skill system.
+            var config = SmallConfig();
+            var state = GameSimulation.CreateMatch(config, 42);
+            AILogic.Reset(42);
+
+            state.Players[0].SkillSlots[0] = GrappleSkill();
+            state.Players[0].SkillSlots[0].CooldownRemaining = 3f; // mid-cooldown, like during a swing
+            state.Players[0].Energy = 80f;
+            state.Players[0].IsGrounded = false;
+            state.Players[0].RopeHookCount = 1;
+            state.Players[0].RopeRehookWindow = 0.5f;
+
+            // Aim straight up at the sky — no terrain to grapple to
+            state.Players[0].AimAngle = 90f;
+            state.Players[0].FacingDirection = 1;
+            // Float the player high above any terrain so the raycast definitely misses
+            state.Players[0].Position = new Vec2(0f, 100f);
+
+            float energyBefore = state.Players[0].Energy;
+            float cooldownBefore = state.Players[0].SkillSlots[0].CooldownRemaining;
+            int hookCountBefore = state.Players[0].RopeHookCount;
+            float windowBefore = state.Players[0].RopeRehookWindow;
+            int eventsBefore = state.SkillEvents.Count;
+
+            SkillSystem.ActivateSkill(state, 0, 0);
+
+            Assert.AreEqual(energyBefore, state.Players[0].Energy, 0.01f,
+                "Failed rehook must not consume energy");
+            Assert.AreEqual(cooldownBefore, state.Players[0].SkillSlots[0].CooldownRemaining, 0.01f,
+                "Failed rehook must not reset or shorten cooldown");
+            Assert.AreEqual(hookCountBefore, state.Players[0].RopeHookCount,
+                "Failed rehook must not increment hook count");
+            Assert.AreEqual(windowBefore, state.Players[0].RopeRehookWindow, 0.01f,
+                "Failed rehook must not close the rehook window");
+            Assert.AreEqual(eventsBefore, state.SkillEvents.Count,
+                "Failed rehook must not emit a skill event");
+            Assert.IsFalse(state.Players[0].SkillSlots[0].IsActive,
+                "Failed rehook must not activate the skill");
+        }
+
+        [Test]
         public void Rehook_FreshActivation_ResetsHookCount()
         {
             var config = SmallConfig();
