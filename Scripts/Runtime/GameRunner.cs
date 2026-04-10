@@ -62,6 +62,12 @@ namespace Baboomz
             AddChild(inputBridge);
             inputBridge.SetState(State);
 
+            // Parallax background (behind terrain — CanvasLayer with negative index)
+            var parallax = new ParallaxBackgroundRenderer();
+            parallax.Name = "Parallax";
+            AddChild(parallax);
+            parallax.Init();
+
             // Terrain
             var terrain = new GodotTerrainBridge();
             terrain.Name = "Terrain";
