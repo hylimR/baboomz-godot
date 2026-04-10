@@ -25,6 +25,7 @@ namespace Baboomz
         public Label WindLabel;
         public Label TimerLabel;
         public Label MatchStateLabel;
+        public TextureRect CompassNeedle;  // rotates with wind angle
 
         // Bottom bar
         public ColorRect[] WeaponSlots;
@@ -73,31 +74,37 @@ namespace Baboomz
                 new Color(0f, 0f, 0f, 0.3f), parent,
                 new Vector2(0f, 0f), new Vector2(0.3f, 0.15f));
 
-            // Portrait placeholder
-            UIBuilder.CreatePanel("P1Portrait",
+            // Portrait placeholder + steampunk frame overlay.
+            var portrait = UIBuilder.CreatePanel("P1Portrait",
                 new Color(0.4f, 0.3f, 0.2f), panel,
                 new Vector2(0.02f, 0.1f), new Vector2(0.2f, 0.9f));
+            GameHUDArt.AddFrameOverlay(portrait, GameHUDArt.PortraitFrame, new Vector2(6f, 6f));
 
             // Player 1 name
             refs.P1NameLabel = UIBuilder.CreateLabel("Player 1", 18, Colors.White,
                 panel, new Vector2(0.22f, 0.05f), new Vector2(0.98f, 0.3f));
 
-            // HP bar
+            // HP bar (with frame + textured fill)
             var (hpFill, hpBg) = UIBuilder.CreateBar("HPBar",
-                UIBuilder.GrassGreen, new Color(0.2f, 0.2f, 0.2f, 0.8f),
+                Colors.White, new Color(0.2f, 0.2f, 0.2f, 0.8f),
                 panel, new Vector2(0.22f, 0.35f), new Vector2(0.85f, 0.6f));
             refs.P1HpFill = hpFill;
             refs.P1HpBg = hpBg;
+            GameHUDArt.ApplyTexturedFill(hpFill, GameHUDArt.HpBarFill);
+            GameHUDArt.AddFrameOverlay(hpBg, GameHUDArt.HpBarFrame, new Vector2(4f, 6f));
 
             refs.P1HpText = UIBuilder.CreateLabel("100/100", 14, Colors.White,
                 panel, new Vector2(0.86f, 0.35f), new Vector2(0.98f, 0.6f));
 
-            // Energy bar
+            // Energy bar (with frame + textured fill). White base so Modulate
+            // (set by HUDBridge / GameHUD) drives the final color.
             var (epFill, epBg) = UIBuilder.CreateBar("EnergyBar",
                 UIBuilder.EnergyBlue, new Color(0.2f, 0.2f, 0.2f, 0.8f),
                 panel, new Vector2(0.22f, 0.65f), new Vector2(0.85f, 0.9f));
             refs.P1EpFill = epFill;
             refs.P1EpBg = epBg;
+            GameHUDArt.ApplyTexturedFill(epFill, GameHUDArt.EpBarFill);
+            GameHUDArt.AddFrameOverlay(epBg, GameHUDArt.HpBarFrame, new Vector2(4f, 6f));
 
             refs.P1EpText = UIBuilder.CreateLabel("", 14, Colors.White,
                 panel, new Vector2(0.86f, 0.65f), new Vector2(0.98f, 0.9f));
@@ -109,32 +116,41 @@ namespace Baboomz
                 new Color(0f, 0f, 0f, 0.3f), parent,
                 new Vector2(0.7f, 0f), new Vector2(1f, 0.15f));
 
-            // Portrait placeholder
-            UIBuilder.CreatePanel("P2Portrait",
+            // Portrait placeholder + frame
+            var portrait = UIBuilder.CreatePanel("P2Portrait",
                 new Color(0.3f, 0.2f, 0.4f), panel,
                 new Vector2(0.8f, 0.1f), new Vector2(0.98f, 0.9f));
+            GameHUDArt.AddFrameOverlay(portrait, GameHUDArt.PortraitFrame, new Vector2(6f, 6f));
 
             // Player 2 name
             refs.P2NameLabel = UIBuilder.CreateLabel("Player 2", 18, Colors.White,
                 panel, new Vector2(0.02f, 0.05f), new Vector2(0.78f, 0.3f),
                 HorizontalAlignment.Right);
 
-            // HP bar
+            // HP bar (with frame + textured fill)
             var (hpFill, hpBg) = UIBuilder.CreateBar("P2HPBar",
-                UIBuilder.GrassGreen, new Color(0.2f, 0.2f, 0.2f, 0.8f),
+                Colors.White, new Color(0.2f, 0.2f, 0.2f, 0.8f),
                 panel, new Vector2(0.15f, 0.35f), new Vector2(0.78f, 0.6f));
             refs.P2HpFill = hpFill;
             refs.P2HpBg = hpBg;
+            GameHUDArt.ApplyTexturedFill(hpFill, GameHUDArt.HpBarFill);
+            GameHUDArt.AddFrameOverlay(hpBg, GameHUDArt.HpBarFrame, new Vector2(4f, 6f));
         }
 
         private static void BuildTopCenterPanel(Control parent, ref GameHUDRefs refs)
         {
-            refs.WindLabel = UIBuilder.CreateLabel("Wind: -- 0.0", 20, Colors.White,
-                parent, new Vector2(0.35f, 0.02f), new Vector2(0.5f, 0.08f),
+            // Real art: compass dial + rotating needle. Returns null when missing.
+            refs.CompassNeedle = GameHUDArt.BuildCompass(parent);
+
+            // Fallback wind text label — visible only when there's no compass art.
+            refs.WindLabel = UIBuilder.CreateLabel("", 14, Colors.White,
+                parent, new Vector2(0.4f, 0.0f), new Vector2(0.5f, 0.04f),
                 HorizontalAlignment.Center);
+            if (refs.CompassNeedle == null)
+                refs.WindLabel.Text = "Wind: -- 0.0";
 
             refs.TimerLabel = UIBuilder.CreateLabel("OK", 20, Colors.White,
-                parent, new Vector2(0.5f, 0.02f), new Vector2(0.65f, 0.08f),
+                parent, new Vector2(0.5f, 0.09f), new Vector2(0.65f, 0.13f),
                 HorizontalAlignment.Center);
         }
 
@@ -157,16 +173,32 @@ namespace Baboomz
             bar.OffsetTop = -100f;
             bar.OffsetBottom = 0f;
 
+            // Steampunk overlay across the whole bar (real art covers the placeholder).
+            var barArt = SpriteLoader.Load(GameHUDArt.BottomHudBar);
+            if (barArt != null)
+            {
+                // Fade the placeholder to nearly transparent so the overlay shows through.
+                bar.Color = new Color(bar.Color.R, bar.Color.G, bar.Color.B, 0.05f);
+                GameHUDArt.AddFrameOverlay(bar, GameHUDArt.BottomHudBar, Vector2.Zero);
+            }
+
+            // Gear decoration on the bottom-left corner of the bar.
+            GameHUDArt.AddGearDecor(bar);
+
             // Weapon slots: 22 total, 7 visible at once, centered in bar
             float slotSize = 50f;
             float slotSpacing = 60f;
+
+            var weaponSlotTex = SpriteLoader.Load(GameHUDArt.WeaponSlot);
 
             for (int i = 0; i < TotalWeaponSlots; i++)
             {
                 // Use absolute pixel positioning via offsets, centered in bar
                 var slot = new ColorRect();
                 slot.Name = $"WeaponSlot{i}";
-                slot.Color = UIBuilder.Inactive;
+                // White base so Modulate (set by RefreshWeaponSlots) drives tint
+                // consistently whether or not the texture overlay exists.
+                slot.Color = Colors.White;
                 slot.MouseFilter = Control.MouseFilterEnum.Ignore;
 
                 // Center anchor
@@ -183,6 +215,20 @@ namespace Baboomz
 
                 bar.AddChild(slot);
                 refs.WeaponSlots[i] = slot;
+
+                // Texture overlay (steampunk frame). The slot's own Color is already
+                // white above, so Modulate (set by RefreshWeaponSlots) tints both.
+                if (weaponSlotTex != null)
+                {
+                    var slotFrame = new TextureRect();
+                    slotFrame.Name = "Frame";
+                    slotFrame.Texture = weaponSlotTex;
+                    slotFrame.StretchMode = TextureRect.StretchModeEnum.Scale;
+                    slotFrame.MouseFilter = Control.MouseFilterEnum.Ignore;
+                    slotFrame.AnchorLeft = 0f; slotFrame.AnchorTop = 0f;
+                    slotFrame.AnchorRight = 1f; slotFrame.AnchorBottom = 1f;
+                    slot.AddChild(slotFrame);
+                }
 
                 // Ammo/name label below each slot
                 var label = new Label();
@@ -263,7 +309,9 @@ namespace Baboomz
                 refs.SkillCooldownLabels[i] = cdLabel;
             }
 
-            // Fire button (right side of bottom bar)
+            // Fire button (right side of bottom bar). Always create the Button so the
+            // existing wiring (HUDBridge.GetFireButton) keeps working; layer the fire
+            // art on top via TextureRect when available.
             var fireBtn = UIBuilder.CreateButton("FireButton", "FIRE", 18,
                 UIBuilder.HpRed, bar);
             fireBtn.AnchorLeft = 1f;
@@ -275,6 +323,9 @@ namespace Baboomz
             fireBtn.OffsetRight = -20f;
             fireBtn.OffsetBottom = 35f;
             refs.FireButton = fireBtn;
+
+            // Real art overlay (no-op when texture missing).
+            GameHUDArt.ApplyFireButtonArt(fireBtn);
         }
     }
 }
