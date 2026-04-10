@@ -3037,7 +3037,8 @@ namespace Baboomz.Tests.Editor
 
             Assert.GreaterOrEqual(state.Players[0].WeaponSlots.Length, 7, "Should have at least 7 weapon slots");
             Assert.AreEqual("airstrike", state.Players[0].WeaponSlots[6].WeaponId);
-            Assert.AreEqual(1, state.Players[0].WeaponSlots[6].Ammo);
+            // Issue #34 raised airstrike Ammo 1 -> 2 as part of bottom-tier bottom-lift pass.
+            Assert.AreEqual(2, state.Players[0].WeaponSlots[6].Ammo);
             Assert.IsTrue(state.Players[0].WeaponSlots[6].IsAirstrike);
         }
 
@@ -3329,13 +3330,14 @@ namespace Baboomz.Tests.Editor
         }
 
         [Test]
-        public void ClusterBomb_EnergyCost35_Ammo4_AfterBalance()
+        public void ClusterBomb_EnergyCost25_Ammo4_AfterBalance()
         {
+            // Issue #34 bottom-lift: EnergyCost 35 -> 25. Ammo stays at 4.
             var config = SmallConfig();
-            Assert.AreEqual(35f, config.Weapons[3].EnergyCost,
-                "Cluster bomb energy cost should be 35 after balance nerf (#424)");
+            Assert.AreEqual(25f, config.Weapons[3].EnergyCost,
+                "Cluster bomb energy cost should be 25 after issue #34 bottom-lift (was 35)");
             Assert.AreEqual(4, config.Weapons[3].Ammo,
-                "Cluster bomb ammo should be 4 after balance nerf (#424)");
+                "Cluster bomb ammo should be 4");
         }
 
         [Test]
@@ -5183,7 +5185,8 @@ namespace Baboomz.Tests.Editor
                     found = true;
                     Assert.AreEqual(6, config.Weapons[i].ClusterCount,
                         "Banana bomb should have 6 sub-projectiles");
-                    Assert.AreEqual(1, config.Weapons[i].Ammo);
+                    // Issue #34 raised banana bomb Ammo 1 -> 2 as part of bottom-lift pass.
+                    Assert.AreEqual(2, config.Weapons[i].Ammo);
                     break;
                 }
             }
@@ -5584,37 +5587,90 @@ namespace Baboomz.Tests.Editor
         }
 
         [Test]
-        public void BalanceCheck_BananaBombSubDamage_Is22()
+        public void BalanceCheck_BananaBombSubDamage_Issue34()
         {
+            // Issue #34 bottom-lift pass: MaxDamage 22 -> 35, Ammo 1 -> 2,
+            // ShootCooldown 4 -> 3. EnergyCost stays at 40 (from #22).
+            // ClusterCount unchanged at 6.
             var config = new GameConfig();
             var banana = config.Weapons[11];
             Assert.AreEqual("banana_bomb", banana.WeaponId);
-            Assert.AreEqual(22f, banana.MaxDamage, "Banana sub-projectile damage should be 22 (balanced from 25)");
+            Assert.AreEqual(35f, banana.MaxDamage, "Banana sub-projectile damage should be 35 (issue #34, was 22)");
             Assert.AreEqual(6, banana.ClusterCount, "Banana should still have 6 sub-projectiles");
         }
 
         [Test]
-        public void BalanceCheck_BananaBombCooldownAndEnergy_Issue22()
+        public void BalanceCheck_BananaBombCooldownAndEnergy_Issue34()
         {
-            // Issue #22 nerf: banana bomb's max-hit burst (~154 dmg) is ~2x the
-            // single-shot premium tier. Increase cooldown to airstrike cadence and
-            // raise energy cost to gate spam.
+            // Issue #22 set EnergyCost=40. Issue #34 lowered ShootCooldown 4 -> 3 and
+            // raised Ammo 1 -> 2 to restore burst utility.
             var config = new GameConfig();
             var banana = config.Weapons[11];
             Assert.AreEqual("banana_bomb", banana.WeaponId);
-            Assert.AreEqual(4f, banana.ShootCooldown, "Banana cooldown should be 4s (issue #22, was 3s)");
-            Assert.AreEqual(40f, banana.EnergyCost, "Banana energy cost should be 40 (issue #22, was 30)");
+            Assert.AreEqual(3f, banana.ShootCooldown, "Banana cooldown should be 3s (issue #34, was 4s)");
+            Assert.AreEqual(40f, banana.EnergyCost, "Banana energy cost should be 40 (issue #22)");
+            Assert.AreEqual(2, banana.Ammo, "Banana ammo should be 2 (issue #34, was 1)");
         }
 
         [Test]
         public void BalanceCheck_AirstrikeCount_IsFour_Issue22()
         {
             // Issue #22 nerf: airstrike's 5x35 = 175 max burst was too high for a
-            // 4s cooldown. Drop to 4 bombs => 140 max burst.
+            // 4s cooldown. Drop to 4 bombs => 140 max burst. Issue #34 leaves this alone.
             var config = new GameConfig();
             var airstrike = config.Weapons[6];
             Assert.AreEqual("airstrike", airstrike.WeaponId);
             Assert.AreEqual(4, airstrike.AirstrikeCount, "Airstrike count should be 4 (issue #22, was 5)");
+        }
+
+        [Test]
+        public void BalanceCheck_AirstrikeDamageAndAmmo_Issue34()
+        {
+            // Issue #34 bottom-lift: MaxDamage 35 -> 45 and Ammo 1 -> 2 to restore
+            // saturation-bombing fantasy after the #22 AirstrikeCount nerf to 4.
+            var config = new GameConfig();
+            var airstrike = config.Weapons[6];
+            Assert.AreEqual("airstrike", airstrike.WeaponId);
+            Assert.AreEqual(45f, airstrike.MaxDamage, "Airstrike per-bomb damage should be 45 (issue #34, was 35)");
+            Assert.AreEqual(2, airstrike.Ammo, "Airstrike ammo should be 2 (issue #34, was 1)");
+        }
+
+        [Test]
+        public void BalanceCheck_FreezeGrenadeEnergy_Issue34()
+        {
+            // Issue #34: freeze_grenade is a utility/CC tool dealing only 5 damage
+            // but cost 20 energy — a 0.08 DPS/Energy outlier. Drop to 12 energy.
+            var config = new GameConfig();
+            WeaponDef freeze = default;
+            foreach (var w in config.Weapons) if (w.WeaponId == "freeze_grenade") { freeze = w; break; }
+            Assert.AreEqual("freeze_grenade", freeze.WeaponId);
+            Assert.AreEqual(12f, freeze.EnergyCost, "Freeze grenade energy should be 12 (issue #34, was 20)");
+        }
+
+        [Test]
+        public void BalanceCheck_ClusterDamageAndEnergy_Issue34()
+        {
+            // Issue #34: cluster's 20 base damage and 35 energy cost made it a 0.19
+            // DPS/Energy outlier. Bump damage to 30 and drop energy to 25.
+            var config = new GameConfig();
+            WeaponDef cluster = default;
+            foreach (var w in config.Weapons) if (w.WeaponId == "cluster") { cluster = w; break; }
+            Assert.AreEqual("cluster", cluster.WeaponId);
+            Assert.AreEqual(30f, cluster.MaxDamage, "Cluster base damage should be 30 (issue #34, was 20)");
+            Assert.AreEqual(25f, cluster.EnergyCost, "Cluster energy should be 25 (issue #34, was 35)");
+        }
+
+        [Test]
+        public void BalanceCheck_FlakCannonDamageAndCooldown_Issue34()
+        {
+            // Issue #34: flak was the worst outlier at 0.10 DPS/Energy — 8 fragments
+            // could not make up for 10 base damage. Bump to 20 damage and drop cooldown.
+            var config = new GameConfig();
+            WeaponDef flak = default;
+            foreach (var w in config.Weapons) if (w.WeaponId == "flak_cannon") { flak = w; break; }
+            Assert.AreEqual("flak_cannon", flak.WeaponId);
+            Assert.AreEqual(20f, flak.MaxDamage, "Flak damage should be 20 (issue #34, was 10)");
+            Assert.AreEqual(3f, flak.ShootCooldown, "Flak cooldown should be 3s (issue #34, was 4s)");
         }
 
         [Test]
