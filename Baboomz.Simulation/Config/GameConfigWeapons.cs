@@ -62,7 +62,8 @@ namespace Baboomz.Simulation
                 ExplosionRadius = 3f, MaxDamage = 35f, KnockbackForce = 8f,
                 ProjectileCount = 1, SpreadAngle = 0f,
                 DestroysIndestructible = false, EnergyCost = 40f, Ammo = 1,
-                IsAirstrike = true, AirstrikeCount = 5
+                // Balance #22: AirstrikeCount 5 -> 4 to drop max-burst from 175 -> 140
+                IsAirstrike = true, AirstrikeCount = 4
             },
             new WeaponDef
             {
@@ -103,10 +104,12 @@ namespace Baboomz.Simulation
             new WeaponDef
             {
                 WeaponId = "banana_bomb",
-                MinPower = 10f, MaxPower = 28f, ChargeTime = 2f, ShootCooldown = 3f,
+                // Balance #22: ShootCooldown 3 -> 4 (match airstrike cadence) and
+                // EnergyCost 30 -> 40 (reflect higher max-burst ceiling vs rocket).
+                MinPower = 10f, MaxPower = 28f, ChargeTime = 2f, ShootCooldown = 4f,
                 ExplosionRadius = 2f, MaxDamage = 22f, KnockbackForce = 5f,
                 ProjectileCount = 1, SpreadAngle = 0f,
-                DestroysIndestructible = false, EnergyCost = 30f, Ammo = 1,
+                DestroysIndestructible = false, EnergyCost = 40f, Ammo = 1,
                 ClusterCount = 6
             },
             new WeaponDef
