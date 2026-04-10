@@ -37,8 +37,13 @@ namespace Baboomz.Simulation
                         Position = p.Position,
                         TargetPosition = p.SkillTargetPosition
                     });
+                    return true;
                 }
-                return true;
+                // Grapple attempt failed (no anchor under reticle): fall through
+                // so the caller returns false and the player can re-try cleanly,
+                // but without consuming cooldown/energy through a "handled" return
+                // that previously let them spam the input without penalty (#32).
+                return false;
             }
 
             return false;
