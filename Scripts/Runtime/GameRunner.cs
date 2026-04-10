@@ -121,6 +121,12 @@ namespace Baboomz
             AddChild(payloadCart);
             payloadCart.Init(State);
 
+            // Hit markers (world-space damage feedback)
+            var hitMarkers = new HitMarkerRenderer();
+            hitMarkers.Name = "HitMarkers";
+            AddChild(hitMarkers);
+            hitMarkers.Init(State);
+
             // Audio
             _audioBridge = new AudioBridge();
             _audioBridge.Name = "Audio";
@@ -150,6 +156,12 @@ namespace Baboomz
             deathSlowMo.Name = "DeathSlowMo";
             AddChild(deathSlowMo);
             deathSlowMo.Init(State);
+
+            // Low-HP red vignette overlay (CanvasLayer below HUD).
+            var lowHpOverlay = new LowHealthOverlay();
+            lowHpOverlay.Name = "LowHealthOverlay";
+            AddChild(lowHpOverlay);
+            lowHpOverlay.Init(State);
 
             // HUD (on a CanvasLayer so it renders above everything)
             var hudLayer = new CanvasLayer();
