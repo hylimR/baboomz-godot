@@ -39,6 +39,9 @@ namespace Baboomz
             _shaderMat.Shader = shader;
             _shaderMat.SetShaderParameter("terrain_mask", _maskTexture);
 
+            // Wire real terrain textures from Art/Terrain/Default/ (falls back to colors).
+            WireTerrainTextures("Default");
+
             // The Sprite2D uses the mask texture as its base texture;
             // the shader overrides how it is drawn.
             Texture = _maskTexture;
@@ -81,6 +84,34 @@ namespace Baboomz
                 SyncFullMask();
                 _maskTexture.Update(_maskImage);
                 _lastPixelHash = hash;
+            }
+        }
+
+        /// <summary>
+        /// Loads tileable earth/surface/destruction textures for the given theme
+        /// and feeds them into the shader. Missing textures leave the uniform
+        /// flag at 0.0 so the shader falls back to the flat color.
+        /// </summary>
+        private void WireTerrainTextures(string theme)
+        {
+            var earth = SpriteLoader.Load($"Terrain/{theme}/earth_body");
+            var surface = SpriteLoader.Load($"Terrain/{theme}/surface_cap");
+            var destruction = SpriteLoader.Load($"Terrain/{theme}/destruction_edge");
+
+            if (earth != null)
+            {
+                _shaderMat.SetShaderParameter("earth_tex", earth);
+                _shaderMat.SetShaderParameter("use_earth_tex", 1f);
+            }
+            if (surface != null)
+            {
+                _shaderMat.SetShaderParameter("surface_tex", surface);
+                _shaderMat.SetShaderParameter("use_surface_tex", 1f);
+            }
+            if (destruction != null)
+            {
+                _shaderMat.SetShaderParameter("destruction_tex", destruction);
+                _shaderMat.SetShaderParameter("use_destruction_tex", 1f);
             }
         }
 
