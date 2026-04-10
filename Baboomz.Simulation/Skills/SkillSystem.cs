@@ -154,8 +154,8 @@ namespace Baboomz.Simulation
                     break;
             }
 
-            // Start cooldown
-            skill.CooldownRemaining = skill.Cooldown;
+            // Start cooldown (apply CooldownMultiplier so skills respect haste/slow modifiers)
+            skill.CooldownRemaining = skill.Cooldown * p.CooldownMultiplier;
 
             // Emit event for renderer
             state.SkillEvents.Add(new SkillEvent
