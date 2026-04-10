@@ -123,6 +123,57 @@ dotnet test Baboomz.Simulation.Tests/ && dotnet test Baboomz.E2E.Tests/
 # "C:/Program Files/Godot/Godot.exe" --path . --editor  (then Alt+B, F5)
 ```
 
+## Development Workflow
+
+This project uses **GitHub issues exclusively** for bug tracking and feature requests. No `docs/bugs/` or `docs/todos/` file queues.
+
+**Repo**: [hylimR/baboomz-godot](https://github.com/hylimR/baboomz-godot)
+
+### File a bug or feature
+```
+/report-bug <description>
+```
+Adds context, creates a GitHub issue with the right labels. Prefix with `feature:` or `visual:` to force feature mode / add visual label.
+
+### Run the full dev cycle
+```
+/dev-cycle
+```
+Runs QA → Dev → Tech Lead in sequence.
+
+### Individual roles (also loop-able)
+- `/qa` — audit code, analyze balance, file issues
+- `/dev` — pick up open issues, fix, open PRs
+- `/tech-lead` — review open PRs, merge or request changes
+- `/fix-bugs` — one-shot: fix one open bug via `bug-fixer` agent
+- `/do-todo` — one-shot: handle one small task via `todo-doer` agent
+
+### Verification (required before any commit)
+```bash
+dotnet build Baboomz.csproj
+dotnet test Baboomz.Simulation.Tests/Baboomz.Simulation.Tests.csproj
+dotnet test Baboomz.E2E.Tests/Baboomz.E2E.Tests.csproj
+```
+
+For visual/rendering changes, also capture a screenshot via the Godot MCP:
+```
+mcp__godot__capture_screenshot  projectPath=D:/Workspace/BaboomzGodot  scene=Scenes/Main.tscn  outputPath=/tmp/verify.png
+```
+
+### Code quality rules (enforced by Tech Lead)
+- **File size**: ≤300 lines soft cap, ≤400 hard limit
+- **Simulation purity**: no `using Godot;` in `Baboomz.Simulation/`
+- **Test coverage**: bug fixes require a regression test; features require at least one test
+- **Branch naming**: `fix/N-short-desc` or `feat/N-short-desc` where N is the issue number
+- **Commit messages**: `fix: description (#N)` or `feat: description (#N)`
+- **Visual PRs**: must include screenshot references in the PR body
+
+### GitHub labels
+- `bug`, `enhancement` — issue type
+- `priority:high` / `priority:medium` / `priority:low` — triage level
+- `visual` — rendering, sprites, shaders, art, animation work
+- `needs-review`, `in-progress`, `changes-requested` — workflow state
+
 ## Coding Conventions
 
 - **Namespace**: `Baboomz` for Godot scripts, `Baboomz.Simulation` for simulation
