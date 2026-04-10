@@ -50,13 +50,16 @@ namespace Baboomz
             _aimLine.AddPoint(Vector2.Right * 50f);
             AddChild(_aimLine);
 
-            // Name label
+            // Name label — stagger vertically per-index so two players spawning
+            // close together don't stack their labels on top of each other (#9).
             _nameLabel = new Label();
             _nameLabel.Text = p.Name;
             _nameLabel.HorizontalAlignment = HorizontalAlignment.Center;
-            _nameLabel.AddThemeFontSizeOverride("font_size", 11);
+            _nameLabel.AddThemeFontSizeOverride("font_size", 9);
             _nameLabel.AddThemeColorOverride("font_color", Colors.White);
-            _nameLabel.Position = new Vector2(-30, -45);
+            float labelOffsetY = -42f - (index * 14f);
+            _nameLabel.Position = new Vector2(-24, labelOffsetY);
+            _nameLabel.CustomMinimumSize = new Vector2(48, 0);
             _nameLabel.ZIndex = 10;
             AddChild(_nameLabel);
 
