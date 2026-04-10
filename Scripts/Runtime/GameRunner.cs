@@ -115,6 +115,12 @@ namespace Baboomz
             AddChild(kothZone);
             kothZone.Init(State);
 
+            // Payload cart (only renders when MatchType.Payload)
+            var payloadCart = new PayloadCartRenderer();
+            payloadCart.Name = "PayloadCart";
+            AddChild(payloadCart);
+            payloadCart.Init(State);
+
             // Audio
             _audioBridge = new AudioBridge();
             _audioBridge.Name = "Audio";
