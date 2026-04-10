@@ -86,8 +86,11 @@ namespace Baboomz
                 _hud.SetWeaponSlotAmmo(i, label);
             }
 
-            // Weapon switch popup with details
-            if (p1.ActiveWeaponSlot != _lastWeaponSlot)
+            // Weapon switch popup with details.
+            // Suppressed during Waiting (countdown) so it doesn't overlap
+            // the "3, 2, 1, GO!" label (#10).
+            if (p1.ActiveWeaponSlot != _lastWeaponSlot
+                && _state.Phase != MatchPhase.Waiting)
             {
                 _lastWeaponSlot = p1.ActiveWeaponSlot;
                 string name = weapon.WeaponId?.ToUpper() ?? "EMPTY";
@@ -96,6 +99,13 @@ namespace Baboomz
                 string special = weapon.Bounces > 0 ? " BOUNCE" : "";
                 _hud.SetMatchState($"{name} [{ammo}] {dmg}{special}");
                 _weaponNameTimer = WeaponNameDuration;
+            }
+
+            // Clear any lingering match state banner during countdown.
+            if (_state.Phase == MatchPhase.Waiting)
+            {
+                _hud.SetMatchState("");
+                _weaponNameTimer = 0f;
             }
 
             // Clear weapon name after timeout
