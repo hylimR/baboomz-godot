@@ -200,15 +200,22 @@ namespace Baboomz.Simulation
             else
                 minePos = target; // no terrain hit — place at max range
 
-            // Enforce max 2 active mines per player
+            // Enforce max 2 active mines per player. Select the mine with the lowest
+            // PlacedTime — this is the genuinely oldest, independent of list position
+            // (list index is unstable because slots can be reused after explosions). (#33)
             int ownedCount = 0;
             int oldestIndex = -1;
+            float oldestPlacedTime = float.MaxValue;
             for (int i = 0; i < state.Mines.Count; i++)
             {
                 if (state.Mines[i].Active && state.Mines[i].OwnerIndex == playerIndex)
                 {
                     ownedCount++;
-                    if (oldestIndex < 0) oldestIndex = i;
+                    if (state.Mines[i].PlacedTime < oldestPlacedTime)
+                    {
+                        oldestPlacedTime = state.Mines[i].PlacedTime;
+                        oldestIndex = i;
+                    }
                 }
             }
             if (ownedCount >= 2 && oldestIndex >= 0)
@@ -226,7 +233,8 @@ namespace Baboomz.Simulation
                 Damage = skill.Value > 0f ? skill.Value : 30f,
                 Active = true,
                 Lifetime = 15f,
-                OwnerIndex = playerIndex
+                OwnerIndex = playerIndex,
+                PlacedTime = state.Time
             });
         }
     }
