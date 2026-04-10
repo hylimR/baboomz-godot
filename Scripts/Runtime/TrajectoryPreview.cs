@@ -29,7 +29,7 @@ namespace Baboomz
             ProcessPriority = 45;
         }
 
-        public void Hide()
+        public new void Hide()
         {
             if (_line != null) _line.ClearPoints();
         }

@@ -24,7 +24,7 @@ namespace Baboomz
             _state = state;
             PositionSmoothingEnabled = true;
             PositionSmoothingSpeed = 4.0f;
-            Zoom = new Vector2(0.8f, 0.8f);
+            Zoom = new Vector2(4.0f, 4.0f); // Increased zoom to zoom in
             MakeCurrent();
             ProcessPriority = 60; // After renderers
         }

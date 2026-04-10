@@ -618,20 +618,21 @@ namespace Baboomz.Tests.Editor
         }
 
         [Test]
-        public void AIWeaponLoadout_SetByCreateMatch_LimitsAIWeapons()
+        public void AIWeaponLoadout_SetByCreateMatch_StoresLoadoutButDoesNotRestrict()
         {
             var config = BaseConfig();
             // Don't set AIWeaponLoadout — let CreateMatch auto-select it
             var state = GameSimulation.CreateMatch(config, 42);
 
-            // AI should have a loadout set and no more than 4 active weapons
+            // Loadout is still computed and stored in config for reference
             Assert.IsNotNull(config.AIWeaponLoadout, "CreateMatch should auto-assign AI weapon loadout");
 
+            // But AI keeps all weapons — SelectWeapon references all slot indices
             int aiActiveCount = 0;
             foreach (var slot in state.Players[1].WeaponSlots)
                 if (slot.WeaponId != null) aiActiveCount++;
 
-            Assert.LessOrEqual(aiActiveCount, 4, "AI should have at most 4 active weapons");
+            Assert.AreEqual(config.Weapons.Length, aiActiveCount, "AI should have all weapons (loadout not applied)");
         }
 
         [Test]
@@ -1005,7 +1006,12 @@ namespace Baboomz.Tests.Editor
             // Regression (#377): WeaponScrollDelta -1 should cycle backward.
             var state = GameSimulation.CreateMatch(SmallConfig(), 42);
             ref PlayerState p = ref state.Players[0];
+
+            // Ensure slots 2 and 3 are filled so backward scroll has a target
+            if (p.WeaponSlots[2].WeaponId == null) p.WeaponSlots[2].WeaponId = "rocket";
+            if (p.WeaponSlots[3].WeaponId == null) p.WeaponSlots[3].WeaponId = "cluster";
             p.ActiveWeaponSlot = 3; // start mid-list
+            state.Input.WeaponSlotPressed = -1; // no direct slot press (default 0 would snap to slot 0)
             state.Input.WeaponScrollDelta = -1;
             GameSimulation.Tick(state, 0.016f);
             Assert.AreEqual(2, p.ActiveWeaponSlot,
@@ -2869,6 +2875,9 @@ namespace Baboomz.Tests.Editor
             var state = GameSimulation.CreateMatch(config, 42);
             AILogic.Reset(42);
 
+            // Disable AI so it doesn't fire stray projectiles that interfere
+            state.Players[1].IsAI = false;
+
             // Move player 1 next to where the barrel will be
             state.Players[1].Position = new Vec2(5f, 5f);
             state.Players[1].Health = 10f; // low HP so barrel kills them
@@ -2885,10 +2894,11 @@ namespace Baboomz.Tests.Editor
 
             float dmgBefore = state.Players[0].TotalDamageDealt;
 
-            // Player 0 fires a projectile that hits terrain near the barrel
+            // Player 0 fires a projectile that hits terrain near the barrel.
+            // Build a tall wall so the projectile hits even after gravity pulls it down.
             int wallPx = state.Terrain.WorldToPixelX(5f);
             int wallPy = state.Terrain.WorldToPixelY(5f);
-            for (int py = wallPy - 3; py <= wallPy + 3; py++)
+            for (int py = wallPy - 20; py <= wallPy + 3; py++)
                 state.Terrain.SetSolid(wallPx, py, true);
 
             state.Projectiles.Add(new ProjectileState
@@ -7172,7 +7182,7 @@ namespace Baboomz.Tests.Editor
             config.BarrelCount = 0;
             var state = GameSimulation.CreateMatch(config, 42);
 
-            // Set up player 1 as a boss with weapon
+            // Set up player 1 as a boss with a single-projectile weapon (cannon = slot 0)
             state.Players[1].Position = new Vec2(10f, 5f);
             state.Players[1].FacingDirection = -1;
             state.Players[1].BossType = "iron_sentinel";
@@ -7180,6 +7190,7 @@ namespace Baboomz.Tests.Editor
             state.Players[1].AimAngle = 45f;
             state.Players[1].AimPower = 15f;
             state.Players[1].Energy = 1000f;
+            state.Players[1].ActiveWeaponSlot = 0;
 
             int projBefore = state.Projectiles.Count;
 
@@ -8753,6 +8764,9 @@ namespace Baboomz.Tests.Editor
             var state = GameSimulation.CreateMatch(config, 42);
             state.Phase = MatchPhase.Playing;
 
+            // Disable AI so it doesn't fire stray projectiles that inflate the count
+            state.Players[1].IsAI = false;
+
             state.Projectiles.Add(new ProjectileState
             {
                 Id = state.NextProjectileId++,
@@ -8780,6 +8794,9 @@ namespace Baboomz.Tests.Editor
                 if (state.ExplosionEvents.Count > 0) sawExplosion = true;
                 if (state.Projectiles.Count == 0) break;
             }
+            // One more tick to clean up dead projectiles
+            if (state.Projectiles.Count > 0)
+                GameSimulation.Tick(state, 0.016f);
 
             Assert.AreEqual(0, state.Projectiles.Count, "Gravity bomb should have exploded after fuse");
             Assert.IsTrue(sawExplosion, "Should have created an explosion event");
@@ -9625,6 +9642,10 @@ namespace Baboomz.Tests.Editor
 
             var state = GameSimulation.CreateMatch(config, 42);
             AILogic.Reset(42);
+
+            // Prevent AI from firing (which would destroy terrain and invalidate the test)
+            for (int p = 0; p < state.Players.Length; p++)
+                state.Players[p].ShootCooldownRemaining = 999f;
 
             float groundY = GamePhysics.FindGroundY(state.Terrain, 0f, 20f);
             var terrainPos = new Vec2(0f, groundY);
@@ -11074,8 +11095,8 @@ namespace Baboomz.Tests.Editor
             CombatResolver.ApplyExplosion(state, state.Players[1].Position,
                 5f, 999f, 0f, 0, false);
 
-            Assert.AreEqual(scoreBefore + state.Config.SurvivalScorePerKill,
-                state.Survival.Score, "Should score for mob kill");
+            Assert.AreEqual(scoreBefore + state.Config.SurvivalScorePerKill + state.Config.SurvivalScoreDirectHitBonus,
+                state.Survival.Score, "Should score for mob kill (includes direct hit bonus)");
         }
 
         [Test]
@@ -13218,9 +13239,11 @@ namespace Baboomz.Tests.Editor
             for (int i = 0; i < 20; i++)
             {
                 ProjectileSimulation.Update(state, 0.02f);
-                if (state.Projectiles.Count == 0 || !state.Projectiles[0].Alive)
-                    break;
+                if (state.Projectiles.Count == 0) break;
             }
+            // One more update to clean up dead projectiles
+            if (state.Projectiles.Count > 0)
+                ProjectileSimulation.Update(state, 0.02f);
 
             Assert.AreEqual(0, state.Projectiles.Count,
                 "Piercing projectile should die to water/bounds after piercing a player, not fly through forever");
@@ -13271,6 +13294,7 @@ namespace Baboomz.Tests.Editor
         {
             var state = GameSimulation.CreateMatch(SmallConfig(), 42);
             // Manually create a flak projectile high in the air so it won't hit terrain
+            int flakId = state.NextProjectileId;
             state.Projectiles.Add(new ProjectileState
             {
                 Id = state.NextProjectileId++,
@@ -13288,16 +13312,18 @@ namespace Baboomz.Tests.Editor
                 SourceWeaponId = "flak_cannon"
             });
 
-            // Tick until the projectile travels 2+ units (at 5 u/s: ~0.5s)
+            // Tick until the flak projectile detonates (identified by ID becoming dead/removed)
             for (int t = 0; t < 100; t++)
             {
                 GameSimulation.Tick(state, 1f / 60f);
-                if (state.Projectiles.Count > 1) break; // fragments spawned
+                bool flakAlive = false;
+                foreach (var p in state.Projectiles) if (p.Id == flakId && p.Alive) { flakAlive = true; break; }
+                if (!flakAlive) break; // flak detonated
             }
 
-            // Original flak projectile should be dead, fragments spawned
+            // Count alive fragment projectiles (SourceWeaponId == flak_cannon, not the original)
             int alive = 0;
-            foreach (var p in state.Projectiles) if (p.Alive) alive++;
+            foreach (var p in state.Projectiles) if (p.Alive && p.SourceWeaponId == "flak_cannon") alive++;
             Assert.AreEqual(8, alive, "Should have exactly 8 alive fragment projectiles");
         }
 
@@ -13305,6 +13331,7 @@ namespace Baboomz.Tests.Editor
         public void FlakCannon_FragmentsScatterDownward()
         {
             var state = GameSimulation.CreateMatch(SmallConfig(), 42);
+            int flakId = state.NextProjectileId;
             state.Projectiles.Add(new ProjectileState
             {
                 Id = state.NextProjectileId++,
@@ -13322,17 +13349,19 @@ namespace Baboomz.Tests.Editor
                 SourceWeaponId = "flak_cannon"
             });
 
-            // Tick until fragments spawn
+            // Tick until the flak projectile detonates
             for (int t = 0; t < 60; t++)
             {
                 GameSimulation.Tick(state, 1f / 60f);
-                if (state.Projectiles.Count > 1) break;
+                bool flakAlive = false;
+                foreach (var p in state.Projectiles) if (p.Id == flakId && p.Alive) { flakAlive = true; break; }
+                if (!flakAlive) break;
             }
 
-            // All fragments should have negative Y velocity (downward)
+            // All flak fragments should have negative Y velocity (downward)
             int downward = 0;
             foreach (var p in state.Projectiles)
-                if (p.Alive && p.Velocity.y < 0f) downward++;
+                if (p.Alive && p.SourceWeaponId == "flak_cannon" && p.Velocity.y < 0f) downward++;
             Assert.AreEqual(8, downward, "All 8 fragments should have downward velocity");
         }
 

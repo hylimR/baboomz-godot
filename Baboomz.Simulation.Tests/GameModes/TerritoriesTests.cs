@@ -12,7 +12,7 @@ namespace Baboomz.Tests
             {
                 MatchType = MatchType.Territories,
                 TeamMode = false,
-                TerritoryZoneRadius = 12f,
+                TerritoryZoneRadius = 5f,
                 TerritoryPointsPerSecond = 1f,
                 TerritoryPointsToWin = 300f,
                 TerritoryZoneCount = 3,

@@ -8,8 +8,15 @@ Real-time 2D artillery game — Godot port of the Unity 6 version.
 Baboomz.csproj                    -- Godot .NET project (SDK 4.6.2)
 Baboomz.Simulation/               -- Pure C# class library (NO Godot dependency)
   74 files, 11,789 lines            GameState, GameSimulation, GameConfig, Vec2, AI, Physics, etc.
-Baboomz.Simulation.Tests/         -- NUnit test project (991 passing, 24 pre-existing failures)
+Baboomz.Simulation.Tests/         -- NUnit test project (1015 passing, 0 failures)
   24 test files                      Run with: dotnet test Baboomz.Simulation.Tests/
+Baboomz.E2E.Tests/                -- E2E integration tests (50 passing, 0 failures)
+  5 test files                       Run with: dotnet test Baboomz.E2E.Tests/
+    MatchLifecycleTests.cs             Full match creation → tick → end lifecycle
+    InputPipelineTests.cs              Input → simulation → state pipeline
+    GameModeTests.cs                   All 12 game modes create + tick
+    SceneFlowTests.cs                  Menu → match → result data flow
+    ConfigVariationTests.cs            Difficulty, health, wind config variations
 
 Scripts/
   Core/                            -- Autoloads, bridges, settings
@@ -102,8 +109,14 @@ Vec2.cs          - custom math       HUDBridge.cs     - state -> HUD
 # Build from CLI
 dotnet build Baboomz.csproj
 
-# Run simulation tests (no Godot needed)
+# Run simulation tests (no Godot needed) — 1015 passing, 0 failures
 dotnet test Baboomz.Simulation.Tests/Baboomz.Simulation.Tests.csproj
+
+# Run E2E tests (no Godot needed) — 50 tests covering full match lifecycle
+dotnet test Baboomz.E2E.Tests/Baboomz.E2E.Tests.csproj
+
+# Run ALL tests
+dotnet test Baboomz.Simulation.Tests/ && dotnet test Baboomz.E2E.Tests/
 
 # Run game — open in Godot editor, press Alt+B to build, F5 to run
 # Or via Godot CLI:
@@ -153,7 +166,8 @@ No VContainer, no MessagePipe, no UniTask — replaced with:
 - Persistence (W/L/D, career stats, campaign progress, settings)
 - TrajectoryPreview, KillFeed, Countdown, DeathSlowMo
 - Mines, barrels, crates, mobs, skill markers, wind particles
-- 991 simulation tests passing
+- 1015 simulation tests passing (0 failures)
+- 50 E2E integration tests (match lifecycle, input pipeline, all game modes, scene flow, config)
 
 ### Remaining (nice-to-have)
 - Mode-specific renderers (CTF flags, KOTH zones, Payload cart)

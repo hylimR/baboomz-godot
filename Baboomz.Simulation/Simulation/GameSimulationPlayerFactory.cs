@@ -63,14 +63,11 @@ namespace Baboomz.Simulation
                         slots[i].WeaponId = null;
             }
 
-            // Apply weapon loadout: null-out slots not in the selected loadout
+            // Apply weapon loadout: null-out slots not in the selected loadout (players only).
+            // AI always keeps all weapons — SelectWeapon references all 22 slot indices.
             if (!isAI && config.PlayerWeaponLoadout != null && config.PlayerWeaponLoadout.Length > 0)
             {
                 ApplyWeaponLoadout(slots, config.PlayerWeaponLoadout);
-            }
-            else if (isAI && config.AIWeaponLoadout != null && config.AIWeaponLoadout.Length > 0)
-            {
-                ApplyWeaponLoadout(slots, config.AIWeaponLoadout);
             }
 
             // Use provided skill indices, falling back to config defaults

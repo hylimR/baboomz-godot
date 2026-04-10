@@ -11,5 +11,6 @@
   <ItemGroup>
     <Compile Remove="Baboomz.Simulation\**" />
     <Compile Remove="Baboomz.Simulation.Tests\**" />
+    <Compile Remove="Baboomz.E2E.Tests\**" />
   </ItemGroup>
 </Project>

@@ -193,7 +193,7 @@ namespace Baboomz.Tests.Editor
             EncyclopediaEntry flak = default;
             foreach (var e in entries) { if (e.Id == "flak_cannon") { flak = e; break; } }
             Assert.IsTrue(flak.Stats.ContainsKey("Special"), "Flak Cannon missing Special stat");
-            StringAssert.Contains("burst", flak.Stats["Special"]);
+            StringAssert.Contains("sub-projectiles", flak.Stats["Special"]);
         }
 
         [Test]

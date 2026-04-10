@@ -18,8 +18,10 @@ namespace Baboomz.Simulation
 
             if (weapon.Ammo == 0) return;
 
-            if (weapon.EnergyCost > 0f && p.Energy < weapon.EnergyCost) return;
-            if (weapon.EnergyCost > 0f) p.Energy -= weapon.EnergyCost;
+            // Overcharge already drained all energy as its activation cost — skip weapon energy check
+            bool overchargeActive = p.OverchargeTimer > 0f;
+            if (!overchargeActive && weapon.EnergyCost > 0f && p.Energy < weapon.EnergyCost) return;
+            if (!overchargeActive && weapon.EnergyCost > 0f) p.Energy -= weapon.EnergyCost;
             if (weapon.Ammo > 0)
             {
                 p.WeaponSlots[p.ActiveWeaponSlot].Ammo--;

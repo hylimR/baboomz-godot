@@ -404,18 +404,30 @@ namespace Baboomz.Tests.Editor
         public void RopeSwing_DoesNotApplyGravityTwice()
         {
             // Manually construct a player mid-swing (GrapplingHook active, airborne)
-            var state = CreateState();
+            var config = SmallConfig();
+            config.MineCount = 0;
+            config.BarrelCount = 0;
+            config.SuddenDeathTime = 0f;
+            var state = GameSimulation.CreateMatch(config, 42);
+
+            // Disable AI so it doesn't fire projectiles that add knockback to player 0
+            state.Players[1].IsAI = false;
+            state.Players[1].IsDead = true; // Kill AI to prevent any interference
+
             ref PlayerState p = ref state.Players[0];
             SetSkillSlot(ref p.SkillSlots[0], FindSkill(state.Config, SkillType.GrapplingHook));
+
+            // Move player high above terrain to avoid collision effects
+            p.Position = new Vec2(0f, 15f);
+            p.IsGrounded = false;
+            p.Velocity = new Vec2(0f, 0f);
 
             // Manually activate the skill slot (bypass terrain hit requirement)
             p.SkillSlots[0].IsActive = true;
             p.SkillSlots[0].DurationRemaining = 2f;
-            // Anchor point directly above
+            // Anchor point directly above — at angle 0, pendulum gravity is sin(0) = 0
             p.SkillTargetPosition = new Vec2(p.Position.x, p.Position.y + 8f);
             p.RopeLength = 8f;
-            p.IsGrounded = false;
-            p.Velocity = new Vec2(0f, 0f);
 
             float dt = 0.016f;
             float gravity = state.Config.Gravity;
@@ -429,7 +441,7 @@ namespace Baboomz.Tests.Editor
             // At angle=0 (anchor directly above) the gravity term is sin(0)=0,
             // so velocity after one tick should remain near-zero in y (not gravity × dt downward).
             float maxExpectedGravityContribution = gravity * dt * 1.5f; // 50% margin
-            Assert.Less(MathF.Abs(p.Velocity.y), maxExpectedGravityContribution,
+            Assert.Less(MathF.Abs(state.Players[0].Velocity.y), maxExpectedGravityContribution,
                 "While rope-swinging, UpdatePlayer must not add an extra gravity term to velocity");
         }
 
