@@ -21,6 +21,7 @@ namespace Baboomz
         private AudioStreamWav _jumpClip;
         private AudioStreamWav _switchClip;
         private AudioStreamWav _hitTickClip;
+        private AudioStreamWav _heartbeatClip;
 
         private int _lastWeaponSlot = -1;
         private bool _lastJumpState;
@@ -50,6 +51,8 @@ namespace Baboomz
             _jumpClip = GenerateTone(0.08f, 300f, 600f, 0.2f);
             _switchClip = GenerateTone(0.05f, 500f, 500f, 0.15f);
             _hitTickClip = GenerateTone(0.05f, 1200f, 900f, 0.35f);
+            // Low-HP heartbeat (#36): low, short thump — two beats in one clip.
+            _heartbeatClip = GenerateHeartbeat(0.6f, 0.5f);
         }
 
         public override void _Process(double delta)
@@ -103,6 +106,15 @@ namespace Baboomz
         public void OnProjectileFired()
         {
             PlayClip(_fireClip, 0.4f);
+        }
+
+        /// <summary>
+        /// Plays a single low-HP heartbeat thump. Issue #36: triggered once when
+        /// the local player first crosses the low-health threshold, not every frame.
+        /// </summary>
+        public void PlayLowHealthCue()
+        {
+            PlayClip(_heartbeatClip, 0.6f);
         }
 
         private void PlayClip(AudioStreamWav clip, float volume)
@@ -186,6 +198,47 @@ namespace Baboomz
             }
 
             return CreateWav(data, samples);
+        }
+
+        /// <summary>
+        /// Generates a two-beat heartbeat thump for low-HP warning (#36).
+        /// Each beat is a very low sine (~60 Hz) with a sharp envelope.
+        /// </summary>
+        private static AudioStreamWav GenerateHeartbeat(float duration, float volume)
+        {
+            int samples = (int)(duration * SampleRate);
+            var data = new byte[samples * 2];
+
+            // Two beats spaced ~0.25s apart.
+            float beatCenter1 = 0.08f;
+            float beatCenter2 = 0.28f;
+            float beatWidth = 0.07f;
+
+            for (int i = 0; i < samples; i++)
+            {
+                float t = (float)i / SampleRate;
+
+                // Envelope: two Gaussian-ish bumps centered on beatCenter1/beatCenter2.
+                float env1 = Envelope(t, beatCenter1, beatWidth);
+                float env2 = Envelope(t, beatCenter2, beatWidth) * 0.75f;
+                float envelope = Mathf.Max(env1, env2);
+
+                // ~60 Hz thump with slight downward sweep for a "pulse" feel.
+                float freq = 60f + 20f * envelope;
+                float sample = Mathf.Sin(2f * Mathf.Pi * freq * t) * envelope * volume;
+
+                short pcm = (short)(Mathf.Clamp(sample, -1f, 1f) * 32767f);
+                data[i * 2] = (byte)(pcm & 0xFF);
+                data[i * 2 + 1] = (byte)((pcm >> 8) & 0xFF);
+            }
+
+            return CreateWav(data, samples);
+        }
+
+        private static float Envelope(float t, float center, float width)
+        {
+            float d = (t - center) / width;
+            return Mathf.Exp(-d * d * 4f);
         }
 
         private static AudioStreamWav CreateWav(byte[] pcmData, int sampleCount)

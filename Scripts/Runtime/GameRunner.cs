@@ -158,10 +158,12 @@ namespace Baboomz
             deathSlowMo.Init(State);
 
             // Low-HP red vignette overlay (CanvasLayer below HUD).
+            // Audio bridge is passed so the overlay can emit a one-shot heartbeat
+            // cue when the local player first crosses the low-HP threshold (#36).
             var lowHpOverlay = new LowHealthOverlay();
             lowHpOverlay.Name = "LowHealthOverlay";
             AddChild(lowHpOverlay);
-            lowHpOverlay.Init(State);
+            lowHpOverlay.Init(State, _audioBridge);
 
             // HUD (on a CanvasLayer so it renders above everything)
             var hudLayer = new CanvasLayer();
