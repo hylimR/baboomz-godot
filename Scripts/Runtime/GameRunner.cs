@@ -109,6 +109,12 @@ namespace Baboomz
             AddChild(ctfFlags);
             ctfFlags.Init(State);
 
+            // KOTH zone (only renders when MatchType.KingOfTheHill)
+            var kothZone = new KothZoneRenderer();
+            kothZone.Name = "KothZone";
+            AddChild(kothZone);
+            kothZone.Init(State);
+
             // Audio
             _audioBridge = new AudioBridge();
             _audioBridge.Name = "Audio";
