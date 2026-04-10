@@ -5594,6 +5594,30 @@ namespace Baboomz.Tests.Editor
         }
 
         [Test]
+        public void BalanceCheck_BananaBombCooldownAndEnergy_Issue22()
+        {
+            // Issue #22 nerf: banana bomb's max-hit burst (~154 dmg) is ~2x the
+            // single-shot premium tier. Increase cooldown to airstrike cadence and
+            // raise energy cost to gate spam.
+            var config = new GameConfig();
+            var banana = config.Weapons[11];
+            Assert.AreEqual("banana_bomb", banana.WeaponId);
+            Assert.AreEqual(4f, banana.ShootCooldown, "Banana cooldown should be 4s (issue #22, was 3s)");
+            Assert.AreEqual(40f, banana.EnergyCost, "Banana energy cost should be 40 (issue #22, was 30)");
+        }
+
+        [Test]
+        public void BalanceCheck_AirstrikeCount_IsFour_Issue22()
+        {
+            // Issue #22 nerf: airstrike's 5x35 = 175 max burst was too high for a
+            // 4s cooldown. Drop to 4 bombs => 140 max burst.
+            var config = new GameConfig();
+            var airstrike = config.Weapons[6];
+            Assert.AreEqual("airstrike", airstrike.WeaponId);
+            Assert.AreEqual(4, airstrike.AirstrikeCount, "Airstrike count should be 4 (issue #22, was 5)");
+        }
+
+        [Test]
         public void BalanceCheck_DrillAmmo_Is4()
         {
             var config = new GameConfig();
