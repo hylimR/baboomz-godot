@@ -6676,8 +6676,11 @@ namespace Baboomz.Tests.Editor
                 "Overcharge should set DamageMultiplier to 2x");
             Assert.Greater(state.Players[0].OverchargeTimer, 0f,
                 "OverchargeTimer should be active");
-            Assert.AreEqual(18f, state.Players[0].SkillSlots[0].CooldownRemaining, 0.01f,
-                "Cooldown should be active after successful activation");
+            // Cooldown is scaled by player's CooldownMultiplier (issue #31).
+            // Seed 42 lands on "Clockwork Foundry" biome which sets DefaultCooldownMultiplier=0.8.
+            float expectedCooldown = 18f * state.Players[0].CooldownMultiplier;
+            Assert.AreEqual(expectedCooldown, state.Players[0].SkillSlots[0].CooldownRemaining, 0.01f,
+                "Cooldown should be active after successful activation (scaled by CooldownMultiplier)");
         }
 
         [Test]
@@ -10650,8 +10653,11 @@ namespace Baboomz.Tests.Editor
 
             SkillSystem.ActivateSkill(state, 0, 0);
 
-            Assert.AreEqual(12f, state.Players[0].SkillSlots[0].CooldownRemaining, 0.01f,
-                "Cooldown should start on activation");
+            // Cooldown is scaled by player's CooldownMultiplier (issue #31).
+            // Seed 42 lands on "Clockwork Foundry" biome which sets DefaultCooldownMultiplier=0.8.
+            float expected = 12f * state.Players[0].CooldownMultiplier;
+            Assert.AreEqual(expected, state.Players[0].SkillSlots[0].CooldownRemaining, 0.01f,
+                "Cooldown should start on activation (scaled by CooldownMultiplier)");
         }
     }
 

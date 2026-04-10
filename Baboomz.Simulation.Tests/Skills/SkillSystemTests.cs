@@ -56,6 +56,35 @@ namespace Baboomz.Tests.Editor
         }
 
         [Test]
+        public void ActivateSkill_AppliesCooldownMultiplier()
+        {
+            // Regression test for #31: skill cooldowns ignored CooldownMultiplier.
+            var state = CreateState();
+            state.Players[0].CooldownMultiplier = 0.5f;
+            float baseCooldown = state.Players[0].SkillSlots[0].Cooldown;
+
+            SkillSystem.ActivateSkill(state, 0, 0);
+
+            Assert.AreEqual(baseCooldown * 0.5f,
+                state.Players[0].SkillSlots[0].CooldownRemaining, 0.01f,
+                "Skill cooldown should be scaled by CooldownMultiplier (same as weapon firing)");
+        }
+
+        [Test]
+        public void ActivateSkill_CooldownMultiplierAboveOne_SlowsSkill()
+        {
+            // Regression test for #31: multiplier > 1 should lengthen cooldown.
+            var state = CreateState();
+            state.Players[0].CooldownMultiplier = 2f;
+            float baseCooldown = state.Players[0].SkillSlots[0].Cooldown;
+
+            SkillSystem.ActivateSkill(state, 0, 0);
+
+            Assert.AreEqual(baseCooldown * 2f,
+                state.Players[0].SkillSlots[0].CooldownRemaining, 0.01f);
+        }
+
+        [Test]
         public void ActivateSkill_OnCooldown_Blocked()
         {
             var state = CreateState();
