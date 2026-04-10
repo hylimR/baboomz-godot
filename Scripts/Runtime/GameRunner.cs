@@ -103,6 +103,12 @@ namespace Baboomz
             AddChild(debris);
             debris.Init(State);
 
+            // CTF flags (only spawns visuals when MatchType.CaptureTheFlag)
+            var ctfFlags = new CtfFlagRenderer();
+            ctfFlags.Name = "CtfFlags";
+            AddChild(ctfFlags);
+            ctfFlags.Init(State);
+
             // Audio
             _audioBridge = new AudioBridge();
             _audioBridge.Name = "Audio";
