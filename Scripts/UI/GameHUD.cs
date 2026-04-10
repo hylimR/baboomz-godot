@@ -28,6 +28,7 @@ namespace Baboomz
         private Label windLabel;
         private Label timerLabel;
         private Label matchStateLabel;
+        private TextureRect compassNeedle;
 
         // Bottom bar
         private ColorRect[] weaponSlots;
@@ -62,6 +63,7 @@ namespace Baboomz
             windLabel = refs.WindLabel;
             timerLabel = refs.TimerLabel;
             matchStateLabel = refs.MatchStateLabel;
+            compassNeedle = refs.CompassNeedle;
 
             weaponSlots = refs.WeaponSlots;
             weaponLabels = refs.WeaponLabels;
@@ -94,7 +96,9 @@ namespace Baboomz
             {
                 float clamped = Mathf.Clamp(normalised, 0f, 1f);
                 SetBarFill(p1HpFill, p1HpBg, clamped);
-                p1HpFill.Color = UIBuilder.HpRed.Lerp(UIBuilder.GrassGreen, clamped);
+                // Modulate propagates to the texture overlay child (when present);
+                // when there's no overlay, the Color is preserved from the builder.
+                p1HpFill.Modulate = UIBuilder.HpRed.Lerp(UIBuilder.GrassGreen, clamped);
             }
             if (p1HpText != null && current >= 0f)
                 p1HpText.Text = $"{Mathf.CeilToInt(current)}/{Mathf.CeilToInt(max)}";
@@ -106,7 +110,7 @@ namespace Baboomz
             {
                 float clamped = Mathf.Clamp(normalised, 0f, 1f);
                 SetBarFill(p2HpFill, p2HpBg, clamped);
-                p2HpFill.Color = UIBuilder.HpRed.Lerp(UIBuilder.GrassGreen, clamped);
+                p2HpFill.Modulate = UIBuilder.HpRed.Lerp(UIBuilder.GrassGreen, clamped);
             }
         }
 
@@ -123,6 +127,17 @@ namespace Baboomz
 
         public void SetWind(float angleDegrees, float strength)
         {
+            // Compass needle (steampunk art): rotate around the dial center.
+            if (compassNeedle != null)
+            {
+                compassNeedle.Rotation = Mathf.DegToRad(angleDegrees);
+                // Tint stronger winds orange.
+                float ts = Mathf.Clamp(strength / 3f, 0f, 1f);
+                compassNeedle.Modulate = Colors.White.Lerp(new Color(1f, 0.6f, 0.2f), ts);
+            }
+
+            // Always update the text label too — it's hidden when the compass is
+            // available, but kept around as a fallback for missing-art runs.
             if (windLabel == null) return;
 
             bool leftWind = angleDegrees >= 0f && angleDegrees < 180f;
@@ -133,7 +148,8 @@ namespace Baboomz
             float t = Mathf.Clamp(strength / 3f, 0f, 1f);
             windLabel.AddThemeColorOverride("font_color",
                 Colors.White.Lerp(new Color(1f, 0.6f, 0.2f), t));
-            windLabel.Text = $"{arrow} {barStr}";
+            // Suppress the text indicator when the compass needle is rendering.
+            windLabel.Text = compassNeedle != null ? "" : $"{arrow} {barStr}";
         }
 
         public void SetCooldownDisplay(float cooldownPercent)
@@ -230,7 +246,10 @@ namespace Baboomz
 
                 Color tint = (i == activeWeaponIndex) ? UIBuilder.UiGold : UIBuilder.Inactive;
                 tint.A = 1f;
-                weaponSlots[i].Color = tint;
+                // Modulate propagates to the texture overlay child (when present);
+                // when there is no overlay, the underlying ColorRect is also tinted
+                // because Modulate multiplies its Color.
+                weaponSlots[i].Modulate = tint;
             }
         }
     }
