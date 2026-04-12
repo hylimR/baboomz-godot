@@ -25,6 +25,7 @@ namespace Baboomz
         private GameSettings _settings;
         private EncyclopediaPanel _encyclopediaPanel;
         private AchievementPanel _achievementPanel;
+        private LevelSelectPanel _levelSelectPanel;
 
         private readonly Color _easyColor = new Color(0.3f, 0.6f, 0.3f);
         private readonly Color _normalColor = new Color(0.5f, 0.5f, 0.2f);
@@ -124,8 +125,19 @@ namespace Baboomz
             UIBuilder.SetAnchors(playBtn, new Vector2(0.3f, y), new Vector2(0.7f, y + 0.07f));
             playBtn.Pressed += OnPlayPressed;
 
-            // --- QUIT button ---
+            // --- Campaign button ---
             y += 0.09f;
+            var campaignBtn = UIBuilder.CreateButton("CampaignBtn", "Campaign", 24,
+                new Color(0.5f, 0.4f, 0.2f), this);
+            UIBuilder.SetAnchors(campaignBtn, new Vector2(0.3f, y), new Vector2(0.7f, y + 0.06f));
+            campaignBtn.Pressed += OnCampaignPressed;
+
+            _levelSelectPanel = new LevelSelectPanel();
+            _levelSelectPanel.Name = "LevelSelectPanel";
+            AddChild(_levelSelectPanel);
+
+            // --- QUIT button ---
+            y += 0.08f;
             var quitBtn = UIBuilder.CreateButton("QuitBtn", "QUIT", 24,
                 new Color(0.5f, 0.3f, 0.3f), this);
             UIBuilder.SetAnchors(quitBtn, new Vector2(0.35f, y), new Vector2(0.65f, y + 0.06f));
@@ -222,6 +234,11 @@ namespace Baboomz
         private void OnQuitPressed()
         {
             GetTree().Quit();
+        }
+
+        private void OnCampaignPressed()
+        {
+            _levelSelectPanel?.Show();
         }
 
         private void OnEncyclopediaPressed()
