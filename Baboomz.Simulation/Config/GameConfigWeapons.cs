@@ -60,12 +60,12 @@ namespace Baboomz.Simulation
             new WeaponDef
             {
                 WeaponId = "airstrike",
-                // Balance #34: MaxDamage 35 -> 45 and Ammo 1 -> 2 to restore the
-                // "saturation bombing" fantasy after the #22 AirstrikeCount nerf.
+                // Balance #34: MaxDamage 35 -> 40 (conservative bump, keeps burst at 160
+                // which is just above #22's 140 cap without doubling it).
                 MinPower = 5f, MaxPower = 20f, ChargeTime = 1.5f, ShootCooldown = 4f,
-                ExplosionRadius = 3f, MaxDamage = 45f, KnockbackForce = 8f,
+                ExplosionRadius = 3f, MaxDamage = 40f, KnockbackForce = 8f,
                 ProjectileCount = 1, SpreadAngle = 0f,
-                DestroysIndestructible = false, EnergyCost = 40f, Ammo = 2,
+                DestroysIndestructible = false, EnergyCost = 40f, Ammo = 1,
                 // Balance #22: AirstrikeCount 5 -> 4 to drop max-burst from 175 -> 140
                 IsAirstrike = true, AirstrikeCount = 4
             },
@@ -109,12 +109,12 @@ namespace Baboomz.Simulation
             {
                 WeaponId = "banana_bomb",
                 // Balance #22: EnergyCost 30 -> 40 to reflect higher max-burst ceiling.
-                // Balance #34: MaxDamage 22 -> 35 and Ammo 1 -> 2 to lift bottom-tier DPS/Energy;
-                //              ShootCooldown 4 -> 3 to match peer tactical weapon cadence.
-                MinPower = 10f, MaxPower = 28f, ChargeTime = 2f, ShootCooldown = 3f,
-                ExplosionRadius = 2f, MaxDamage = 35f, KnockbackForce = 5f,
+                // Balance #34: MaxDamage 22 -> 26 (conservative bump; per-shot burst
+                //              26 × 6 = 156, just above #22's 132 without reverting the gate).
+                MinPower = 10f, MaxPower = 28f, ChargeTime = 2f, ShootCooldown = 4f,
+                ExplosionRadius = 2f, MaxDamage = 26f, KnockbackForce = 5f,
                 ProjectileCount = 1, SpreadAngle = 0f,
-                DestroysIndestructible = false, EnergyCost = 40f, Ammo = 2,
+                DestroysIndestructible = false, EnergyCost = 40f, Ammo = 1,
                 ClusterCount = 6
             },
             new WeaponDef

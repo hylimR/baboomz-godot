@@ -3037,8 +3037,7 @@ namespace Baboomz.Tests.Editor
 
             Assert.GreaterOrEqual(state.Players[0].WeaponSlots.Length, 7, "Should have at least 7 weapon slots");
             Assert.AreEqual("airstrike", state.Players[0].WeaponSlots[6].WeaponId);
-            // Issue #34 raised airstrike Ammo 1 -> 2 as part of bottom-tier bottom-lift pass.
-            Assert.AreEqual(2, state.Players[0].WeaponSlots[6].Ammo);
+            Assert.AreEqual(1, state.Players[0].WeaponSlots[6].Ammo);
             Assert.IsTrue(state.Players[0].WeaponSlots[6].IsAirstrike);
         }
 
@@ -5185,8 +5184,7 @@ namespace Baboomz.Tests.Editor
                     found = true;
                     Assert.AreEqual(6, config.Weapons[i].ClusterCount,
                         "Banana bomb should have 6 sub-projectiles");
-                    // Issue #34 raised banana bomb Ammo 1 -> 2 as part of bottom-lift pass.
-                    Assert.AreEqual(2, config.Weapons[i].Ammo);
+                    Assert.AreEqual(1, config.Weapons[i].Ammo);
                     break;
                 }
             }
@@ -5589,27 +5587,26 @@ namespace Baboomz.Tests.Editor
         [Test]
         public void BalanceCheck_BananaBombSubDamage_Issue34()
         {
-            // Issue #34 bottom-lift pass: MaxDamage 22 -> 35, Ammo 1 -> 2,
-            // ShootCooldown 4 -> 3. EnergyCost stays at 40 (from #22).
-            // ClusterCount unchanged at 6.
+            // Issue #34 conservative bump: MaxDamage 22 -> 26 (per-shot burst 26×6=156,
+            // just above #22's 132 without reverting the gate). Ammo stays 1, cooldown stays 4.
             var config = new GameConfig();
             var banana = config.Weapons[11];
             Assert.AreEqual("banana_bomb", banana.WeaponId);
-            Assert.AreEqual(35f, banana.MaxDamage, "Banana sub-projectile damage should be 35 (issue #34, was 22)");
+            Assert.AreEqual(26f, banana.MaxDamage, "Banana sub-projectile damage should be 26 (issue #34, was 22)");
             Assert.AreEqual(6, banana.ClusterCount, "Banana should still have 6 sub-projectiles");
         }
 
         [Test]
         public void BalanceCheck_BananaBombCooldownAndEnergy_Issue34()
         {
-            // Issue #22 set EnergyCost=40. Issue #34 lowered ShootCooldown 4 -> 3 and
-            // raised Ammo 1 -> 2 to restore burst utility.
+            // Issue #22 set EnergyCost=40, ShootCooldown=4, Ammo=1.
+            // Issue #34 conservative bump keeps cooldown and ammo at #22 values.
             var config = new GameConfig();
             var banana = config.Weapons[11];
             Assert.AreEqual("banana_bomb", banana.WeaponId);
-            Assert.AreEqual(3f, banana.ShootCooldown, "Banana cooldown should be 3s (issue #34, was 4s)");
+            Assert.AreEqual(4f, banana.ShootCooldown, "Banana cooldown should be 4s (unchanged from #22)");
             Assert.AreEqual(40f, banana.EnergyCost, "Banana energy cost should be 40 (issue #22)");
-            Assert.AreEqual(2, banana.Ammo, "Banana ammo should be 2 (issue #34, was 1)");
+            Assert.AreEqual(1, banana.Ammo, "Banana ammo should be 1 (unchanged from #22)");
         }
 
         [Test]
@@ -5626,13 +5623,13 @@ namespace Baboomz.Tests.Editor
         [Test]
         public void BalanceCheck_AirstrikeDamageAndAmmo_Issue34()
         {
-            // Issue #34 bottom-lift: MaxDamage 35 -> 45 and Ammo 1 -> 2 to restore
-            // saturation-bombing fantasy after the #22 AirstrikeCount nerf to 4.
+            // Issue #34 conservative bump: MaxDamage 35 -> 40 (burst 40×4=160,
+            // just above #22's 140 cap). Ammo stays 1.
             var config = new GameConfig();
             var airstrike = config.Weapons[6];
             Assert.AreEqual("airstrike", airstrike.WeaponId);
-            Assert.AreEqual(45f, airstrike.MaxDamage, "Airstrike per-bomb damage should be 45 (issue #34, was 35)");
-            Assert.AreEqual(2, airstrike.Ammo, "Airstrike ammo should be 2 (issue #34, was 1)");
+            Assert.AreEqual(40f, airstrike.MaxDamage, "Airstrike per-bomb damage should be 40 (issue #34, was 35)");
+            Assert.AreEqual(1, airstrike.Ammo, "Airstrike ammo should be 1 (unchanged)");
         }
 
         [Test]
