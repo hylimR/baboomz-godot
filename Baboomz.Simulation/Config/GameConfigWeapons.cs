@@ -31,10 +31,12 @@ namespace Baboomz.Simulation
             new WeaponDef
             {
                 WeaponId = "cluster",
+                // Balance #34: MaxDamage 20 -> 30 and EnergyCost 35 -> 25 to lift DPS/Energy
+                // above the 0.5× median outlier threshold (was 0.19, target ~0.45).
                 MinPower = 10f, MaxPower = 28f, ChargeTime = 2f, ShootCooldown = 3f,
-                ExplosionRadius = 1.5f, MaxDamage = 20f, KnockbackForce = 4f,
+                ExplosionRadius = 1.5f, MaxDamage = 30f, KnockbackForce = 4f,
                 ProjectileCount = 1, SpreadAngle = 0f,
-                DestroysIndestructible = false, EnergyCost = 35f, Ammo = 4,
+                DestroysIndestructible = false, EnergyCost = 25f, Ammo = 4,
                 ClusterCount = 4
             },
             new WeaponDef
@@ -58,8 +60,10 @@ namespace Baboomz.Simulation
             new WeaponDef
             {
                 WeaponId = "airstrike",
+                // Balance #34: MaxDamage 35 -> 40 (conservative bump, keeps burst at 160
+                // which is just above #22's 140 cap without doubling it).
                 MinPower = 5f, MaxPower = 20f, ChargeTime = 1.5f, ShootCooldown = 4f,
-                ExplosionRadius = 3f, MaxDamage = 35f, KnockbackForce = 8f,
+                ExplosionRadius = 3f, MaxDamage = 40f, KnockbackForce = 8f,
                 ProjectileCount = 1, SpreadAngle = 0f,
                 DestroysIndestructible = false, EnergyCost = 40f, Ammo = 1,
                 // Balance #22: AirstrikeCount 5 -> 4 to drop max-burst from 175 -> 140
@@ -104,10 +108,11 @@ namespace Baboomz.Simulation
             new WeaponDef
             {
                 WeaponId = "banana_bomb",
-                // Balance #22: ShootCooldown 3 -> 4 (match airstrike cadence) and
-                // EnergyCost 30 -> 40 (reflect higher max-burst ceiling vs rocket).
+                // Balance #22: EnergyCost 30 -> 40 to reflect higher max-burst ceiling.
+                // Balance #34: MaxDamage 22 -> 26 (conservative bump; per-shot burst
+                //              26 × 6 = 156, just above #22's 132 without reverting the gate).
                 MinPower = 10f, MaxPower = 28f, ChargeTime = 2f, ShootCooldown = 4f,
-                ExplosionRadius = 2f, MaxDamage = 22f, KnockbackForce = 5f,
+                ExplosionRadius = 2f, MaxDamage = 26f, KnockbackForce = 5f,
                 ProjectileCount = 1, SpreadAngle = 0f,
                 DestroysIndestructible = false, EnergyCost = 40f, Ammo = 1,
                 ClusterCount = 6
@@ -115,10 +120,12 @@ namespace Baboomz.Simulation
             new WeaponDef
             {
                 WeaponId = "freeze_grenade",
+                // Balance #34: EnergyCost 20 -> 12. Utility CC tool was priced as a damage
+                // weapon despite dealing only 5 damage — make it affordable as crowd control.
                 MinPower = 8f, MaxPower = 22f, ChargeTime = 1.5f, ShootCooldown = 3f,
                 ExplosionRadius = 3f, MaxDamage = 5f, KnockbackForce = 2f,
                 ProjectileCount = 1, SpreadAngle = 0f,
-                DestroysIndestructible = false, EnergyCost = 20f, Ammo = 2,
+                DestroysIndestructible = false, EnergyCost = 12f, Ammo = 2,
                 IsFreeze = true
             },
             new WeaponDef
@@ -198,8 +205,11 @@ namespace Baboomz.Simulation
             new WeaponDef
             {
                 WeaponId = "flak_cannon",
-                MinPower = 10f, MaxPower = 25f, ChargeTime = 2f, ShootCooldown = 4f,
-                ExplosionRadius = 1f, MaxDamage = 10f, KnockbackForce = 3f,
+                // Balance #34: MaxDamage 10 -> 20 and ShootCooldown 4 -> 3. The 8-fragment
+                // burst did not offset the low base damage; flak was the worst DPS/Energy
+                // outlier on the chart at 0.10. New values land near the peer tactical band.
+                MinPower = 10f, MaxPower = 25f, ChargeTime = 2f, ShootCooldown = 3f,
+                ExplosionRadius = 1f, MaxDamage = 20f, KnockbackForce = 3f,
                 ProjectileCount = 1, SpreadAngle = 0f,
                 DestroysIndestructible = false, EnergyCost = 25f, Ammo = 2,
                 ClusterCount = 8,
