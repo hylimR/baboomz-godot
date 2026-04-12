@@ -18,6 +18,7 @@ namespace Baboomz.Simulation
         static int _warCryKills;
         static bool _playerTookDamage;
         static int _playerShotsFiredAtStart;
+        static int _lastTerrainPixels; // for cm_5 per-tick delta detection
 
         public static IReadOnlyCollection<string> Unlocked => _unlocked;
 
@@ -36,6 +37,7 @@ namespace Baboomz.Simulation
             _warCryKills = 0;
             _playerTookDamage = false;
             _playerShotsFiredAtStart = 0;
+            _lastTerrainPixels = 0;
         }
 
         public static void OnMatchStart(GameState state)
@@ -170,6 +172,14 @@ namespace Baboomz.Simulation
             }
             if (_fireDamageTotal >= 200f)
                 TryUnlock("cm_8", state, 0);
+
+            // cm_5: Demolition Expert — 500+ terrain pixels destroyed in one tick
+            // (approximates "one shot" since explosions resolve in a single tick)
+            int currentPixels = state.Players[0].TerrainPixelsDestroyed;
+            int delta = currentPixels - _lastTerrainPixels;
+            _lastTerrainPixels = currentPixels;
+            if (delta >= 500)
+                TryUnlock("cm_5", state, 0);
         }
 
         static void CheckBarrelChain(GameState state)
@@ -201,6 +211,10 @@ namespace Baboomz.Simulation
                         TryUnlock("sm_3", state, 0);
                 }
             }
+
+            // sm_4: Shield Wall — block 100+ damage with Shield
+            if (state.Players[0].ShieldDamageBlocked >= 100f)
+                TryUnlock("sm_4", state, 0);
 
             // sm_7: War Machine — kills during WarCry
             if (state.Players[0].WarCryTimer > 0f)
