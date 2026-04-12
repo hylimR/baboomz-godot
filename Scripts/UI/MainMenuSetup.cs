@@ -26,6 +26,7 @@ namespace Baboomz
         private EncyclopediaPanel _encyclopediaPanel;
         private AchievementPanel _achievementPanel;
         private LevelSelectPanel _levelSelectPanel;
+        private ShopPanel _shopPanel;
 
         private readonly Color _easyColor = new Color(0.3f, 0.6f, 0.3f);
         private readonly Color _normalColor = new Color(0.5f, 0.5f, 0.2f);
@@ -166,6 +167,17 @@ namespace Baboomz
             _achievementPanel.Name = "AchievementPanel";
             AddChild(_achievementPanel);
 
+            // --- Shop button ---
+            y += 0.07f;
+            var shopBtn = UIBuilder.CreateButton("ShopBtn", "Shop", 18,
+                new Color(0.2f, 0.5f, 0.4f), this);
+            UIBuilder.SetAnchors(shopBtn, new Vector2(0.35f, y), new Vector2(0.65f, y + 0.05f));
+            shopBtn.Pressed += OnShopPressed;
+
+            _shopPanel = new ShopPanel();
+            _shopPanel.Name = "ShopPanel";
+            AddChild(_shopPanel);
+
             // --- Version ---
             var version = UIBuilder.CreateLabel("v0.1.0-alpha", 12,
                 new Color(0.5f, 0.5f, 0.5f, 0.5f),
@@ -249,6 +261,11 @@ namespace Baboomz
         private void OnAchievementsPressed()
         {
             _achievementPanel?.Show();
+        }
+
+        private void OnShopPressed()
+        {
+            _shopPanel?.Show();
         }
     }
 }
