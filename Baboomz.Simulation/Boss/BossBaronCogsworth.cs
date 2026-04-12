@@ -27,7 +27,7 @@ namespace Baboomz.Simulation
             if (hpRatio <= 0.66f && boss.BossPhase < 1)
             {
                 boss.BossPhase = 1;
-                specialTimer[index] = t + 10f;
+                stateTimer[index] = t + 10f;
             }
             if (hpRatio <= 0.33f && boss.BossPhase < 2)
             {
