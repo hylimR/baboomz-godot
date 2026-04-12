@@ -127,6 +127,12 @@ namespace Baboomz
             AddChild(hitMarkers);
             hitMarkers.Init(State);
 
+            // Combo display
+            var comboRenderer = new ComboRenderer();
+            comboRenderer.Name = "ComboRenderer";
+            AddChild(comboRenderer);
+            comboRenderer.Init(State);
+
             // Audio
             _audioBridge = new AudioBridge();
             _audioBridge.Name = "Audio";
