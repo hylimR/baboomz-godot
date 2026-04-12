@@ -416,5 +416,41 @@ namespace Baboomz.Tests.Editor
             AchievementTracker.Update(state);
             Assert.IsFalse(AchievementTracker.IsUnlocked("cm_1"));
         }
+
+        // --- Issue #65: new achievement trackers ---
+
+        [Test]
+        public void ShieldWall_sm4_UnlocksAt100DamageBlocked()
+        {
+            var state = GameSimulation.CreateMatch(SmallConfig(), 42);
+            state.Phase = MatchPhase.Playing;
+            AchievementTracker.OnMatchStart(state);
+
+            state.Players[0].ShieldDamageBlocked = 99f;
+            AchievementTracker.Update(state);
+            Assert.IsFalse(AchievementTracker.IsUnlocked("sm_4"));
+
+            state.Players[0].ShieldDamageBlocked = 100f;
+            AchievementTracker.Update(state);
+            Assert.IsTrue(AchievementTracker.IsUnlocked("sm_4"));
+        }
+
+        [Test]
+        public void DemolitionExpert_cm5_UnlocksAt500PixelsPerTick()
+        {
+            var state = GameSimulation.CreateMatch(SmallConfig(), 42);
+            state.Phase = MatchPhase.Playing;
+            AchievementTracker.OnMatchStart(state);
+
+            // First tick: 400 pixels (not enough)
+            state.Players[0].TerrainPixelsDestroyed = 400;
+            AchievementTracker.Update(state);
+            Assert.IsFalse(AchievementTracker.IsUnlocked("cm_5"));
+
+            // Second tick: +500 pixels delta = 900 total, delta = 500
+            state.Players[0].TerrainPixelsDestroyed = 900;
+            AchievementTracker.Update(state);
+            Assert.IsTrue(AchievementTracker.IsUnlocked("cm_5"));
+        }
     }
 }
