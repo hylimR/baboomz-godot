@@ -125,6 +125,24 @@ namespace Baboomz
             AddChild(payloadCart);
             payloadCart.Init(State);
 
+            // Territories zones (only renders when MatchType.Territories)
+            var territoryZones = new TerritoryZoneRenderer();
+            territoryZones.Name = "TerritoryZones";
+            AddChild(territoryZones);
+            territoryZones.Init(State);
+
+            // Demolition crystals (only renders when MatchType.Demolition)
+            var demoCrystals = new DemolitionCrystalRenderer();
+            demoCrystals.Name = "DemoCrystals";
+            AddChild(demoCrystals);
+            demoCrystals.Init(State);
+
+            // Headhunter tokens (only renders when MatchType.Headhunter)
+            var hhTokens = new HeadhunterTokenRenderer();
+            hhTokens.Name = "HeadhunterTokens";
+            AddChild(hhTokens);
+            hhTokens.Init(State);
+
             // Hit markers (world-space damage feedback)
             var hitMarkers = new HitMarkerRenderer();
             hitMarkers.Name = "HitMarkers";
