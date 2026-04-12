@@ -133,11 +133,15 @@ namespace Baboomz.Simulation
                 if (p.IsDead) continue;
 
                 bool carrying = IsCarryingFlag(state, i);
-                // Speed penalty is handled per-tick rather than storing multiplier
-                // to avoid stacking issues. MoveSpeed is reset each tick in UpdatePlayer.
+                // Apply carrier speed penalty as a multiplier on current MoveSpeed
+                // (preserves WarCry buff). Restore base speed when no longer carrying.
                 if (carrying)
                 {
-                    p.MoveSpeed = config.DefaultMoveSpeed * config.CtfCarrierSpeedMult;
+                    p.MoveSpeed *= config.CtfCarrierSpeedMult;
+                }
+                else if (p.MoveSpeed < config.DefaultMoveSpeed && p.WarCryTimer <= 0f)
+                {
+                    p.MoveSpeed = config.DefaultMoveSpeed;
                 }
             }
 
