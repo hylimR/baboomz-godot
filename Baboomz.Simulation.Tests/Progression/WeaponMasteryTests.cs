@@ -404,6 +404,92 @@ namespace Baboomz.Tests.Editor
             Assert.AreEqual(0f, WeaponMasteryCalc.GetBoomerangSteerBonus(MasteryTier.Bronze));
         }
 
+        // --- Issue #56: new weapon mods for remaining 12 weapons ---
+
+        [Test]
+        public void ApplyMasteryMods_Silver_Napalm_LongerFireZone()
+        {
+            var slot = MakeSlot("napalm", 20f, fireZoneDuration: 5f);
+            WeaponMasteryCalc.ApplyMasteryMods(ref slot, MasteryTier.Silver);
+            Assert.AreEqual(6f, slot.FireZoneDuration, 0.01f);
+        }
+
+        [Test]
+        public void ApplyMasteryMods_Gold_Napalm_HigherFireDPS()
+        {
+            var slot = MakeSlot("napalm", 20f, fireZoneDuration: 5f, fireZoneDPS: 15f);
+            WeaponMasteryCalc.ApplyMasteryMods(ref slot, MasteryTier.Gold);
+            Assert.AreEqual(6f, slot.FireZoneDuration, 0.01f); // silver
+            Assert.AreEqual(18f, slot.FireZoneDPS, 0.01f); // gold: +3
+        }
+
+        [Test]
+        public void ApplyMasteryMods_Silver_Airstrike_ExtraBomb()
+        {
+            var slot = MakeSlot("airstrike", 35f, airstrikeCount: 4);
+            WeaponMasteryCalc.ApplyMasteryMods(ref slot, MasteryTier.Silver);
+            Assert.AreEqual(5, slot.AirstrikeCount);
+        }
+
+        [Test]
+        public void ApplyMasteryMods_Gold_Airstrike_ReducedEnergy()
+        {
+            var slot = MakeSlot("airstrike", 35f, airstrikeCount: 4, energyCost: 40f);
+            WeaponMasteryCalc.ApplyMasteryMods(ref slot, MasteryTier.Gold);
+            Assert.AreEqual(5, slot.AirstrikeCount); // silver
+            Assert.AreEqual(35f, slot.EnergyCost, 0.01f); // gold: -5
+        }
+
+        [Test]
+        public void ApplyMasteryMods_Silver_BananaBomb_ExtraCluster()
+        {
+            var slot = MakeSlot("banana_bomb", 22f, clusterCount: 6);
+            WeaponMasteryCalc.ApplyMasteryMods(ref slot, MasteryTier.Silver);
+            Assert.AreEqual(7, slot.ClusterCount);
+        }
+
+        [Test]
+        public void ApplyMasteryMods_Gold_GravityBomb_StrongerPull()
+        {
+            var slot = MakeSlot("gravity_bomb", 30f, pullRadius: 5f, pullForce: 10f);
+            WeaponMasteryCalc.ApplyMasteryMods(ref slot, MasteryTier.Gold);
+            Assert.AreEqual(6f, slot.PullRadius, 0.01f); // silver: +1
+            Assert.AreEqual(15f, slot.PullForce, 0.01f); // gold: +5
+        }
+
+        [Test]
+        public void ApplyMasteryMods_Silver_FlakCannon_ExtraFragments()
+        {
+            var slot = MakeSlot("flak_cannon", 10f, clusterCount: 8);
+            WeaponMasteryCalc.ApplyMasteryMods(ref slot, MasteryTier.Silver);
+            Assert.AreEqual(10, slot.ClusterCount); // +2
+        }
+
+        [Test]
+        public void ApplyMasteryMods_Gold_FlakCannon_LongerBurstRange()
+        {
+            var slot = MakeSlot("flak_cannon", 10f, clusterCount: 8, flakMaxDist: 25f);
+            WeaponMasteryCalc.ApplyMasteryMods(ref slot, MasteryTier.Gold);
+            Assert.AreEqual(10, slot.ClusterCount); // silver: +2
+            Assert.AreEqual(30f, slot.FlakMaxDist, 0.01f); // gold: +5
+        }
+
+        [Test]
+        public void ApplyMasteryMods_Silver_GustCannon_StrongerKnockback()
+        {
+            var slot = MakeSlot("gust_cannon", 15f, knockbackForce: 8f);
+            WeaponMasteryCalc.ApplyMasteryMods(ref slot, MasteryTier.Silver);
+            Assert.AreEqual(11f, slot.KnockbackForce, 0.01f); // +3
+        }
+
+        [Test]
+        public void ApplyMasteryMods_Silver_RicochetDisc_ExtraBounce()
+        {
+            var slot = MakeSlot("ricochet_disc", 25f, bounces: 3);
+            WeaponMasteryCalc.ApplyMasteryMods(ref slot, MasteryTier.Silver);
+            Assert.AreEqual(4, slot.Bounces);
+        }
+
         [Test]
         public void ApplyMasteryMods_NullWeaponId_NoOp()
         {
@@ -458,7 +544,12 @@ namespace Baboomz.Tests.Editor
             int clusterCount = 0, float fuseTime = 0f,
             float chainDamage = 0f, float chainRange = 0f,
             int maxPierceCount = 0, int bounces = 0,
-            float explosionRadius = 2f, float energyCost = 10f)
+            float explosionRadius = 2f, float energyCost = 10f,
+            float fireZoneDuration = 0f, float fireZoneDPS = 0f,
+            int airstrikeCount = 0, float drillRange = 0f,
+            float knockbackForce = 5f, float pullRadius = 0f,
+            float pullForce = 0f, float lavaMeltRadius = 0f,
+            float flakMaxDist = 0f)
         {
             return new WeaponSlotState
             {
@@ -468,7 +559,12 @@ namespace Baboomz.Tests.Editor
                 ClusterCount = clusterCount, FuseTime = fuseTime,
                 ChainDamage = chainDamage, ChainRange = chainRange,
                 MaxPierceCount = maxPierceCount, Bounces = bounces,
-                ExplosionRadius = explosionRadius, EnergyCost = energyCost
+                ExplosionRadius = explosionRadius, EnergyCost = energyCost,
+                FireZoneDuration = fireZoneDuration, FireZoneDPS = fireZoneDPS,
+                AirstrikeCount = airstrikeCount, DrillRange = drillRange,
+                KnockbackForce = knockbackForce, PullRadius = pullRadius,
+                PullForce = pullForce, LavaMeltRadius = lavaMeltRadius,
+                FlakMaxDist = flakMaxDist
             };
         }
 

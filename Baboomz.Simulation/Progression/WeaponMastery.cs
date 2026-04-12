@@ -118,15 +118,28 @@ namespace Baboomz.Simulation
             switch (slot.WeaponId)
             {
                 case "cannon": slot.MinPower *= 1.05f; slot.MaxPower *= 1.05f; break;
-                case "rocket": slot.ExplosionRadius += 0.5f; break; // +5 blast radius (mapped to +0.5 world units)
+                case "rocket": slot.ExplosionRadius += 0.5f; break;
                 case "shotgun": slot.ProjectileCount += 1; break;
                 case "cluster": slot.ClusterCount += 1; break;
                 case "dynamite": slot.FuseTime -= 0.5f; break;
-                case "drill": slot.MaxPierceCount += 1; break; // piercing
-                case "freeze_grenade": break; // +0.5s freeze handled at explosion (not in slot)
+                case "drill": slot.MaxPierceCount += 1; break;
+                case "freeze_grenade": break; // +0.5s freeze handled at explosion
                 case "lightning_rod": slot.ChainDamage += 10f; break;
                 case "boomerang": break; // +5 return speed handled in UpdateBoomerang
                 case "harpoon": slot.MaxPierceCount += 1; break;
+                // Issue #56: remaining 12 weapons
+                case "napalm": slot.FireZoneDuration += 1f; break;
+                case "airstrike": slot.AirstrikeCount += 1; break;
+                case "blowtorch": slot.DrillRange += 3f; break;
+                case "holy_hand_grenade": slot.ExplosionRadius += 1f; break;
+                case "sheep": slot.FuseTime += 1f; break;
+                case "banana_bomb": slot.ClusterCount += 1; break;
+                case "sticky_bomb": slot.FuseTime -= 0.5f; break;
+                case "gravity_bomb": slot.PullRadius += 1f; break;
+                case "ricochet_disc": slot.Bounces += 1; break;
+                case "magma_ball": slot.LavaMeltRadius += 1f; break;
+                case "gust_cannon": slot.KnockbackForce += 3f; break;
+                case "flak_cannon": slot.ClusterCount += 2; break;
             }
         }
 
@@ -135,15 +148,28 @@ namespace Baboomz.Simulation
             switch (slot.WeaponId)
             {
                 case "cannon": slot.Bounces += 1; break;
-                case "rocket": slot.EnergyCost *= 0.9f; break; // -10% energy cost
-                case "shotgun": slot.SpreadAngle *= 0.85f; break; // -15% spread
-                case "cluster": slot.MaxDamage += 5f; break; // sub-projectile damage +5 (already scaled by tier dmg mult)
+                case "rocket": slot.EnergyCost *= 0.9f; break;
+                case "shotgun": slot.SpreadAngle *= 0.85f; break;
+                case "cluster": slot.MaxDamage += 5f; break;
                 case "dynamite": slot.Bounces += 1; break;
                 case "drill": slot.MaxDamage += 5f; break;
                 case "freeze_grenade": slot.ExplosionRadius += 0.5f; break;
-                case "lightning_rod": slot.ChainRange += 3f; break; // +1 chain jump approximated as +3m range
+                case "lightning_rod": slot.ChainRange += 3f; break;
                 case "boomerang": slot.MaxDamage += 5f; break;
                 case "harpoon": slot.MaxDamage += 10f; break;
+                // Issue #56: remaining 12 weapons
+                case "napalm": slot.FireZoneDPS += 3f; break;
+                case "airstrike": slot.EnergyCost -= 5f; break;
+                case "blowtorch": slot.MaxDamage += 3f; break;
+                case "holy_hand_grenade": slot.KnockbackForce *= 1.2f; break;
+                case "sheep": slot.MaxDamage += 10f; break;
+                case "banana_bomb": slot.MaxDamage += 4f; break;
+                case "sticky_bomb": slot.MaxDamage += 8f; break;
+                case "gravity_bomb": slot.PullForce += 5f; break;
+                case "ricochet_disc": slot.MaxDamage += 5f; break;
+                case "magma_ball": slot.FireZoneDuration += 1f; break;
+                case "gust_cannon": slot.ExplosionRadius += 1f; break;
+                case "flak_cannon": slot.FlakMaxDist += 5f; break;
             }
         }
 
