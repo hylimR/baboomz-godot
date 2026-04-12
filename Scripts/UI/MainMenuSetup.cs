@@ -23,6 +23,7 @@ namespace Baboomz
         private int _skill0Index;
         private int _skill1Index;
         private GameSettings _settings;
+        private EncyclopediaPanel _encyclopediaPanel;
 
         private readonly Color _easyColor = new Color(0.3f, 0.6f, 0.3f);
         private readonly Color _normalColor = new Color(0.5f, 0.5f, 0.2f);
@@ -128,6 +129,18 @@ namespace Baboomz
                 new Color(0.5f, 0.3f, 0.3f), this);
             UIBuilder.SetAnchors(quitBtn, new Vector2(0.35f, y), new Vector2(0.65f, y + 0.06f));
             quitBtn.Pressed += OnQuitPressed;
+
+            // --- Encyclopedia button ---
+            y += 0.08f;
+            var encBtn = UIBuilder.CreateButton("EncyclopediaBtn", "Encyclopedia", 18,
+                new Color(0.3f, 0.3f, 0.5f), this);
+            UIBuilder.SetAnchors(encBtn, new Vector2(0.35f, y), new Vector2(0.65f, y + 0.05f));
+            encBtn.Pressed += OnEncyclopediaPressed;
+
+            // Encyclopedia panel (hidden overlay, shows on button press)
+            _encyclopediaPanel = new EncyclopediaPanel();
+            _encyclopediaPanel.Name = "EncyclopediaPanel";
+            AddChild(_encyclopediaPanel);
 
             // --- Version ---
             var version = UIBuilder.CreateLabel("v0.1.0-alpha", 12,
@@ -288,6 +301,11 @@ namespace Baboomz
         private void OnQuitPressed()
         {
             GetTree().Quit();
+        }
+
+        private void OnEncyclopediaPressed()
+        {
+            _encyclopediaPanel?.Show();
         }
     }
 }
