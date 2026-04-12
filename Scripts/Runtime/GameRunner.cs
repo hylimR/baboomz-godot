@@ -143,6 +143,18 @@ namespace Baboomz
             AddChild(hhTokens);
             hhTokens.Init(State);
 
+            // Hat renderer (displays equipped hats above player heads)
+            var hatRenderer = new HatRenderer();
+            hatRenderer.Name = "HatRenderer";
+            AddChild(hatRenderer);
+            hatRenderer.Init(State);
+
+            // Emote renderer (speech bubbles on EmoteEvents)
+            var emoteRenderer = new EmoteRenderer();
+            emoteRenderer.Name = "EmoteRenderer";
+            AddChild(emoteRenderer);
+            emoteRenderer.Init(State);
+
             // Hit markers (world-space damage feedback)
             var hitMarkers = new HitMarkerRenderer();
             hitMarkers.Name = "HitMarkers";
