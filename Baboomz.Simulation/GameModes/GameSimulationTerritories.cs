@@ -90,13 +90,15 @@ namespace Baboomz.Simulation
 
                 if (teamsInZone == 1)
                 {
+                    // Capture or maintain ownership when only one team is present
                     territory.ZoneOwner[z] = lastTeam;
                     territory.TeamScores[lastTeam] += state.Config.TerritoryPointsPerSecond * dt;
                 }
-                else if (teamsInZone == 0)
+                else if (teamsInZone == 0 && territory.ZoneOwner[z] >= 0)
                 {
-                    // Zone becomes neutral when no one is present
-                    territory.ZoneOwner[z] = -1;
+                    // Zone stays owned when unoccupied — owner keeps scoring
+                    territory.TeamScores[territory.ZoneOwner[z]] +=
+                        state.Config.TerritoryPointsPerSecond * dt;
                 }
                 // else: contested — no scoring, owner stays
             }
