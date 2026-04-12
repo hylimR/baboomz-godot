@@ -1896,6 +1896,38 @@ namespace Baboomz.Tests.Editor
                 state.Survival.Score,
                 "Splash kill should award only SurvivalScorePerKill, not the direct hit bonus");
         }
+
+        [Test]
+        public void SurvivalWaveSpawn_ResizesWeaponTracking_Issue94()
+        {
+            // Issue #94: SpawnSurvivalWave replaces Players array but weapon
+            // tracking arrays stayed at original size, causing silent data loss.
+            var config = SurvivalConfig();
+            config.SurvivalWaveMobBase = 3;
+            var state = GameSimulation.CreateMatch(config, 42);
+            AILogic.Reset(42, state.Players.Length);
+            BossLogic.Reset(42, state.Players.Length);
+
+            // Survival starts with just 1 player (no AI opponent)
+            int initialCount = state.Players.Length;
+            Assert.AreEqual(initialCount, state.WeaponHits.Length);
+
+            // Tick until wave 1 starts (mobs spawn, expanding Players array)
+            state.Phase = MatchPhase.Playing;
+            for (int i = 0; i < 6000; i++)
+            {
+                GameSimulation.Tick(state, 0.016f);
+                if (state.Players.Length > initialCount) break;
+            }
+
+            // After wave spawn, tracking arrays should match new player count
+            Assert.AreEqual(state.Players.Length, state.WeaponHits.Length,
+                "WeaponHits should be resized to match new Players array (issue #94)");
+            Assert.AreEqual(state.Players.Length, state.WeaponKills.Length,
+                "WeaponKills should be resized to match new Players array");
+            Assert.AreEqual(state.Players.Length, state.WeaponsUsed.Length,
+                "WeaponsUsed should be resized to match new Players array");
+        }
     }
 
     [TestFixture]
