@@ -263,5 +263,46 @@ namespace Baboomz.Tests.Editor
             Assert.GreaterOrEqual(state.Headhunter.TokenCount, 3,
                 "Tokens should accumulate from multiple deaths");
         }
+
+        [Test]
+        public void Headhunter_Respawn_RestoresWeaponAmmo_Issue84()
+        {
+            // Issue #84: Respawn didn't restore weapon ammo, causing
+            // progressive weapon starvation across multiple deaths.
+            var config = HhConfig();
+            config.HeadhunterRespawnDelay = 0.01f;
+            var state = GameSimulation.CreateMatch(config, 42);
+            state.Phase = MatchPhase.Playing;
+            AILogic.Reset(42, state.Players.Length);
+            BossLogic.Reset(42, state.Players.Length);
+
+            // Deplete ammo on a limited weapon (rocket = slot 2, default ammo = 4)
+            int rocketSlot = -1;
+            for (int s = 0; s < state.Players[0].WeaponSlots.Length; s++)
+            {
+                if (state.Players[0].WeaponSlots[s].WeaponId == "rocket")
+                {
+                    rocketSlot = s;
+                    state.Players[0].WeaponSlots[s].Ammo = 0;
+                    break;
+                }
+            }
+            Assert.GreaterOrEqual(rocketSlot, 0, "Should have rocket weapon");
+            Assert.AreEqual(0, state.Players[0].WeaponSlots[rocketSlot].Ammo);
+
+            // Kill and respawn player
+            state.Players[0].Health = 0f;
+            state.Players[0].IsDead = true;
+            GameSimulation.SpawnHeadhunterTokens(state, 0);
+
+            // Tick through respawn delay
+            for (int i = 0; i < 200; i++)
+                GameSimulation.Tick(state, 0.016f);
+
+            // After respawn, ammo should be restored
+            Assert.IsFalse(state.Players[0].IsDead, "Player should have respawned");
+            Assert.AreNotEqual(0, state.Players[0].WeaponSlots[rocketSlot].Ammo,
+                "Rocket ammo should be restored after respawn (issue #84)");
+        }
     }
 }

@@ -144,6 +144,27 @@ namespace Baboomz.Simulation
             return state;
         }
 
+        /// <summary>
+        /// Restores weapon ammo from config for a player (used by respawn modes).
+        /// Matches weapons by WeaponId to handle custom loadouts correctly.
+        /// </summary>
+        internal static void RestoreWeaponAmmo(ref PlayerState p, GameConfig config)
+        {
+            for (int s = 0; s < p.WeaponSlots.Length; s++)
+            {
+                string id = p.WeaponSlots[s].WeaponId;
+                if (id == null) continue;
+                for (int w = 0; w < config.Weapons.Length; w++)
+                {
+                    if (config.Weapons[w].WeaponId == id)
+                    {
+                        p.WeaponSlots[s].Ammo = config.Weapons[w].Ammo;
+                        break;
+                    }
+                }
+            }
+        }
+
         public static void Tick(GameState state, float dt)
         {
             state.ExplosionEvents.Clear();
