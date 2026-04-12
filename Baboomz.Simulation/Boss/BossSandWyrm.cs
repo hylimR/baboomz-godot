@@ -87,6 +87,11 @@ namespace Baboomz.Simulation
                         boss.IsInvulnerable = false;
                         stateTimer[index] = t + 5f;
                         attackTimer[index] = t + 1f;
+                        // Snap to ground at new X position to prevent floating/clipping
+                        float groundY = GamePhysics.FindGroundY(
+                            state.Terrain, boss.Position.x, state.Config.SpawnProbeY, 0.5f);
+                        boss.Position.y = groundY + 0.5f;
+                        boss.Velocity.y = 0f;
                     }
                     break;
             }
