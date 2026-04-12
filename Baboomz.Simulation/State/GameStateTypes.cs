@@ -95,6 +95,7 @@ namespace Baboomz.Simulation
         public bool MeltsTerrain;    // true = lava pool that erodes terrain each tick
         public float MeltRadius;     // radius of terrain melt area
         public float MeltTimer;      // accumulator for melt interval (0.5s)
+        public float DamageEventTimer; // throttle DamageEvent emission (0.5s intervals)
     }
 
     public struct SmokeZone

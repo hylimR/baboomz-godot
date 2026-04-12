@@ -227,11 +227,11 @@ namespace Baboomz.Tests.Editor
 
             Assert.Greater(fireZoneDamage, 0f, "Fire zone should deal damage");
 
-            // With 2x multiplier: 20 * 0.016 * 2 = 0.64
-            // Without multiplier: 20 * 0.016 = 0.32
-            float expectedWithMultiplier = 20f * 0.016f * 2f;
-            Assert.AreEqual(expectedWithMultiplier, fireZoneDamage, 0.01f,
-                "Fire zone damage should apply caster's DamageMultiplier");
+            // With throttled events (0.5s intervals), the reported damage is
+            // DamagePerSecond * 0.5 * DamageMultiplier = 20 * 0.5 * 2 = 20
+            float expectedWithMultiplier = 20f * 0.5f * 2f;
+            Assert.AreEqual(expectedWithMultiplier, fireZoneDamage, 0.1f,
+                "Fire zone damage event should apply caster's DamageMultiplier");
         }
 
         [Test]
