@@ -10,8 +10,13 @@ namespace Baboomz
     public partial class MatchResultPanel : Control
     {
         private Control _overlay;
+        private Control _centerPanel;
         private Label _resultLabel;
         private Label _statsLabel;
+        private Label _progressionLabel;
+        private ColorRect _rankBarBg;
+        private ColorRect _rankBarFill;
+        private Label _rankLabel;
 
         public override void _Ready()
         {
@@ -31,10 +36,11 @@ namespace Baboomz
             UIBuilder.SetAnchors(_overlay, Vector2.Zero, Vector2.One);
             AddChild(_overlay);
 
-            // Center panel
+            // Center panel — taller to fit progression section
             var panel = UIBuilder.CreatePanel("CenterPanel",
                 new Color(0.15f, 0.1f, 0.05f, 0.95f), _overlay,
-                new Vector2(0.25f, 0.2f), new Vector2(0.75f, 0.8f));
+                new Vector2(0.15f, 0.05f), new Vector2(0.85f, 0.95f));
+            _centerPanel = panel;
 
             // Result text
             _resultLabel = UIBuilder.CreateLabel("MATCH OVER", 42, UIBuilder.UiGold,
@@ -42,25 +48,46 @@ namespace Baboomz
                 HorizontalAlignment.Center);
             _resultLabel.VerticalAlignment = VerticalAlignment.Center;
 
-            // Stats text
-            _statsLabel = UIBuilder.CreateLabel("", 16, new Color(0.85f, 0.85f, 0.85f),
-                panel, new Vector2(0.05f, 0.20f), new Vector2(0.95f, 0.72f),
-                HorizontalAlignment.Center);
+            // Stats text (left half)
+            _statsLabel = UIBuilder.CreateLabel("", 14, new Color(0.85f, 0.85f, 0.85f),
+                panel, new Vector2(0.02f, 0.14f), new Vector2(0.48f, 0.72f),
+                HorizontalAlignment.Left);
             _statsLabel.VerticalAlignment = VerticalAlignment.Top;
             _statsLabel.AddThemeConstantOverride("outline_size", 0);
+
+            // Progression text (right half)
+            _progressionLabel = UIBuilder.CreateLabel("", 14, new Color(0.9f, 0.85f, 0.7f),
+                panel, new Vector2(0.52f, 0.14f), new Vector2(0.98f, 0.72f),
+                HorizontalAlignment.Left);
+            _progressionLabel.VerticalAlignment = VerticalAlignment.Top;
+            _progressionLabel.AddThemeConstantOverride("outline_size", 0);
+
+            // Rank progress bar (bottom-center, above buttons)
+            _rankBarBg = UIBuilder.CreatePanel("RankBarBg",
+                new Color(0.2f, 0.2f, 0.2f, 0.8f), panel,
+                new Vector2(0.15f, 0.74f), new Vector2(0.85f, 0.78f));
+            _rankBarFill = new ColorRect();
+            _rankBarFill.Name = "RankBarFill";
+            _rankBarFill.Color = UIBuilder.UiGold;
+            UIBuilder.SetAnchors(_rankBarFill, new Vector2(0f, 0f), new Vector2(0f, 1f));
+            _rankBarBg.AddChild(_rankBarFill);
+
+            _rankLabel = UIBuilder.CreateLabel("", 12, Colors.White,
+                panel, new Vector2(0.15f, 0.78f), new Vector2(0.85f, 0.82f),
+                HorizontalAlignment.Center);
 
             // Play Again button
             var playAgainBtn = UIBuilder.CreateButton("PlayAgainBtn", "Play Again", 24,
                 new Color(0.3f, 0.6f, 0.3f), panel);
             UIBuilder.SetAnchors(playAgainBtn,
-                new Vector2(0.55f, 0.78f), new Vector2(0.95f, 0.95f));
+                new Vector2(0.55f, 0.84f), new Vector2(0.95f, 0.97f));
             playAgainBtn.Pressed += OnPlayAgain;
 
             // Main Menu button
             var menuBtn = UIBuilder.CreateButton("MainMenuBtn", "Main Menu", 20,
                 new Color(0.5f, 0.3f, 0.3f), panel);
             UIBuilder.SetAnchors(menuBtn,
-                new Vector2(0.05f, 0.78f), new Vector2(0.45f, 0.95f));
+                new Vector2(0.05f, 0.84f), new Vector2(0.45f, 0.97f));
             menuBtn.Pressed += OnMainMenu;
         }
 
@@ -103,6 +130,9 @@ namespace Baboomz
                 stats += $"  Best Hit: {p.MaxSingleDamage:F0}\n\n";
             }
             _statsLabel.Text = stats;
+
+            // Compute and display progression for player 0 (local player)
+            ShowProgression(state);
 
             Visible = true;
         }

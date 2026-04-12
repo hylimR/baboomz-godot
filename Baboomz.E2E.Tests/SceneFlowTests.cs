@@ -167,5 +167,52 @@ namespace Baboomz.E2E.Tests
                     $"Round {round + 1}: new match should start at time 0");
             }
         }
+
+        [Test]
+        public void PostMatchProgression_XPAndChallengesComputed_Issue55()
+        {
+            // Issue #55: post-match progression data (XP, rank, challenges, mastery)
+            // must be computable from a completed match state.
+            var config = new GameConfig();
+            config.UnlockedTier = UnlockRegistry.GetTier(0);
+
+            var state = GameSimulation.CreateMatch(config, 42);
+            AILogic.Reset(42, state.Players.Length);
+            BossLogic.Reset(42, state.Players.Length);
+
+            while (state.Phase != MatchPhase.Ended)
+                GameSimulation.Tick(state, Dt);
+
+            ref PlayerState p = ref state.Players[0];
+            var matchStats = new MatchStats
+            {
+                Won = state.WinnerIndex == 0,
+                Draw = state.WinnerIndex < 0,
+                TotalDamage = p.TotalDamageDealt,
+                ShotsFired = p.ShotsFired,
+                DirectHits = p.DirectHits,
+                DamageTaken = p.TotalDamageTaken,
+                MaxSingleDamage = p.MaxSingleDamage,
+                LandedFirstBlood = state.FirstBloodPlayerIndex == 0
+            };
+
+            // XP calculation should produce valid results
+            var xpResult = RankSystem.CalculateMatchXP(matchStats);
+            Assert.That(xpResult.TotalXP, Is.GreaterThan(0), "Should earn some XP");
+            Assert.That(xpResult.BaseXP, Is.GreaterThan(0), "Should have base XP");
+
+            // Daily challenges should be evaluable
+            var now = System.DateTime.Now;
+            var challenges = ChallengeSystem.GetDailyChallenges(now.Year, now.Month, now.Day);
+            Assert.That(challenges.Length, Is.EqualTo(3), "Should have 3 daily challenges");
+
+            var challengeStats = ChallengeSystem.BuildStats(state, 0);
+            var results = ChallengeSystem.EvaluateChallenges(challenges, challengeStats);
+            Assert.That(results.Length, Is.EqualTo(3), "Should evaluate all 3 challenges");
+
+            // Weapon mastery calculation should work
+            int masteryXP = WeaponMasteryCalc.Calculate(p.DirectHits, 0, true);
+            Assert.That(masteryXP, Is.GreaterThanOrEqualTo(0), "Mastery XP should be non-negative");
+        }
     }
 }
