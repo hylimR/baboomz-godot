@@ -14322,6 +14322,39 @@ namespace Baboomz.Tests.Editor
             Assert.LessOrEqual(bossX, halfMap,
                 "Boss X should not exceed halfMap after teleport");
         }
+
+        [Test]
+        public void BossLogic_BaronCogsworth_Phase2TeleportDelayed_Issue48()
+        {
+            // Issue #48: Phase 2 entry set specialTimer instead of stateTimer,
+            // causing immediate teleport because stateTimer was still 0.
+            var config = SmallConfig();
+            config.MineCount = 0;
+            config.BarrelCount = 0;
+            var state = GameSimulation.CreateMatch(config, 42);
+
+            state.Players[1].BossType = "baron_cogsworth";
+            state.Players[1].IsMob = true;
+            state.Players[1].IsAI = true;
+            state.Players[1].MaxHealth = 300f;
+            state.Players[1].Health = 300f;
+            state.Players[1].BossPhase = 0;
+
+            BossLogic.Reset(42);
+
+            // Record boss position before phase 2 entry
+            Vec2 positionBefore = state.Players[1].Position;
+
+            // Drop HP to trigger phase 2 (66% threshold)
+            state.Players[1].Health = 190f; // ~63%, below 66%
+            GameSimulation.Tick(state, 0.016f);
+            Assert.AreEqual(1, state.Players[1].BossPhase, "Should enter phase 2");
+
+            // Boss should NOT have teleported on the very first phase-2 tick.
+            // The 10s delay means position should be unchanged after just 1 tick.
+            Assert.AreEqual(positionBefore.x, state.Players[1].Position.x,
+                "Boss should not teleport immediately on phase 2 entry (issue #48)");
+        }
     }
 
     [TestFixture]
