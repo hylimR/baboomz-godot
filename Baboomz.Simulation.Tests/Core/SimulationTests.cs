@@ -5636,12 +5636,16 @@ namespace Baboomz.Tests.Editor
         }
 
         [Test]
-        public void BalanceCheck_HealEnergyCost_Is40()
+        public void BalanceCheck_HealStats_Issue49()
         {
+            // Issue #49: Heal was 40E/15s/25HP — underperforming vs Shield (35E/12s).
+            // Buffed to 35E/12s/35HP to match Shield's cost tier.
             var config = new GameConfig();
             var heal = config.Skills[4];
             Assert.AreEqual("heal", heal.SkillId);
-            Assert.AreEqual(40f, heal.EnergyCost, "Heal energy cost should be 40 (reduced from 50)");
+            Assert.AreEqual(35f, heal.EnergyCost, "Heal energy cost should be 35 (issue #49, was 40)");
+            Assert.AreEqual(12f, heal.Cooldown, "Heal cooldown should be 12s (issue #49, was 15s)");
+            Assert.AreEqual(35f, heal.Value, "Heal HP should be 35 (issue #49, was 25)");
         }
 
         [Test]

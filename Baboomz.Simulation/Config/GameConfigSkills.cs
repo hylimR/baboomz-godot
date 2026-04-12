@@ -33,8 +33,9 @@ namespace Baboomz.Simulation
             new SkillDef
             {
                 SkillId = "heal", Type = SkillType.Heal,
-                EnergyCost = 40f, Cooldown = 15f, Duration = 2f,
-                Range = 0f, Value = 25f  // total HP restored
+                // Balance #49: 40E/15s/25HP → 35E/12s/35HP to match Shield's cost tier
+                EnergyCost = 35f, Cooldown = 12f, Duration = 2f,
+                Range = 0f, Value = 35f  // total HP restored
             },
             new SkillDef
             {
