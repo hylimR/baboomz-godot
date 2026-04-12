@@ -24,6 +24,7 @@ namespace Baboomz
         private int _skill1Index;
         private GameSettings _settings;
         private EncyclopediaPanel _encyclopediaPanel;
+        private AchievementPanel _achievementPanel;
 
         private readonly Color _easyColor = new Color(0.3f, 0.6f, 0.3f);
         private readonly Color _normalColor = new Color(0.5f, 0.5f, 0.2f);
@@ -141,6 +142,17 @@ namespace Baboomz
             _encyclopediaPanel = new EncyclopediaPanel();
             _encyclopediaPanel.Name = "EncyclopediaPanel";
             AddChild(_encyclopediaPanel);
+
+            // --- Achievements button ---
+            y += 0.08f;
+            var achBtn = UIBuilder.CreateButton("AchievementsBtn", "Achievements", 18,
+                new Color(0.4f, 0.35f, 0.2f), this);
+            UIBuilder.SetAnchors(achBtn, new Vector2(0.35f, y), new Vector2(0.65f, y + 0.05f));
+            achBtn.Pressed += OnAchievementsPressed;
+
+            _achievementPanel = new AchievementPanel();
+            _achievementPanel.Name = "AchievementPanel";
+            AddChild(_achievementPanel);
 
             // --- Version ---
             var version = UIBuilder.CreateLabel("v0.1.0-alpha", 12,
@@ -306,6 +318,11 @@ namespace Baboomz
         private void OnEncyclopediaPressed()
         {
             _encyclopediaPanel?.Show();
+        }
+
+        private void OnAchievementsPressed()
+        {
+            _achievementPanel?.Show();
         }
     }
 }
