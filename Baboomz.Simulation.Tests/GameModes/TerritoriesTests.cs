@@ -112,8 +112,9 @@ namespace Baboomz.Tests
         }
 
         [Test]
-        public void Tick_EmptyZone_BecomesNeutral()
+        public void Tick_EmptyZone_RetainsOwnership()
         {
+            // Updated for #85: zones retain ownership when empty
             var state = GameSimulation.CreateMatch(MakeConfig(), 42);
             state.Phase = MatchPhase.Playing;
 
@@ -123,10 +124,11 @@ namespace Baboomz.Tests
             GameSimulation.Tick(state, 1f);
             Assert.AreEqual(0, state.Territory.ZoneOwner[0]);
 
-            // Move player away
+            // Move player away — zone should stay owned
             state.Players[0].Position = new Vec2(-100f, 0f);
             GameSimulation.Tick(state, 1f);
-            Assert.AreEqual(-1, state.Territory.ZoneOwner[0], "Zone should be neutral when empty");
+            Assert.AreEqual(0, state.Territory.ZoneOwner[0],
+                "Zone should retain ownership when empty (issue #85)");
         }
 
         [Test]
@@ -221,6 +223,34 @@ namespace Baboomz.Tests
             GameSimulation.Tick(state, 1f);
 
             Assert.AreEqual(-1, state.Territory.ZoneOwner[0], "Mobs should not capture zones");
+        }
+
+        [Test]
+        public void Territories_ZoneRetainsOwnership_WhenEmpty_Issue85()
+        {
+            // Issue #85: Zones lost ownership when all players left.
+            // Should retain until enemy captures.
+            var config = MakeConfig();
+            var state = GameSimulation.CreateMatch(config, 42);
+            state.Phase = MatchPhase.Playing;
+            AILogic.Reset(42, state.Players.Length);
+
+            // Player 0 captures zone 0
+            state.Players[0].Position = state.Territory.ZonePositions[0];
+            state.Players[1].Position = new Vec2(100f, 0f); // far away
+            GameSimulation.Tick(state, 1f);
+            Assert.AreEqual(0, state.Territory.ZoneOwner[0], "P0 should own zone 0");
+            float scoreAfterCapture = state.Territory.TeamScores[0];
+
+            // Player 0 leaves the zone
+            state.Players[0].Position = new Vec2(-100f, 0f);
+            GameSimulation.Tick(state, 1f);
+
+            // Zone should still be owned by team 0 and scoring
+            Assert.AreEqual(0, state.Territory.ZoneOwner[0],
+                "Zone should retain ownership when empty (issue #85)");
+            Assert.Greater(state.Territory.TeamScores[0], scoreAfterCapture,
+                "Empty owned zone should still generate points");
         }
     }
 }
