@@ -168,8 +168,10 @@ namespace Baboomz.Simulation
             new WeaponDef
             {
                 WeaponId = "ricochet_disc",
+                // Balance #87: MaxDamage 28 -> 22 (total burst 66 still competitive
+                // for infinite-ammo; DPS/E from 1.87 to ~1.47).
                 MinPower = 10f, MaxPower = 28f, ChargeTime = 1.5f, ShootCooldown = 3f,
-                ExplosionRadius = 1.5f, MaxDamage = 28f, KnockbackForce = 3f,
+                ExplosionRadius = 1.5f, MaxDamage = 22f, KnockbackForce = 3f,
                 ProjectileCount = 1, SpreadAngle = 0f,
                 DestroysIndestructible = false, EnergyCost = 15f, Ammo = -1,
                 Bounces = 3, IsRicochet = true
@@ -205,13 +207,13 @@ namespace Baboomz.Simulation
             new WeaponDef
             {
                 WeaponId = "flak_cannon",
-                // Balance #34: MaxDamage 10 -> 20 and ShootCooldown 4 -> 3. The 8-fragment
-                // burst did not offset the low base damage; flak was the worst DPS/Energy
-                // outlier on the chart at 0.10. New values land near the peer tactical band.
+                // Balance #87: MaxDamage 20 -> 15, EnergyCost 25 -> 30.
+                // 8×15 = 120 max burst between airstrike and HHG tiers.
+                // DPS/E from 2.40 to ~1.33, matching peer burst weapons.
                 MinPower = 10f, MaxPower = 25f, ChargeTime = 2f, ShootCooldown = 3f,
-                ExplosionRadius = 1f, MaxDamage = 20f, KnockbackForce = 3f,
+                ExplosionRadius = 1f, MaxDamage = 15f, KnockbackForce = 3f,
                 ProjectileCount = 1, SpreadAngle = 0f,
-                DestroysIndestructible = false, EnergyCost = 25f, Ammo = 2,
+                DestroysIndestructible = false, EnergyCost = 30f, Ammo = 2,
                 ClusterCount = 8,
                 IsFlak = true, FlakMinDist = 5f, FlakMaxDist = 25f
             }

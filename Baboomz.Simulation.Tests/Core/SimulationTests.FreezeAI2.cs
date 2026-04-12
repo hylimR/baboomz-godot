@@ -69,16 +69,17 @@ namespace Baboomz.Tests.Editor
         }
 
         [Test]
-        public void BalanceCheck_FlakCannonDamageAndCooldown_Issue34()
+        public void BalanceCheck_FlakCannonDamageAndCooldown_Issue87()
         {
-            // Issue #34: flak was the worst outlier at 0.10 DPS/Energy — 8 fragments
-            // could not make up for 10 base damage. Bump to 20 damage and drop cooldown.
+            // Issue #87: flak was a DPS/E outlier at 2.40. Reduced MaxDamage 20→15,
+            // EnergyCost 25→30. 8×15=120 burst between airstrike and HHG tiers.
             var config = new GameConfig();
             WeaponDef flak = default;
             foreach (var w in config.Weapons) if (w.WeaponId == "flak_cannon") { flak = w; break; }
             Assert.AreEqual("flak_cannon", flak.WeaponId);
-            Assert.AreEqual(20f, flak.MaxDamage, "Flak damage should be 20 (issue #34, was 10)");
-            Assert.AreEqual(3f, flak.ShootCooldown, "Flak cooldown should be 3s (issue #34, was 4s)");
+            Assert.AreEqual(15f, flak.MaxDamage, "Flak damage should be 15 (issue #87, was 20)");
+            Assert.AreEqual(30f, flak.EnergyCost, "Flak energy should be 30 (issue #87, was 25)");
+            Assert.AreEqual(3f, flak.ShootCooldown, "Flak cooldown should be 3s");
         }
 
         [Test]
