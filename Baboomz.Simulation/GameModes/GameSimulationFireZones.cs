@@ -40,6 +40,10 @@ namespace Baboomz.Simulation
                     }
                 }
 
+                // Throttle DamageEvent emission timer
+                zone.DamageEventTimer -= dt;
+                bool resetEventTimer = zone.DamageEventTimer <= 0f;
+
                 // Damage players standing in the fire zone
                 for (int p = 0; p < state.Players.Length; p++)
                 {
@@ -58,13 +62,25 @@ namespace Baboomz.Simulation
                         player.Health -= damage;
                         player.TotalDamageTaken += damage;
 
-                        state.DamageEvents.Add(new DamageEvent
+                        // Throttle DamageEvent emission to 0.5s intervals
+                        // to prevent hit marker/KillFeed spam. Damage is still
+                        // applied every frame for correct HP tracking.
+                        if (zone.DamageEventTimer <= 0f)
                         {
-                            TargetIndex = p,
-                            Amount = damage,
-                            Position = player.Position,
-                            SourceIndex = zone.OwnerIndex
-                        });
+                            // Report 0.5s worth of effective damage (with multipliers)
+                            float eventDamage = zone.DamagePerSecond * 0.5f;
+                            if (zone.OwnerIndex >= 0 && zone.OwnerIndex < state.Players.Length)
+                                eventDamage *= state.Players[zone.OwnerIndex].DamageMultiplier;
+                            eventDamage *= (1f / MathF.Max(player.ArmorMultiplier, 0.01f));
+
+                            state.DamageEvents.Add(new DamageEvent
+                            {
+                                TargetIndex = p,
+                                Amount = eventDamage,
+                                Position = player.Position,
+                                SourceIndex = zone.OwnerIndex
+                            });
+                        }
 
                         // Track stats
                         if (zone.OwnerIndex >= 0 && zone.OwnerIndex < state.Players.Length && p != zone.OwnerIndex)
@@ -86,6 +102,9 @@ namespace Baboomz.Simulation
                         }
                     }
                 }
+
+                if (resetEventTimer)
+                    zone.DamageEventTimer = 0.5f;
 
                 state.FireZones[f] = zone;
             }
