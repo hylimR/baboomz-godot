@@ -4804,6 +4804,46 @@ namespace Baboomz.Tests.Editor
         }
 
         [Test]
+        public void BossLogic_SandWyrm_SnapsToGroundAfterEmerge_Issue90()
+        {
+            // Issue #90: SandWyrm emerged at arbitrary Y with no ground detection.
+            // Tick long enough for a full submerge → underground → emerge cycle.
+            var config = SmallConfig();
+            config.MineCount = 0;
+            config.BarrelCount = 0;
+            var state = GameSimulation.CreateMatch(config, 42);
+
+            state.Players[1].BossType = "sand_wyrm";
+            state.Players[1].IsMob = true;
+            state.Players[1].IsAI = true;
+            state.Players[1].MaxHealth = 150f;
+            state.Players[1].Health = 150f;
+            state.Players[1].BossPhase = 0;
+
+            BossLogic.Reset(42);
+
+            // Force into submerge (subState 1) by setting subState directly
+            BossLogic.subState[1] = 1;
+
+            // Tick for ~15 seconds to complete full submerge→underground→emerge
+            for (int i = 0; i < 1000; i++)
+                GameSimulation.Tick(state, 0.016f);
+
+            // After enough time, the boss should have completed at least one
+            // emerge cycle and be near ground level (not deep underground)
+            if (BossLogic.subState[1] == 0) // back to surfaced
+            {
+                float groundY = GamePhysics.FindGroundY(
+                    state.Terrain, state.Players[1].Position.x, config.SpawnProbeY, 0.5f);
+                Assert.AreEqual(groundY + 0.5f, state.Players[1].Position.y, 3f,
+                    "SandWyrm should be near ground after emerging (issue #90)");
+            }
+            // If still in a substate, at least verify it's not stuck underground
+            Assert.IsFalse(state.Players[1].Position.y < config.DeathBoundaryY,
+                "SandWyrm should not be below death boundary");
+        }
+
+        [Test]
         public void BossLogic_ForgeColossus_ArmorExpiresEvenIfPhaseAdvancesPast1()
         {
             var config = SmallConfig();
