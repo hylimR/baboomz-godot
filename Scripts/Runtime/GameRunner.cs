@@ -50,6 +50,10 @@ namespace Baboomz
 
             _matchResultShown = false;
             _matchEndTimer = -1f;
+            _isReplayMode = false;
+
+            // Start recording for replay
+            StartRecording();
 
             SetupAll();
         }
@@ -207,6 +211,13 @@ namespace Baboomz
         {
             if (State == null) return;
 
+            if (_isReplayMode)
+            {
+                ProcessReplayTick((float)delta);
+                UpdateReplayHUD();
+                return;
+            }
+
             if (State.Phase == MatchPhase.Playing)
             {
                 GameSimulation.Tick(State, (float)delta);
@@ -217,7 +228,10 @@ namespace Baboomz
             if (State.Phase == MatchPhase.Ended && !_matchResultShown)
             {
                 if (_matchEndTimer < 0f)
+                {
                     _matchEndTimer = MatchEndDelay;
+                    StopAndSaveRecording();
+                }
 
                 _matchEndTimer -= (float)delta;
                 if (_matchEndTimer <= 0f)

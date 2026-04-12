@@ -76,18 +76,25 @@ namespace Baboomz
                 panel, new Vector2(0.15f, 0.78f), new Vector2(0.85f, 0.82f),
                 HorizontalAlignment.Center);
 
+            // Watch Replay button (center)
+            var replayBtn = UIBuilder.CreateButton("ReplayBtn", "Watch Replay", 18,
+                new Color(0.3f, 0.3f, 0.6f), panel);
+            UIBuilder.SetAnchors(replayBtn,
+                new Vector2(0.3f, 0.83f), new Vector2(0.7f, 0.9f));
+            replayBtn.Pressed += OnWatchReplay;
+
             // Play Again button
-            var playAgainBtn = UIBuilder.CreateButton("PlayAgainBtn", "Play Again", 24,
+            var playAgainBtn = UIBuilder.CreateButton("PlayAgainBtn", "Play Again", 20,
                 new Color(0.3f, 0.6f, 0.3f), panel);
             UIBuilder.SetAnchors(playAgainBtn,
-                new Vector2(0.55f, 0.84f), new Vector2(0.95f, 0.97f));
+                new Vector2(0.55f, 0.91f), new Vector2(0.95f, 0.98f));
             playAgainBtn.Pressed += OnPlayAgain;
 
             // Main Menu button
-            var menuBtn = UIBuilder.CreateButton("MainMenuBtn", "Main Menu", 20,
+            var menuBtn = UIBuilder.CreateButton("MainMenuBtn", "Main Menu", 18,
                 new Color(0.5f, 0.3f, 0.3f), panel);
             UIBuilder.SetAnchors(menuBtn,
-                new Vector2(0.05f, 0.84f), new Vector2(0.45f, 0.97f));
+                new Vector2(0.05f, 0.91f), new Vector2(0.45f, 0.98f));
             menuBtn.Pressed += OnMainMenu;
         }
 
@@ -135,6 +142,16 @@ namespace Baboomz
             ShowProgression(state);
 
             Visible = true;
+        }
+
+        private void OnWatchReplay()
+        {
+            var replayData = GameRunner.LastReplayData;
+            if (replayData == null || replayData.Frames.Count == 0) return;
+
+            Visible = false;
+            var runner = GetParent()?.GetParent() as GameRunner;
+            runner?.StartReplayPlayback(replayData);
         }
 
         private void OnPlayAgain()
