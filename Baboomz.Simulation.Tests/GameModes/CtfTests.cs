@@ -363,5 +363,59 @@ namespace Baboomz.Tests.Editor
             // Should not throw
             GameSimulation.DropCtfFlag(state, 0);
         }
+
+        [Test]
+        public void Ctf_CarrierSpeedPenalty_UsesMultiplier_Issue83()
+        {
+            // Issue #83: Carrier speed overwrote MoveSpeed with base * mult,
+            // destroying WarCry buff. Fix: apply as multiplier on current speed.
+            var config = CtfConfig();
+            var state = GameSimulation.CreateMatch(config, 42);
+            state.Phase = MatchPhase.Playing;
+            AILogic.Reset(42, state.Players.Length);
+
+            float baseSpeed = config.DefaultMoveSpeed; // 5f
+            float warCrySpeed = baseSpeed * 1.5f; // 7.5f (WarCry typical buff)
+
+            // Simulate WarCry active + carrying flag
+            state.Players[0].MoveSpeed = warCrySpeed;
+            state.Players[0].WarCryTimer = 5f;
+
+            // Make player 0 carry enemy flag
+            state.Ctf.Flags[1].CarrierIndex = 0;
+
+            // Tick to apply carrier speed penalty
+            GameSimulation.Tick(state, 0.016f);
+
+            // Speed should be warCrySpeed * CtfCarrierSpeedMult, NOT baseSpeed * mult
+            float expected = warCrySpeed * config.CtfCarrierSpeedMult;
+            Assert.AreEqual(expected, state.Players[0].MoveSpeed, 0.5f,
+                "Carrier speed should be WarCry speed * carrier mult, not base * mult (issue #83)");
+        }
+
+        [Test]
+        public void Ctf_NonCarrier_SpeedRestored_Issue83()
+        {
+            // Issue #83: After dropping flag, speed was never restored
+            var config = CtfConfig();
+            var state = GameSimulation.CreateMatch(config, 42);
+            state.Phase = MatchPhase.Playing;
+            AILogic.Reset(42, state.Players.Length);
+
+            float baseSpeed = config.DefaultMoveSpeed;
+
+            // Set player speed below base (simulating lingering penalty)
+            state.Players[0].MoveSpeed = baseSpeed * 0.5f;
+            state.Players[0].WarCryTimer = 0f; // no WarCry
+
+            // Not carrying any flag
+            state.Ctf.Flags[0].CarrierIndex = -1;
+            state.Ctf.Flags[1].CarrierIndex = -1;
+
+            GameSimulation.Tick(state, 0.016f);
+
+            Assert.GreaterOrEqual(state.Players[0].MoveSpeed, baseSpeed * 0.9f,
+                "Non-carrier speed should be restored to base (issue #83)");
+        }
     }
 }
