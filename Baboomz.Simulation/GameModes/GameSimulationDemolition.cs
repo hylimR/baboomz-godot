@@ -95,6 +95,9 @@ namespace Baboomz.Simulation
             p.FreezeTimer = 0f;
             p.RetreatTimer = 0f;
             p.ShootCooldownRemaining = 0f;
+
+            // Restore weapon ammo from config to prevent progressive weapon starvation
+            RestoreWeaponAmmo(ref p, config);
         }
 
         /// <summary>

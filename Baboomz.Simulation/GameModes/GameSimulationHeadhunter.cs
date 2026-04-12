@@ -121,6 +121,9 @@ namespace Baboomz.Simulation
             p.ShootCooldownRemaining = 0f;
             p.IsSwimming = false;
             p.SwimTimer = 0f;
+
+            // Restore weapon ammo from config to prevent progressive weapon starvation
+            RestoreWeaponAmmo(ref p, config);
         }
 
         static void CompactTokens(ref HeadhunterState hh)
