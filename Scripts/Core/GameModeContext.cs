@@ -32,6 +32,9 @@ namespace Baboomz
         /// <summary>Skill index for slot 1 (default: dash = 3).</summary>
         public static int SelectedSkillSlot1 { get; set; } = 3;
 
+        /// <summary>Weapon slot active at match start (default: 0 = cannon).</summary>
+        public static int StartWeaponSlot { get; set; } = 0;
+
         public static void Reset()
         {
             Mode = GameMode.VsAI;
@@ -39,6 +42,7 @@ namespace Baboomz
             Loadout = new PlayerLoadout();
             SelectedSkillSlot0 = 0;
             SelectedSkillSlot1 = 3;
+            StartWeaponSlot = 0;
         }
     }
 

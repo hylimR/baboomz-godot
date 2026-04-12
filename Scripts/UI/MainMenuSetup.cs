@@ -27,6 +27,7 @@ namespace Baboomz
         private AchievementPanel _achievementPanel;
         private LevelSelectPanel _levelSelectPanel;
         private ShopPanel _shopPanel;
+        private LoadoutPanel _loadoutPanel;
 
         private readonly Color _easyColor = new Color(0.3f, 0.6f, 0.3f);
         private readonly Color _normalColor = new Color(0.5f, 0.5f, 0.2f);
@@ -156,8 +157,19 @@ namespace Baboomz
             _encyclopediaPanel.Name = "EncyclopediaPanel";
             AddChild(_encyclopediaPanel);
 
+            // --- Loadout button ---
+            y += 0.07f;
+            var loadoutBtn = UIBuilder.CreateButton("LoadoutBtn", "Loadout", 18,
+                new Color(0.4f, 0.3f, 0.5f), this);
+            UIBuilder.SetAnchors(loadoutBtn, new Vector2(0.35f, y), new Vector2(0.65f, y + 0.05f));
+            loadoutBtn.Pressed += OnLoadoutPressed;
+
+            _loadoutPanel = new LoadoutPanel();
+            _loadoutPanel.Name = "LoadoutPanel";
+            AddChild(_loadoutPanel);
+
             // --- Achievements button ---
-            y += 0.08f;
+            y += 0.07f;
             var achBtn = UIBuilder.CreateButton("AchievementsBtn", "Achievements", 18,
                 new Color(0.4f, 0.35f, 0.2f), this);
             UIBuilder.SetAnchors(achBtn, new Vector2(0.35f, y), new Vector2(0.65f, y + 0.05f));
@@ -256,6 +268,11 @@ namespace Baboomz
         private void OnEncyclopediaPressed()
         {
             _encyclopediaPanel?.Show();
+        }
+
+        private void OnLoadoutPressed()
+        {
+            _loadoutPanel?.Show();
         }
 
         private void OnAchievementsPressed()
