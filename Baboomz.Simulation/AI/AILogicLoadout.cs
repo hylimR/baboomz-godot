@@ -125,6 +125,8 @@ namespace Baboomz.Simulation
             if (ai.Position.y < dangerY && ai.Velocity.y < 0f)
             {
                 if (TryActivateSkillByType(state, index, SkillType.Jetpack)) return;
+                // GrapplingHook as alternative to Jetpack for falling rescue
+                if (TryActivateSkillByType(state, index, SkillType.GrapplingHook)) return;
             }
 
             float hpPercent = ai.MaxHealth > 0f ? ai.Health / ai.MaxHealth : 0f;
@@ -158,6 +160,15 @@ namespace Baboomz.Simulation
             // Earthquake when 2+ enemies grounded
             if (rng.NextDouble() < 0.01 * dt * 60.0 && CountGroundedEnemies(state, index) >= 2)
                 TryActivateSkillByType(state, index, SkillType.Earthquake);
+
+            // GrapplingHook for mobility (near map edge or after knockback)
+            float halfMap = state.Config.MapWidth / 2f;
+            if (MathF.Abs(ai.Position.x) > halfMap * 0.8f && rng.NextDouble() < 0.01 * dt * 60.0)
+                TryActivateSkillByType(state, index, SkillType.GrapplingHook);
+
+            // Mend for defensive terrain cover when HP is low
+            if (hpPercent < 0.5f && rng.NextDouble() < 0.008 * dt * 60.0)
+                TryActivateSkillByType(state, index, SkillType.Mend);
 
             // Overcharge when saved up energy and an enemy is in firing range (commit to a big shot)
             if (ai.Energy >= 80f && rng.NextDouble() < 0.015 * dt * 60.0 && HasEnemyInRange(state, index, 25f))

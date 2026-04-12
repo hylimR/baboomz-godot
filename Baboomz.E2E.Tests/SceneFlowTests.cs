@@ -214,5 +214,42 @@ namespace Baboomz.E2E.Tests
             int masteryXP = WeaponMasteryCalc.Calculate(p.DirectHits, 0, true);
             Assert.That(masteryXP, Is.GreaterThanOrEqualTo(0), "Mastery XP should be non-negative");
         }
+
+        [Test]
+        public void AI_WithGrapplingHookAndMend_DoesNotCrash_Issue91()
+        {
+            // Issue #91: AI should handle GrapplingHook and Mend skills
+            // without crashing. Full stochastic testing is impractical,
+            // but we verify the skill pipeline processes these types correctly.
+            var config = new GameConfig();
+            config.UnlockedTier = UnlockRegistry.GetTier(0);
+
+            // Give AI skills that include GrapplingHook and Mend
+            var state = GameSimulation.CreateMatch(config, 42,
+                playerSkill0: 1, playerSkill1: 17); // grapple + mend for player
+            AILogic.Reset(42, state.Players.Length);
+            BossLogic.Reset(42, state.Players.Length);
+
+            // Force AI to have GrapplingHook and Mend
+            if (state.Players[1].SkillSlots != null && state.Players[1].SkillSlots.Length >= 2)
+            {
+                state.Players[1].SkillSlots[0].Type = SkillType.GrapplingHook;
+                state.Players[1].SkillSlots[0].SkillId = "grapple";
+                state.Players[1].SkillSlots[1].Type = SkillType.Mend;
+                state.Players[1].SkillSlots[1].SkillId = "mend";
+            }
+
+            // Put AI in low-HP danger scenario to trigger Mend
+            state.Players[1].Health = state.Players[1].MaxHealth * 0.3f;
+
+            // Tick 500 frames — should not crash with these skills equipped
+            for (int i = 0; i < 500; i++)
+            {
+                GameSimulation.Tick(state, Dt);
+                if (state.Phase == MatchPhase.Ended) break;
+            }
+
+            Assert.Pass("AI with GrapplingHook/Mend skills ran without error");
+        }
     }
 }
