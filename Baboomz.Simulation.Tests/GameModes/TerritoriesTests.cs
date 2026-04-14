@@ -252,5 +252,70 @@ namespace Baboomz.Tests
             Assert.Greater(state.Territory.TeamScores[0], scoreAfterCapture,
                 "Empty owned zone should still generate points");
         }
+
+        [Test]
+        public void Tick_WinnerPrefersAlivePlayer_Issue110()
+        {
+            // Issue #110: When a team reached the point threshold, the code found
+            // the first player on that team without checking if they were alive.
+            // Use TeamMode with 4 players so CheckMatchEnd doesn't interfere via
+            // the FFA death-check path.
+            var config = MakeConfig();
+            config.TerritoryPointsToWin = 5f;
+            config.TeamMode = true;
+            var state = GameSimulation.CreateMatch(config, 42);
+            state.Phase = MatchPhase.Playing;
+            AILogic.Reset(42, state.Players.Length);
+
+            // P0=team0, P1=team1 (2-player match, team mode)
+            state.Players[0].TeamIndex = 0;
+            state.Players[1].TeamIndex = 0; // Both on team 0
+
+            // Kill P0 but leave P1 alive (both on team 0)
+            state.Players[0].IsDead = true;
+            state.Players[0].Health = 0f;
+
+            // Force team 0 to win
+            state.Territory.TeamScores[0] = config.TerritoryPointsToWin + 1f;
+
+            GameSimulation.Tick(state, 0.016f);
+
+            Assert.AreEqual(MatchPhase.Ended, state.Phase);
+            Assert.AreEqual(0, state.WinnerTeamIndex);
+            Assert.AreEqual(1, state.WinnerIndex,
+                "Should prefer alive player P1 over dead P0 on the same team (issue #110)");
+            Assert.IsFalse(state.Players[state.WinnerIndex].IsDead,
+                "Winner should be alive when alive players exist on the team");
+        }
+
+        [Test]
+        public void Tick_WinnerSkipsDeadPlayer_PicksAlive_Issue110()
+        {
+            // Verify that when the first player on the winning team is dead,
+            // the winner is the next alive player on the same team (not the dead one).
+            var config = MakeConfig();
+            config.TerritoryPointsToWin = 5f;
+            config.TeamMode = true;
+            var state = GameSimulation.CreateMatch(config, 42);
+            state.Phase = MatchPhase.Playing;
+            AILogic.Reset(42, state.Players.Length);
+
+            // P0(team0) dead, P1(team0) alive — team 1 has nobody
+            state.Players[0].TeamIndex = 0;
+            state.Players[1].TeamIndex = 0;
+            state.Players[0].IsDead = true;
+            state.Players[0].Health = 0f;
+
+            // Force team 0 to win via score
+            state.Territory.TeamScores[0] = config.TerritoryPointsToWin + 1f;
+
+            GameSimulation.Tick(state, 0.016f);
+
+            Assert.AreEqual(MatchPhase.Ended, state.Phase);
+            // Winner must be P1 (alive), not P0 (dead)
+            Assert.AreEqual(1, state.WinnerIndex,
+                "Winner should skip dead P0 and pick alive P1 on team 0 (issue #110)");
+            Assert.IsFalse(state.Players[state.WinnerIndex].IsDead);
+        }
     }
 }
