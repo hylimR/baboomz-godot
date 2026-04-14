@@ -149,9 +149,10 @@ namespace Baboomz.Simulation
                 if (demo.Crystals[c].HP <= 0f)
                 {
                     // Crystal c belongs to team c; the other team wins
-                    int winner = c == 0 ? 1 : 0;
+                    int winTeam = c == 0 ? 1 : 0;
                     state.Phase = MatchPhase.Ended;
-                    state.WinnerIndex = winner;
+                    state.WinnerTeamIndex = winTeam;
+                    state.WinnerIndex = FindPlayerOnTeam(state, winTeam);
                     return;
                 }
             }
@@ -174,12 +175,42 @@ namespace Baboomz.Simulation
 
                 state.Phase = MatchPhase.Ended;
                 if (hp0 > hp1)
-                    state.WinnerIndex = 0;
+                {
+                    state.WinnerTeamIndex = 0;
+                    state.WinnerIndex = FindPlayerOnTeam(state, 0);
+                }
                 else if (hp1 > hp0)
-                    state.WinnerIndex = 1;
+                {
+                    state.WinnerTeamIndex = 1;
+                    state.WinnerIndex = FindPlayerOnTeam(state, 1);
+                }
                 else
+                {
                     state.WinnerIndex = -1; // draw
+                }
             }
+        }
+
+        /// <summary>
+        /// Find the first alive player on a team. Falls back to first player on
+        /// team if all are dead (e.g. tiebreaker scenario). In non-team mode
+        /// (TeamIndex == -1), uses player index as implicit team: P0 = team 0, P1 = team 1.
+        /// </summary>
+        static int FindPlayerOnTeam(GameState state, int teamIndex)
+        {
+            int fallback = -1;
+            for (int i = 0; i < state.Players.Length; i++)
+            {
+                // In non-team mode, players have TeamIndex == -1.
+                // Use positional convention: P0=team0, P1=team1.
+                int pTeam = state.Players[i].TeamIndex >= 0
+                    ? state.Players[i].TeamIndex
+                    : (i < state.Players.Length / 2 ? 0 : 1);
+                if (pTeam != teamIndex) continue;
+                if (fallback < 0) fallback = i;
+                if (!state.Players[i].IsDead) return i;
+            }
+            return fallback;
         }
     }
 }
