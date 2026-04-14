@@ -15,7 +15,9 @@ Review open PRs, enforce code quality, approve and merge or request changes. Run
 
 ## Per-Cycle Workflow
 
-### 0. Reset to main
+### 0. Switch to main
+
+**Always start the cycle on `main`:**
 
 ```bash
 git checkout main && git pull origin main
@@ -136,6 +138,18 @@ dotnet test Baboomz.E2E.Tests/
 git checkout main
 ```
 
+**For `visual` PRs — use Godot MCP to verify screenshots.** Don't just trust the paths claimed in the PR body; re-capture and compare:
+
+```
+mcp__godot__run_project           projectPath=D:/Workspace/game/BaboomzGodot-Lead  scene=Scenes/Main.tscn
+mcp__godot__capture_screenshot    projectPath=D:/Workspace/game/BaboomzGodot-Lead  scene=Scenes/Main.tscn     outputPath=/tmp/review-main.png
+mcp__godot__capture_screenshot    projectPath=D:/Workspace/game/BaboomzGodot-Lead  scene=Scenes/MainMenu.tscn outputPath=/tmp/review-menu.png
+mcp__godot__get_debug_output
+mcp__godot__stop_project
+```
+
+Reject visual PRs that render broken or don't match what the PR body claims.
+
 ### 8. Proactive audit (when no PRs)
 
 When idle, check main for code quality:
@@ -157,9 +171,9 @@ gh issue create \
   --body "file.cs is N lines. Split into partial classes or extract helpers."
 ```
 
-### 9. Local project hygiene
+### 9. Local project hygiene (end of cycle — always end on main)
 
-After all PRs are processed, clean up the local repo:
+After all PRs are processed, clean up the local repo. **Always finish the cycle back on `main`:**
 
 ```bash
 # 1. Return to main and pull latest
@@ -196,4 +210,6 @@ git status --short  # should be empty
 - **Create quality issues** — if proactive audit finds problems, file them for Dev
 - **Sequential conflict resolution** — rebase and merge one PR at a time when multiple PRs conflict with each other
 - **Local hygiene every cycle** — prune worktrees, delete merged branches. Working directory must be clean at end of cycle.
+- **Start and end the cycle on main** — switch to `main` at step 0, switch back to `main` at step 9
+- **Use Godot MCP to verify visual PRs** — `run_project`, `capture_screenshot`, `get_debug_output`, `stop_project` (project path `D:/Workspace/game/BaboomzGodot-Lead`). Re-capture screenshots before approving any visual PR; don't trust only the paths in the PR body.
 - **Visual PR rule** — if `visual` label is set and no screenshot paths in body, request changes immediately

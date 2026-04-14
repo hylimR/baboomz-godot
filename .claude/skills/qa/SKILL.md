@@ -15,7 +15,9 @@ Daily audit session combining **QA testing**, **game design/balance analysis**, 
 
 ## Per-Cycle Workflow
 
-### 0. Reset to main
+### 0. Switch to main
+
+**Always start the cycle on `main`:**
 
 ```bash
 git checkout main && git pull origin main
@@ -75,6 +77,18 @@ Audit against the feature list in CLAUDE.md "What's Ported vs Remaining" section
 - What's the highest-impact gap right now?
 
 Pay special attention to the **visual replication gap** — the Unity version has full character sprites, terrain textures, explosion animations, and parallax backgrounds. The Godot port currently uses placeholder rectangles and procedural circles. File these gaps with the `visual` label.
+
+**Use Godot MCP to verify visual gaps before filing.** Before filing a `visual` issue, run the project and capture a screenshot so the issue body can reference the actual current state:
+
+```
+mcp__godot__run_project           projectPath=D:/Workspace/game/BaboomzGodot-Lead  scene=Scenes/Main.tscn
+mcp__godot__capture_screenshot    projectPath=D:/Workspace/game/BaboomzGodot-Lead  scene=Scenes/Main.tscn     outputPath=/tmp/qa-main.png
+mcp__godot__capture_screenshot    projectPath=D:/Workspace/game/BaboomzGodot-Lead  scene=Scenes/MainMenu.tscn outputPath=/tmp/qa-menu.png
+mcp__godot__get_debug_output
+mcp__godot__stop_project
+```
+
+Also use `get_debug_output` during runtime checks to surface errors/warnings that code-reading alone would miss — file those as bugs.
 
 ---
 
@@ -289,10 +303,12 @@ Agent(subagent_type="general-purpose", mode="bypassPermissions", run_in_backgrou
 
 This keeps the pipeline flowing — QA files issues, Dev picks them up, Tech Lead reviews.
 
-### 8. Return to main
+### 8. Return to main (end of cycle)
+
+**Always end the cycle back on `main`:**
 
 ```bash
-git checkout main
+git checkout main && git pull origin main
 ```
 
 ### 9. Report
@@ -334,3 +350,5 @@ git checkout main
 - **Read the code before filing** — verify assumptions against actual source
 - **Scope estimates required** — every feature proposal tags small/medium/large
 - **Use `visual` label** — for any rendering, sprite, shader, or art-related issue
+- **Start and end the cycle on main** — switch to `main` at step 0, switch back to `main` at step 8
+- **Use Godot MCP for verification** — before filing visual/runtime bugs, use `run_project`, `get_debug_output`, and `capture_screenshot` (project path `D:/Workspace/game/BaboomzGodot-Lead`) to confirm the issue reproduces and to attach screenshots in issue bodies

@@ -15,7 +15,9 @@ Pick up open GitHub issues, fix them on branches, and open PRs. Work on **multip
 
 ## Per-Cycle Workflow
 
-### 0. Reset to main
+### 0. Switch to main
+
+**Always start the cycle on `main`:**
 
 ```bash
 git checkout main && git pull origin main
@@ -101,14 +103,21 @@ dotnet test Baboomz.E2E.Tests/Baboomz.E2E.Tests.csproj
 
 **Do NOT create a PR if the build or any test fails.** Fix until green.
 
-**For issues with the `visual` label**, additionally capture screenshots:
+**Godot MCP — use for development and verification.** Leverage these tools whenever your change touches renderers, scenes, shaders, UI, or anything visible:
 
 ```
-mcp__godot__capture_screenshot  projectPath=D:/Workspace/BaboomzGodot  scene=Scenes/Main.tscn     outputPath=/tmp/verify-main.png
-mcp__godot__capture_screenshot  projectPath=D:/Workspace/BaboomzGodot  scene=Scenes/MainMenu.tscn outputPath=/tmp/verify-menu.png
+mcp__godot__get_project_info         projectPath=D:/Workspace/game/BaboomzGodot-Lead
+mcp__godot__launch_editor            projectPath=D:/Workspace/game/BaboomzGodot-Lead
+mcp__godot__run_project              projectPath=D:/Workspace/game/BaboomzGodot-Lead
+mcp__godot__get_debug_output
+mcp__godot__stop_project
+mcp__godot__capture_screenshot       projectPath=D:/Workspace/game/BaboomzGodot-Lead  scene=Scenes/Main.tscn     outputPath=/tmp/verify-main.png
+mcp__godot__capture_screenshot       projectPath=D:/Workspace/game/BaboomzGodot-Lead  scene=Scenes/MainMenu.tscn outputPath=/tmp/verify-menu.png
 ```
 
-Attach the screenshot paths in the PR body so the Tech Lead can review visually.
+Use `run_project` + `get_debug_output` to catch runtime errors that `dotnet build` cannot, and `capture_screenshot` to verify visual output before opening a PR.
+
+**For issues with the `visual` label**, screenshots are REQUIRED — attach the paths in the PR body so the Tech Lead can review visually.
 
 ### 6. Commit and push
 
@@ -191,11 +200,14 @@ Agent(subagent_type="general-purpose", mode="bypassPermissions", run_in_backgrou
   prompt="Run the /tech-lead skill: review all open PRs with needs-review label, apply the code quality checklist, approve and merge good PRs, request changes on bad ones. Follow the skill instructions exactly.")
 ```
 
-### 10. Cleanup merged branches (end of cycle)
+### 10. Cleanup merged branches and return to main (end of cycle)
+
+**Always end the cycle back on `main`:**
 
 ```bash
 git fetch --prune
 git branch --merged main | grep -v main | xargs -r git branch -d
+git checkout main && git pull origin main
 ```
 
 ### 11. Report
@@ -220,5 +232,7 @@ git branch --merged main | grep -v main | xargs -r git branch -d
 - **Reference issues** — every commit and PR links to the issue number
 - **Don't touch issues labeled `in-progress`** by someone else
 - **Return to main between issues** — always branch from fresh main
-- **Visual issues require screenshots** — PRs with `visual` label must include capture_screenshot output in the body
+- **Start and end the cycle on main** — switch to `main` at step 0, switch back to `main` at step 10
+- **Use Godot MCP for development and verification** — `launch_editor`, `run_project`, `get_debug_output`, `stop_project`, `capture_screenshot` (project path `D:/Workspace/game/BaboomzGodot-Lead`). Verify runtime behavior in-editor before opening any PR that touches renderers, scenes, shaders, or UI.
+- **Visual issues require screenshots** — PRs with `visual` label must include `mcp__godot__capture_screenshot` output paths in the body
 - **Simulation purity** — if your change touches `Baboomz.Simulation/`, verify no `using Godot` was introduced
