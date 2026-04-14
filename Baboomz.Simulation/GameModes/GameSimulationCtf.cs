@@ -133,11 +133,15 @@ namespace Baboomz.Simulation
                 if (p.IsDead) continue;
 
                 bool carrying = IsCarryingFlag(state, i);
-                // Apply carrier speed penalty as a multiplier on current MoveSpeed
-                // (preserves WarCry buff). Restore base speed when no longer carrying.
+                // Set carrier speed as a flat value each frame (no compounding).
+                // Compute the effective base speed from DefaultMoveSpeed + WarCry buff,
+                // then apply the carrier multiplier once.
                 if (carrying)
                 {
-                    p.MoveSpeed *= config.CtfCarrierSpeedMult;
+                    float baseSpeed = config.DefaultMoveSpeed;
+                    if (p.WarCryTimer > 0f && p.WarCrySpeedBuff > 0f)
+                        baseSpeed *= p.WarCrySpeedBuff;
+                    p.MoveSpeed = baseSpeed * config.CtfCarrierSpeedMult;
                 }
                 else if (p.MoveSpeed < config.DefaultMoveSpeed && p.WarCryTimer <= 0f)
                 {
