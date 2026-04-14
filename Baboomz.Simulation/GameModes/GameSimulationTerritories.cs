@@ -109,16 +109,21 @@ namespace Baboomz.Simulation
                 if (territory.TeamScores[t] >= state.Config.TerritoryPointsToWin)
                 {
                     state.Phase = MatchPhase.Ended;
-                    // Find first alive player on winning team
+                    state.WinnerTeamIndex = t;
+                    // Find first alive player on winning team, fall back to first on team
+                    int fallback = -1;
                     for (int i = 0; i < state.Players.Length; i++)
                     {
-                        if (state.Players[i].TeamIndex == t)
+                        if (state.Players[i].TeamIndex != t) continue;
+                        if (fallback < 0) fallback = i;
+                        if (!state.Players[i].IsDead)
                         {
                             state.WinnerIndex = i;
-                            state.WinnerTeamIndex = t;
+                            fallback = -1;
                             break;
                         }
                     }
+                    if (fallback >= 0) state.WinnerIndex = fallback;
                     return;
                 }
             }
