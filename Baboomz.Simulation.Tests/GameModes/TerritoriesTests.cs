@@ -226,6 +226,36 @@ namespace Baboomz.Tests
         }
 
         [Test]
+        public void Territories_PrefersAlivePlayerAsWinner_Issue110()
+        {
+            // Issue #110: With multiple players on a team, alive player should be preferred
+            // over a dead one. Use both on same team so environment check doesn't end early.
+            var config = MakeConfig();
+            config.TerritoryPointsToWin = 5f;
+            var state = GameSimulation.CreateMatch(config, 42);
+            state.Phase = MatchPhase.Playing;
+
+            // Put both players on team 0: P0 dead, P1 alive
+            state.Players[0].TeamIndex = 0;
+            state.Players[1].TeamIndex = 0;
+            state.Players[0].IsDead = true;
+            state.Players[0].Position = new Vec2(-100f, 0f);
+            state.Players[1].Position = new Vec2(100f, 100f);
+
+            // Team 0 owns all zones, nearly at threshold
+            state.Territory.TeamScores[0] = 4.5f;
+            state.Territory.ZoneOwner[0] = 0;
+            state.Territory.ZoneOwner[1] = 0;
+            state.Territory.ZoneOwner[2] = 0;
+
+            GameSimulation.Tick(state, 1f);
+
+            Assert.AreEqual(MatchPhase.Ended, state.Phase);
+            Assert.AreEqual(1, state.WinnerIndex,
+                "Alive player (P1) should be winner, not dead player (P0) (issue #110)");
+        }
+
+        [Test]
         public void Territories_ZoneRetainsOwnership_WhenEmpty_Issue85()
         {
             // Issue #85: Zones lost ownership when all players left.
