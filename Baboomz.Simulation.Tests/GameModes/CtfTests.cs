@@ -365,21 +365,19 @@ namespace Baboomz.Tests.Editor
         }
 
         [Test]
-        public void Ctf_CarrierSpeedPenalty_UsesMultiplier_Issue83()
+        public void Ctf_CarrierSpeedPenalty_PreservesWarCry_Issue83()
         {
-            // Issue #83: Carrier speed overwrote MoveSpeed with base * mult,
-            // destroying WarCry buff. Fix: apply as multiplier on current speed.
+            // Issue #83: Carrier speed should preserve WarCry buff.
             var config = CtfConfig();
             var state = GameSimulation.CreateMatch(config, 42);
             state.Phase = MatchPhase.Playing;
             AILogic.Reset(42, state.Players.Length);
 
-            float baseSpeed = config.DefaultMoveSpeed; // 5f
-            float warCrySpeed = baseSpeed * 1.5f; // 7.5f (WarCry typical buff)
+            float warCryBuff = 1.5f;
 
             // Simulate WarCry active + carrying flag
-            state.Players[0].MoveSpeed = warCrySpeed;
             state.Players[0].WarCryTimer = 5f;
+            state.Players[0].WarCrySpeedBuff = warCryBuff;
 
             // Make player 0 carry enemy flag
             state.Ctf.Flags[1].CarrierIndex = 0;
@@ -387,10 +385,33 @@ namespace Baboomz.Tests.Editor
             // Tick to apply carrier speed penalty
             GameSimulation.Tick(state, 0.016f);
 
-            // Speed should be warCrySpeed * CtfCarrierSpeedMult, NOT baseSpeed * mult
-            float expected = warCrySpeed * config.CtfCarrierSpeedMult;
+            // Speed should be base * warCry * carrier mult
+            float expected = config.DefaultMoveSpeed * warCryBuff * config.CtfCarrierSpeedMult;
             Assert.AreEqual(expected, state.Players[0].MoveSpeed, 0.5f,
-                "Carrier speed should be WarCry speed * carrier mult, not base * mult (issue #83)");
+                "Carrier speed should be base * WarCry * carrier mult (issue #83)");
+        }
+
+        [Test]
+        public void Ctf_CarrierSpeed_DoesNotDecayOverTicks_Issue108()
+        {
+            // Issue #108: carrier speed decayed exponentially because *= was applied every frame.
+            var config = CtfConfig();
+            var state = GameSimulation.CreateMatch(config, 42);
+            state.Phase = MatchPhase.Playing;
+            AILogic.Reset(42, state.Players.Length);
+
+            // Make player 0 carry enemy flag
+            state.Ctf.Flags[1].CarrierIndex = 0;
+            state.Ctf.Flags[1].IsHome = false;
+
+            float expected = config.DefaultMoveSpeed * config.CtfCarrierSpeedMult;
+
+            // Tick 60 frames — speed must remain stable
+            for (int i = 0; i < 60; i++)
+                GameSimulation.Tick(state, 0.016f);
+
+            Assert.AreEqual(expected, state.Players[0].MoveSpeed, 0.01f,
+                "Carrier speed should remain stable after 60 ticks, not decay exponentially");
         }
 
         [Test]
