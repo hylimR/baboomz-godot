@@ -160,16 +160,17 @@ namespace Baboomz.Tests.Editor
         }
 
         [Test]
-        public void DashSkill_Costs20Energy_AfterBalance()
+        public void DashSkill_Costs18Energy_AfterBalance()
         {
+            // Balance #155: Dash cost 20E → 18E to own the cheapest-mobility niche.
             var config = new GameConfig();
             bool found = false;
             foreach (var skill in config.Skills)
             {
                 if (skill.SkillId == "dash")
                 {
-                    Assert.AreEqual(20f, skill.EnergyCost,
-                        "Dash should cost 20 energy after balance adjustment");
+                    Assert.AreEqual(18f, skill.EnergyCost,
+                        "Dash should cost 18 energy after balance adjustment (#155)");
                     found = true;
                     break;
                 }

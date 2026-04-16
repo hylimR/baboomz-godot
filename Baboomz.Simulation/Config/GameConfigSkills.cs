@@ -27,8 +27,11 @@ namespace Baboomz.Simulation
             new SkillDef
             {
                 SkillId = "dash", Type = SkillType.Dash,
-                EnergyCost = 20f, Cooldown = 4f, Duration = 0.2f,  // balanced: 3→4s cooldown (balance 2026-03-25)
-                Range = 0f, Value = 40f  // burst velocity
+                // Balance #155: Dash was strictly dominated at 20E/4s/0.2s/40u → ~8u for 2.5 E/u.
+                // Bump duration 0.2→0.3s, velocity 40→50u (→~15u reach), cost 20→18E, CD 4→3s
+                // so it owns the "cheap frequent short disengage" niche vs Grapple/Jetpack/Teleport.
+                EnergyCost = 18f, Cooldown = 3f, Duration = 0.3f,
+                Range = 0f, Value = 50f  // burst velocity
             },
             new SkillDef
             {
