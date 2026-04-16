@@ -178,6 +178,41 @@ namespace Baboomz.Tests.Editor
             Assert.IsTrue(found, "Dash skill should exist in config");
         }
 
+        [Test]
+        public void HookShot_Balanced_AsUtilityDamageHybrid()
+        {
+            // Balance #164: HookShot sat at 0.33 dmg/E (~3x worse than Earthquake,
+            // 12x worse than Mine Layer). Rebalance to 25E / 10s / 20dmg so the
+            // "pull + finisher" fantasy actually threatens kills, while keeping
+            // dmg/E (0.80) the lowest among damage skills to reflect its utility role.
+            var config = new GameConfig();
+            SkillDef hook = default;
+            bool found = false;
+            foreach (var skill in config.Skills)
+            {
+                if (skill.SkillId == "hookshot") { hook = skill; found = true; break; }
+            }
+            Assert.IsTrue(found, "hookshot skill should exist in config");
+
+            Assert.AreEqual(25f, hook.EnergyCost,
+                "HookShot EnergyCost should be 25 (utility tier) after #164");
+            Assert.AreEqual(10f, hook.Cooldown,
+                "HookShot Cooldown should be 10s (utility tier) after #164");
+            Assert.AreEqual(20f, hook.Value,
+                "HookShot damage should be 20 (~1/3 cannon shot) after #164");
+            Assert.AreEqual(10f, hook.Range,
+                "HookShot Range must remain 10u — this buff is cost/CD/damage only");
+
+            // Invariant: among damage-dealing skills, HookShot should have the
+            // lowest dmg/E (reflecting its utility-hybrid role) but not be absurdly
+            // under-tuned (> 0.5 dmg/E, i.e. within 2x of the next-lowest).
+            float hookDpe = hook.Value / hook.EnergyCost;
+            Assert.Greater(hookDpe, 0.5f,
+                "HookShot damage/energy should be above 0.5 (not an outlier)");
+            Assert.Less(hookDpe, 1.1f,
+                "HookShot damage/energy should stay below Earthquake's 1.0 baseline");
+        }
+
         // MatchStats_IncludesAccuracy test removed: depends on MatchSeries (Unity runtime class)
 
         // --- Cycle 3: Dynamite weapon tests ---
