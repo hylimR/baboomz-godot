@@ -137,7 +137,7 @@ namespace Baboomz.Tests.Editor
             Assert.IsTrue(config.Skills.Length >= 10, "Should have at least 10 skills");
             Assert.AreEqual("warcry", config.Skills[9].SkillId);
             Assert.AreEqual(SkillType.WarCry, config.Skills[9].Type);
-            Assert.AreEqual(40f, config.Skills[9].EnergyCost);
+            Assert.AreEqual(30f, config.Skills[9].EnergyCost); // #126: 40 -> 30
             Assert.AreEqual(5f, config.Skills[9].Duration);
         }
 
@@ -159,12 +159,12 @@ namespace Baboomz.Tests.Editor
 
             SkillSystem.ActivateSkill(state, 0, 0);
 
-            Assert.AreEqual(1.75f, state.Players[0].DamageMultiplier,
-                "Solo War Cry should give 1.75x damage");
+            Assert.AreEqual(1.9f, state.Players[0].DamageMultiplier,
+                "Solo War Cry should give 1.9x damage (#126)");
             Assert.Greater(state.Players[0].WarCryTimer, 0f,
                 "War Cry timer should be active");
-            Assert.AreEqual(baseMoveSpeed * 1.3f, state.Players[0].MoveSpeed, 0.01f,
-                "Solo War Cry should give 1.3x move speed");
+            Assert.AreEqual(baseMoveSpeed * 1.4f, state.Players[0].MoveSpeed, 0.01f,
+                "Solo War Cry should give 1.4x move speed (#126)");
         }
 
         [Test]
@@ -240,7 +240,7 @@ namespace Baboomz.Tests.Editor
 
             SkillSystem.ActivateSkill(state, 0, 0);
 
-            // DoubleDamage (2x) > WarCry solo (1.75x), so 2x wins
+            // DoubleDamage (2x) > WarCry solo (1.9x), so 2x wins
             Assert.AreEqual(2f, state.Players[0].DamageMultiplier,
                 "DoubleDamage should not be overridden by lower War Cry multiplier");
         }
@@ -277,7 +277,7 @@ namespace Baboomz.Tests.Editor
             SkillSystem.ActivateSkill(state, 0, 0);
 
             // Speed should still be baseSpeed * multiplier, not baseSpeed * 1.2 * multiplier
-            float expectedSpeed = baseSpeed * 1.3f; // solo mode caster gets 1.3x
+            float expectedSpeed = baseSpeed * 1.4f; // solo mode caster gets 1.4x (#126)
             Assert.AreEqual(expectedSpeed, state.Players[0].MoveSpeed, 0.01f,
                 "WarCry speed buff should not stack — should restore old buff before applying new");
         }

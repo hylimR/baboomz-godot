@@ -64,8 +64,9 @@ namespace Baboomz.Simulation
             new SkillDef
             {
                 SkillId = "warcry", Type = SkillType.WarCry,
-                EnergyCost = 40f, Cooldown = 18f, Duration = 5f,
-                Range = 0f, Value = 1.5f  // damage multiplier (team); solo gets 1.75x
+                // Balance #126: 40E -> 30E to close the gap with Overcharge's solo value
+                EnergyCost = 30f, Cooldown = 18f, Duration = 5f,
+                Range = 0f, Value = 1.5f  // damage multiplier (team); solo gets 1.9x (#126)
             },
             new SkillDef
             {
