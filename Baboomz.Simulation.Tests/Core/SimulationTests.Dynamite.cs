@@ -148,14 +148,15 @@ namespace Baboomz.Tests.Editor
         }
 
         [Test]
-        public void Cannon_EnergyCost8_AfterBalance()
+        public void Cannon_EnergyCost11_AfterBalance()
         {
             // Regression (#376): cannon had zero energy cost, breaking the energy economy.
             // Updated (#414): raised from 3→8 to reduce 4x median Dmg/Energy ratio.
+            // Updated (#133): raised from 8→11 to tame 2.81x median DPS/E outlier.
             var config = new GameConfig();
             Assert.AreEqual("cannon", config.Weapons[0].WeaponId);
-            Assert.AreEqual(8f, config.Weapons[0].EnergyCost,
-                "Cannon should cost 8 energy per shot — balances Dmg/Energy to 1.5x median (#414)");
+            Assert.AreEqual(11f, config.Weapons[0].EnergyCost,
+                "Cannon should cost 11 energy per shot — brings DPS/E inside 2x median threshold (#133)");
         }
 
         [Test]
