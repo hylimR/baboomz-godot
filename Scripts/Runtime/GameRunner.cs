@@ -36,7 +36,8 @@ namespace Baboomz
             config ??= new GameConfig();
             ApplyDifficulty(config, GameModeContext.SelectedDifficulty);
             config.Player1Name = GameModeContext.PlayerName;
-            config.UnlockedTier = UnlockRegistry.GetTier(0); // TODO: load wins from save
+            PlayerRecord.Load();
+            config.UnlockedTier = UnlockRegistry.GetTier(PlayerRecord.Wins);
             _matchConfig = config;
 
             if (seed < 0) seed = (int)(GD.Randi() % 99999);

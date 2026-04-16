@@ -108,5 +108,33 @@ namespace Baboomz.E2E.Tests
             Assert.That(state.Config.Gravity, Is.GreaterThan(0f),
                 "Default gravity should be positive");
         }
+
+        // Regression: #149 — GameRunner must feed saved win count through
+        // UnlockRegistry.GetTier so match config reflects actual progression.
+        // This mirrors the fix in GameRunner.StartMatch: GetTier(PlayerRecord.Wins).
+        [TestCase(0, 0, 5)]    // Starter: 5 weapons
+        [TestCase(5, 1, 9)]    // Veteran: +4 weapons
+        [TestCase(15, 2, 13)]  // Expert: +4 weapons
+        [TestCase(30, 3, 18)]  // Master: +5 weapons
+        [TestCase(50, 4, 22)]  // Legend: all 22 weapons
+        [TestCase(100, 4, 22)] // above max still Legend
+        public void WinCount_MapsToUnlockedTier_GatingPlayerWeapons(int wins, int expectedTier, int expectedWeaponCount)
+        {
+            // Simulate GameRunner.StartMatch's fix: config.UnlockedTier = GetTier(PlayerRecord.Wins)
+            int tier = UnlockRegistry.GetTier(wins);
+            Assert.That(tier, Is.EqualTo(expectedTier),
+                $"{wins} wins should map to tier {expectedTier}");
+
+            var config = new GameConfig { UnlockedTier = tier };
+            var state = GameSimulation.CreateMatch(config, 42);
+            var player = state.Players[0];
+
+            int unlocked = 0;
+            for (int i = 0; i < player.WeaponSlots.Length; i++)
+                if (player.WeaponSlots[i].WeaponId != null) unlocked++;
+
+            Assert.That(unlocked, Is.EqualTo(expectedWeaponCount),
+                $"Tier {tier} player should have exactly {expectedWeaponCount} weapons unlocked");
+        }
     }
 }
