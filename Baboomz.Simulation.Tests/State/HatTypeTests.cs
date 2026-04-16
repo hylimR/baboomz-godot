@@ -37,5 +37,40 @@ namespace Baboomz.Tests.Editor
                 $"HatType.{hat} numeric position must stay at {expectedIndex} — " +
                 "the HatRenderer switch relies on this mapping.");
         }
+
+        // Regression #161: CreateMatch used a stale hatCount=5, so hats 6-11
+        // (VikingHelmet..GoldenCrown) were dead code even though PR #130
+        // wired the renderer for all 11. This test proves every hat can roll.
+        [Test]
+        public void CreateMatch_RollsAllElevenHats_AcrossSeeds()
+        {
+            var config = new GameConfig();
+            var seen = new System.Collections.Generic.HashSet<HatType>();
+
+            // 400 seeds × 4 players = 1600 rolls — plenty to hit all 11 hats
+            // with uniform rng (expected ~145 rolls per hat).
+            for (int seed = 0; seed < 400 && seen.Count < 11; seed++)
+            {
+                var state = GameSimulation.CreateMatch(config, seed);
+                for (int i = 0; i < state.Players.Length; i++)
+                    seen.Add(state.Players[i].Hat);
+            }
+
+            Assert.AreEqual(11, seen.Count,
+                "CreateMatch must roll across all 11 hats (TopHat..GoldenCrown). " +
+                $"Missing: {string.Join(", ", MissingHats(seen))}");
+            Assert.IsFalse(seen.Contains(HatType.None),
+                "HatType.None must never be rolled as a cosmetic hat.");
+        }
+
+        private static System.Collections.Generic.IEnumerable<HatType> MissingHats(
+            System.Collections.Generic.HashSet<HatType> seen)
+        {
+            for (int i = 1; i <= 11; i++)
+            {
+                var h = (HatType)i;
+                if (!seen.Contains(h)) yield return h;
+            }
+        }
     }
 }
