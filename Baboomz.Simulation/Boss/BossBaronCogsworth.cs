@@ -24,14 +24,18 @@ namespace Baboomz.Simulation
             float hpRatio = boss.Health / boss.MaxHealth;
 
             // Phase transitions
+            // Issue #124: reset attackTimer so the first shot of each new phase
+            // uses that phase's cadence, not whatever value the previous phase left behind.
             if (hpRatio <= 0.66f && boss.BossPhase < 1)
             {
                 boss.BossPhase = 1;
                 stateTimer[index] = t + 10f;
+                attackTimer[index] = t + 4f; // Phase 2 dual-cannon cadence
             }
             if (hpRatio <= 0.33f && boss.BossPhase < 2)
             {
                 boss.BossPhase = 2;
+                attackTimer[index] = t + 1.5f; // Phase 3 rapid-fire cadence
             }
 
             var weapon = boss.WeaponSlots[boss.ActiveWeaponSlot];
