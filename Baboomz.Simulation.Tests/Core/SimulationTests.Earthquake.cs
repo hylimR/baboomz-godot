@@ -9,6 +9,25 @@ namespace Baboomz.Tests.Editor
         // --- Earthquake skill tests ---
 
         [Test]
+        public void Earthquake_ConfigReflectsBalanceBuff141()
+        {
+            // Regression: #141 — earthquake at 20dmg/16cd was ~12x less efficient than
+            // Mine Layer's 35dmg × 3 stack. Buffed to 35/14 to match per-mine damage.
+            var config = new GameConfig();
+            SkillDef earthquake = default;
+            bool found = false;
+            foreach (var s in config.Skills)
+            {
+                if (s.SkillId == "earthquake") { earthquake = s; found = true; break; }
+            }
+            Assert.IsTrue(found, "earthquake skill must exist in config");
+            Assert.AreEqual(SkillType.Earthquake, earthquake.Type);
+            Assert.AreEqual(35f, earthquake.EnergyCost, 0.01f, "EnergyCost unchanged");
+            Assert.AreEqual(14f, earthquake.Cooldown, 0.01f, "Cooldown buffed 16 → 14");
+            Assert.AreEqual(35f, earthquake.Value, 0.01f, "Damage buffed 20 → 35 to match Mine Layer per-mine");
+        }
+
+        [Test]
         public void Earthquake_DamagesGroundedPlayers()
         {
             var config = SmallConfig();

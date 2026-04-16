@@ -114,12 +114,12 @@ namespace Baboomz.Tests.Editor
         }
 
         [Test]
-        public void BalanceCheck_EarthquakeCooldown_Is16()
+        public void BalanceCheck_EarthquakeCooldown_Is14()
         {
             var config = new GameConfig();
             var eq = config.Skills[7];
             Assert.AreEqual("earthquake", eq.SkillId);
-            Assert.AreEqual(16f, eq.Cooldown, "Earthquake cooldown should be 16s (reduced from 20s)");
+            Assert.AreEqual(14f, eq.Cooldown, "Earthquake cooldown should be 14s (issue #141, was 16s)");
         }
 
         [Test]

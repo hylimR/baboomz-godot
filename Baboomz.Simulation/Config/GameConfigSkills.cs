@@ -52,8 +52,12 @@ namespace Baboomz.Simulation
             new SkillDef
             {
                 SkillId = "earthquake", Type = SkillType.Earthquake,
-                EnergyCost = 35f, Cooldown = 16f, Duration = 0f,
-                Range = 0f, Value = 20f  // damage to all grounded
+                // Balance #141: 20dmg/16cd → 35dmg/14cd. Mine Layer's 35dmg × 3 stack (105
+                // total, 25E/10s cd) out-efficient earthquake ~12x, making the 35E slot feel
+                // wasted. Match per-mine damage and shave cooldown so earthquake becomes the
+                // anti-camping "clean the board" pick.
+                EnergyCost = 35f, Cooldown = 14f, Duration = 0f,
+                Range = 0f, Value = 35f  // damage to all grounded
             },
             new SkillDef
             {
