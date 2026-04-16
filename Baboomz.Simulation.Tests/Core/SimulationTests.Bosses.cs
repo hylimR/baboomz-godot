@@ -336,5 +336,65 @@ namespace Baboomz.Tests.Editor
             }
             Assert.IsTrue(found, "Chinatown biome should exist in TerrainBiome.All");
         }
+
+        [Test]
+        public void BaronCogsworth_PhaseTransition_ResetsAttackTimer_Issue124()
+        {
+            // Issue #124: entering a new phase left attackTimer holding the previous
+            // phase's cadence, so the first shot of Phase 2/3 fired with random drift.
+            // The fix resets attackTimer on each transition to that phase's cadence.
+            var config = SmallConfig();
+            config.MineCount = 0;
+            config.BarrelCount = 0;
+            var state = GameSimulation.CreateMatch(config, 42);
+
+            state.Players[1].BossType = "baron_cogsworth";
+            state.Players[1].IsMob = true;
+            state.Players[1].IsAI = true;
+            state.Players[1].MaxHealth = 200f;
+            state.Players[1].Health = 200f;
+            state.Players[1].BossPhase = 0;
+
+            BossLogic.Reset(42, state.Players.Length);
+
+            // Access internal attackTimer via reflection — it is the field the bug
+            // targets and is otherwise test-inaccessible.
+            var field = typeof(BossLogic).GetField(
+                "attackTimer",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
+            Assert.IsNotNull(field, "BossLogic.attackTimer field must exist");
+            float[] timers = (float[])field.GetValue(null);
+
+            // Simulate Phase 1 leftover state: attackTimer already passed (stale).
+            timers[1] = state.Time - 5f;
+
+            // Drop HP below 66% to trigger transition to Phase 2 (BossPhase 1).
+            state.Players[1].Health = 120f; // 60% of 200
+            GameSimulation.Tick(state, 0.016f);
+
+            Assert.AreEqual(1, state.Players[1].BossPhase,
+                "Boss should have transitioned to Phase 2 (BossPhase=1)");
+
+            // After fix: attackTimer is reset to (state.Time + 4f) for Phase 2 cadence.
+            // It must be strictly in the future so the first dual-cannon volley waits
+            // a proper 4s cycle instead of firing on stale drift.
+            Assert.Greater(timers[1], state.Time,
+                "attackTimer must be in the future after phase transition (issue #124)");
+            Assert.LessOrEqual(timers[1] - state.Time, 4.1f,
+                "attackTimer should be set to ~t+4 for Phase 2 dual-cannon cadence");
+
+            // Drop HP below 33% to trigger transition to Phase 3 (BossPhase 2).
+            // Stale the timer again first.
+            timers[1] = state.Time - 5f;
+            state.Players[1].Health = 60f; // 30% of 200
+            GameSimulation.Tick(state, 0.016f);
+
+            Assert.AreEqual(2, state.Players[1].BossPhase,
+                "Boss should have transitioned to Phase 3 (BossPhase=2)");
+            Assert.Greater(timers[1], state.Time,
+                "Phase 3 transition must also reset attackTimer into the future");
+            Assert.LessOrEqual(timers[1] - state.Time, 1.6f,
+                "attackTimer should be set to ~t+1.5 for Phase 3 rapid-fire cadence");
+        }
     }
 }
