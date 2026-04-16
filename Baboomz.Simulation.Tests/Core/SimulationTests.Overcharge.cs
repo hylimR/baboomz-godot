@@ -209,5 +209,40 @@ namespace Baboomz.Tests.Editor
                 "Frozen player should not get Overcharge buff");
         }
 
+        // Regression: issue #140 — DoubleDamage expiry must not wipe an active Overcharge.
+        [Test]
+        public void DoubleDamageExpiry_PreservesActiveOverchargeMultiplier()
+        {
+            var config = SmallConfig();
+            var state = GameSimulation.CreateMatch(config, 42);
+            state.Phase = MatchPhase.Playing;
+
+            // Player has a short DoubleDamage crate buff active...
+            ref var p = ref state.Players[0];
+            p.DamageMultiplier = 2f;
+            p.DoubleDamageTimer = 0.5f;
+
+            // ...and later activates Overcharge (longer duration).
+            p.SkillSlots[0] = MakeOverchargeSlot();
+            p.Energy = 100f;
+            SkillSystem.ActivateSkill(state, 0, 0);
+
+            Assert.AreEqual(2f, state.Players[0].DamageMultiplier, 0.01f,
+                "Both buffs are 2x, multiplier should stay at 2x");
+            Assert.Greater(state.Players[0].OverchargeTimer, 0f,
+                "Overcharge should be armed");
+
+            // Tick until DoubleDamage expires but Overcharge is still running.
+            for (int i = 0; i < 40; i++)
+                GameSimulation.Tick(state, 0.016f);
+
+            Assert.AreEqual(0f, state.Players[0].DoubleDamageTimer, 0.01f,
+                "DoubleDamage should have expired");
+            Assert.Greater(state.Players[0].OverchargeTimer, 0f,
+                "Overcharge should still be armed");
+            Assert.AreEqual(2f, state.Players[0].DamageMultiplier, 0.01f,
+                "DoubleDamage expiry must not wipe the Overcharge 2x multiplier");
+        }
+
     }
 }
