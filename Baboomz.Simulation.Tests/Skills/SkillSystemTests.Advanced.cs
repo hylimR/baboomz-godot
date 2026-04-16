@@ -395,5 +395,27 @@ namespace Baboomz.Tests.Editor
                 "After Decoy early reveal, other skill slots should be activatable again");
         }
 
+        [Test]
+        public void Decoy_Cooldown_AlignedWithDeflect_Issue173()
+        {
+            // Balance #173: Decoy CD 16s→13s. Decoy had the longest CD among evasion
+            // skills despite conditional activation and fragile dummy. 13s matches Deflect.
+            var cfg = new GameConfig();
+            SkillDef? decoy = null;
+            SkillDef? deflect = null;
+            foreach (var s in cfg.Skills)
+            {
+                if (s.SkillId == "decoy") decoy = s;
+                if (s.SkillId == "deflect") deflect = s;
+            }
+
+            Assert.NotNull(decoy, "Decoy skill missing from GameConfig.Skills");
+            Assert.NotNull(deflect, "Deflect skill missing from GameConfig.Skills");
+            Assert.AreEqual(13f, decoy!.Value.Cooldown, 0.001f,
+                "Decoy CD should be 13s (issue #173)");
+            Assert.AreEqual(decoy!.Value.Cooldown, deflect!.Value.Cooldown, 0.001f,
+                "Decoy CD should match Deflect CD — both are reactive evasion skills");
+        }
+
     }
 }
