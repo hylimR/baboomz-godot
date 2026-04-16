@@ -217,19 +217,20 @@ No VContainer, no MessagePipe, no UniTask — replaced with:
 - Persistence (W/L/D, career stats, campaign progress, settings)
 - TrajectoryPreview, KillFeed, Countdown, DeathSlowMo
 - Mines, barrels, crates, mobs, skill markers, wind particles
-- 1015 simulation tests passing (0 failures)
-- 50 E2E integration tests (match lifecycle, input pipeline, all game modes, scene flow, config)
+- Encyclopedia, Loadout, Achievement panels (`Scripts/UI/EncyclopediaPanel.cs`, `LoadoutPanel.cs`, `AchievementPanel.cs`)
+- Campaign UI panels built (LevelSelect, Shop — MainMenu wiring tracked in #112)
+- Replay viewer with speed controls + HUD (`Scripts/Runtime/GameRunner.Replay.cs`)
+- Hat renderer — all 11 hat types (`Scripts/Runtime/HatRenderer.cs`)
+- Emote renderer + taunt display (`Scripts/Runtime/EmoteRenderer.cs` + `Baboomz.Simulation/State/EmoteText.cs`)
+- Real sprite loading wired to PlayerRenderer, ExplosionRenderer, ParallaxBackgroundRenderer (`Scripts/Runtime/SpriteLoader.cs`)
+- Combat feedback — hit markers, low-health vignette, combo renderer (`Scripts/Runtime/{HitMarkerRenderer,LowHealthOverlay,ComboRenderer}.cs`)
+- 1015+ simulation tests passing (0 failures)
+- 50+ E2E integration tests (match lifecycle, input pipeline, all game modes, scene flow, config)
 
 ### Remaining (nice-to-have)
-- Mode-specific renderers (CTF flags, KOTH zones, Payload cart)
-- Encyclopedia, SkillLoadout, Achievement panels
-- Campaign UI (level select, shop, loadout)
-- Editor tools (Level Preview, Level Validator as Godot plugins)
-- Replay viewer
-- Hat/emote renderers
-- Real sprite loading (art is copied, needs wiring to SpriteLoader)
-- Emote/taunt display
-- Low health warning, hit markers, combo renderer
+- Mode-specific renderers — placeholder shapes need sprite art upgrade (tracked in #113)
+- Campaign UI wiring — LevelSelect / Shop / Achievement flow integrated into MainMenu (tracked in #112)
+- Editor tools (Level Preview, Level Validator as Godot plugins — no `addons/` directory yet)
 
 ## Migrated From
 
