@@ -19,6 +19,9 @@ namespace Baboomz.Simulation
         public bool IslandMode;
         public int IslandCount;       // number of disconnected islands (2-4)
         public float IslandGapWidth;  // minimum horizontal gap between islands (world units)
+        // Parallax background asset folder under Art/Backgrounds/. Renderer falls
+        // back to "Default" if a layer PNG is missing here. Empty -> "Default".
+        public string BackgroundFolder;
 
         public static readonly TerrainBiome[] All = new[]
         {
@@ -28,7 +31,8 @@ namespace Baboomz.Simulation
                 MinHeight = -5f, MaxHeight = 15f, HillFrequency = 0.1f,
                 EarthR = 0.40f, EarthG = 0.26f, EarthB = 0.13f,
                 SurfaceR = 0.48f, SurfaceG = 0.75f, SurfaceB = 0.26f,
-                HazardType = BiomeHazardType.Mud, HazardCount = 3
+                HazardType = BiomeHazardType.Mud, HazardCount = 3,
+                BackgroundFolder = "Default"  // existing green-hills/blue-sky art matches
             },
             new TerrainBiome
             {
@@ -36,7 +40,8 @@ namespace Baboomz.Simulation
                 MinHeight = -3f, MaxHeight = 10f, HillFrequency = 0.06f,
                 EarthR = 0.76f, EarthG = 0.60f, EarthB = 0.35f,
                 SurfaceR = 0.85f, SurfaceG = 0.72f, SurfaceB = 0.42f,
-                HazardType = BiomeHazardType.Quicksand, HazardCount = 2
+                HazardType = BiomeHazardType.Quicksand, HazardCount = 2,
+                BackgroundFolder = "Desert"
             },
             new TerrainBiome
             {
@@ -44,7 +49,8 @@ namespace Baboomz.Simulation
                 MinHeight = -4f, MaxHeight = 12f, HillFrequency = 0.08f,
                 EarthR = 0.55f, EarthG = 0.60f, EarthB = 0.65f,
                 SurfaceR = 0.90f, SurfaceG = 0.93f, SurfaceB = 0.97f,
-                HazardType = BiomeHazardType.Ice, HazardCount = 3
+                HazardType = BiomeHazardType.Ice, HazardCount = 3,
+                BackgroundFolder = "Arctic"
             },
             new TerrainBiome
             {
@@ -52,7 +58,8 @@ namespace Baboomz.Simulation
                 MinHeight = -6f, MaxHeight = 18f, HillFrequency = 0.15f,
                 EarthR = 0.25f, EarthG = 0.15f, EarthB = 0.10f,
                 SurfaceR = 0.35f, SurfaceG = 0.20f, SurfaceB = 0.15f,
-                HazardType = BiomeHazardType.Lava, HazardCount = 2
+                HazardType = BiomeHazardType.Lava, HazardCount = 2,
+                BackgroundFolder = "Volcanic"
             },
             new TerrainBiome
             {
@@ -60,7 +67,8 @@ namespace Baboomz.Simulation
                 MinHeight = -4f, MaxHeight = 14f, HillFrequency = 0.12f,
                 EarthR = 0.85f, EarthG = 0.45f, EarthB = 0.60f,
                 SurfaceR = 0.60f, SurfaceG = 0.85f, SurfaceB = 0.90f,
-                HazardType = BiomeHazardType.Bounce, HazardCount = 3
+                HazardType = BiomeHazardType.Bounce, HazardCount = 3,
+                BackgroundFolder = "Candy"
             },
             new TerrainBiome
             {
@@ -68,7 +76,8 @@ namespace Baboomz.Simulation
                 MinHeight = -4f, MaxHeight = 16f, HillFrequency = 0.14f,
                 EarthR = 0.55f, EarthG = 0.27f, EarthB = 0.07f,
                 SurfaceR = 0.75f, SurfaceG = 0.22f, SurfaceB = 0.17f,
-                HazardType = BiomeHazardType.Firecracker, HazardCount = 4
+                HazardType = BiomeHazardType.Firecracker, HazardCount = 4,
+                BackgroundFolder = "Chinatown"
             },
             new TerrainBiome
             {
@@ -76,7 +85,8 @@ namespace Baboomz.Simulation
                 MinHeight = -5f, MaxHeight = 17f, HillFrequency = 0.16f,
                 EarthR = 0.23f, EarthG = 0.23f, EarthB = 0.25f,
                 SurfaceR = 0.72f, SurfaceG = 0.45f, SurfaceB = 0.20f,
-                HazardType = BiomeHazardType.Gear, HazardCount = 3
+                HazardType = BiomeHazardType.Gear, HazardCount = 3,
+                BackgroundFolder = "Steampunk"  // matches existing Art/Backgrounds/Steampunk/ folder
             },
             new TerrainBiome
             {
@@ -84,7 +94,8 @@ namespace Baboomz.Simulation
                 MinHeight = -6f, MaxHeight = 13f, HillFrequency = 0.07f,
                 EarthR = 0.15f, EarthG = 0.35f, EarthB = 0.40f,
                 SurfaceR = 0.80f, SurfaceG = 0.65f, SurfaceB = 0.45f,
-                HazardType = BiomeHazardType.Whirlpool, HazardCount = 2
+                HazardType = BiomeHazardType.Whirlpool, HazardCount = 2,
+                BackgroundFolder = "Sunken"
             },
             new TerrainBiome
             {
@@ -93,7 +104,8 @@ namespace Baboomz.Simulation
                 EarthR = 0.25f, EarthG = 0.35f, EarthB = 0.45f,
                 SurfaceR = 0.35f, SurfaceG = 0.50f, SurfaceB = 0.60f,
                 HazardType = BiomeHazardType.Waterspout, HazardCount = 2,
-                IslandMode = true, IslandCount = 3, IslandGapWidth = 5f
+                IslandMode = true, IslandCount = 3, IslandGapWidth = 5f,
+                BackgroundFolder = "Storm"
             }
         };
 

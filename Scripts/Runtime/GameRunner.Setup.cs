@@ -20,7 +20,7 @@ namespace Baboomz
             var parallax = new ParallaxBackgroundRenderer();
             parallax.Name = "Parallax";
             AddChild(parallax);
-            parallax.Init();
+            parallax.Init(State);
 
             // Terrain
             var terrain = new GodotTerrainBridge();
