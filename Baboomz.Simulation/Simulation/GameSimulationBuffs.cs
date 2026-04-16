@@ -24,9 +24,12 @@ namespace Baboomz.Simulation
                 if (p.DoubleDamageTimer <= 0f)
                 {
                     p.DoubleDamageTimer = 0f;
-                    // Restore WarCry multiplier if still active, otherwise reset to default
+                    // Restore higher-priority buff if still active, otherwise reset to default.
+                    // Mirrors WarCry expiry on line 49 + RevertOverchargeMultiplier priority chain.
                     if (p.WarCryTimer > 0f)
                         p.DamageMultiplier = p.WarCryDamageBuff;
+                    else if (p.OverchargeTimer > 0f)
+                        p.DamageMultiplier = 2f;
                     else
                         p.DamageMultiplier = state.Config.DefaultDamageMultiplier;
                 }

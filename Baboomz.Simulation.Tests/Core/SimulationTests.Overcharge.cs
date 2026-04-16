@@ -209,5 +209,39 @@ namespace Baboomz.Tests.Editor
                 "Frozen player should not get Overcharge buff");
         }
 
+        // Regression test for #140: DoubleDamage expiry used to reset DamageMultiplier to
+        // default even when Overcharge was still armed, wiping the 2x buff the player paid
+        // 60+ energy to earn.
+        [Test]
+        public void DoubleDamageExpiry_PreservesOverchargeMultiplier()
+        {
+            var config = SmallConfig();
+            var state = GameSimulation.CreateMatch(config, 42);
+            state.Phase = MatchPhase.Playing;
+
+            // Arm Overcharge first (2x, 5s duration)
+            state.Players[0].SkillSlots[0] = MakeOverchargeSlot();
+            state.Players[0].Energy = 100f;
+            SkillSystem.ActivateSkill(state, 0, 0);
+            Assert.AreEqual(2f, state.Players[0].DamageMultiplier, 0.01f,
+                "Precondition: Overcharge should set multiplier to 2x");
+            Assert.Greater(state.Players[0].OverchargeTimer, 0f,
+                "Precondition: Overcharge should be armed");
+
+            // Layer DoubleDamage on top with a SHORTER duration so it expires first
+            state.Players[0].DoubleDamageTimer = 1f;
+
+            // Tick past DoubleDamage expiry but before Overcharge expiry
+            for (int i = 0; i < 80; i++) // 1.28s
+                GameSimulation.Tick(state, 0.016f);
+
+            Assert.AreEqual(0f, state.Players[0].DoubleDamageTimer, 0.01f,
+                "DoubleDamage should have expired");
+            Assert.Greater(state.Players[0].OverchargeTimer, 0f,
+                "Overcharge should still be armed");
+            Assert.AreEqual(2f, state.Players[0].DamageMultiplier, 0.01f,
+                "DamageMultiplier should remain 2x from Overcharge after DoubleDamage expiry");
+        }
+
     }
 }
