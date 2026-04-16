@@ -145,6 +145,32 @@ namespace Baboomz.Tests.Editor
             Assert.Less(state.Players[0].Velocity.x, 0f);
         }
 
+        [Test]
+        public void Dash_Config_BalancedForShortFrequentDisengage()
+        {
+            // Balance #155: Dash owns the "cheap frequent short disengage" niche.
+            // Expected: 18E / 3s CD / 0.3s duration / 50u burst velocity
+            // (~15u reach — shortest mobility but fastest to recover and cheapest).
+            var cfg = new GameConfig();
+            SkillDef? dash = null;
+            foreach (var s in cfg.Skills)
+                if (s.SkillId == "dash") { dash = s; break; }
+
+            Assert.NotNull(dash, "Dash skill missing from GameConfig.Skills");
+            Assert.AreEqual(18f, dash!.Value.EnergyCost, 0.001f, "Dash EnergyCost");
+            Assert.AreEqual(3f, dash!.Value.Cooldown, 0.001f, "Dash Cooldown");
+            Assert.AreEqual(0.3f, dash!.Value.Duration, 0.001f, "Dash Duration");
+            Assert.AreEqual(50f, dash!.Value.Value, 0.001f, "Dash burst velocity (Value)");
+
+            // Invariant: remains the cheapest mobility skill (vs grapple/jetpack/teleport/shadow_step)
+            foreach (var s in cfg.Skills)
+            {
+                if (s.SkillId is "grapple" or "jetpack" or "teleport" or "shadow_step")
+                    Assert.Less(dash!.Value.EnergyCost, s.EnergyCost,
+                        $"Dash must remain cheaper than {s.SkillId}");
+            }
+        }
+
         // --- Heal tests ---
 
         [Test]
