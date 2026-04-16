@@ -122,7 +122,7 @@ namespace Baboomz
                     AddChild(pr);
                     pr.Init(proj.Id, State);
                     _projectileRenderers[proj.Id] = pr;
-                    _audioBridge?.OnProjectileFired();
+                    _audioBridge?.OnProjectileFired(proj.SourceWeaponId);
                 }
             }
 

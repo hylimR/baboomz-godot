@@ -16,8 +16,22 @@ namespace Baboomz
             _jumpClip = GenerateTone(0.08f, 300f, 600f, 0.2f);
             _switchClip = GenerateTone(0.05f, 500f, 500f, 0.15f);
             _hitTickClip = GenerateTone(0.05f, 1200f, 900f, 0.35f);
-            // Low-HP heartbeat (#36): low, short thump — two beats in one clip.
             _heartbeatClip = GenerateHeartbeat(0.6f, 0.5f);
+
+            // Per-weapon fire sounds (#175)
+            _fireCannonClip = GenerateTone(0.18f, 110f, 220f, 0.5f);   // deep bass thump
+            _fireRocketClip = GenerateWhoosh(0.25f, 180f, 400f, 0.45f); // mid whoosh + sweep
+            _fireSniperClip = GenerateTone(0.08f, 1400f, 700f, 0.5f);  // sharp crack
+            _fireTossClip = GenerateTone(0.12f, 350f, 250f, 0.3f);     // soft toss arc
+            _fireSpecialClip = GenerateTone(0.15f, 600f, 900f, 0.4f);  // unique rising chirp
+
+            // Per-skill activation sounds (#175)
+            _skillTeleportClip = GenerateTone(0.1f, 1800f, 600f, 0.4f);  // high-pitched pop
+            _skillDashClip = GenerateWhoosh(0.12f, 400f, 800f, 0.35f);   // quick whoosh
+            _skillShieldClip = GenerateTone(0.15f, 800f, 1200f, 0.35f);  // metallic pong
+            _skillQuakeClip = GenerateNoise(0.3f, 0.4f);                 // low rumble
+            _skillHealClip = GenerateChime(0.2f, 880f, 0.3f);            // soft chime
+            _skillPowerClip = GenerateTone(0.25f, 200f, 600f, 0.35f);    // power-up hum
         }
 
         /// <summary>
@@ -102,6 +116,62 @@ namespace Baboomz
                 // ~60 Hz thump with slight downward sweep for a "pulse" feel.
                 float freq = 60f + 20f * envelope;
                 float sample = Mathf.Sin(2f * Mathf.Pi * freq * t) * envelope * volume;
+
+                short pcm = (short)(Mathf.Clamp(sample, -1f, 1f) * 32767f);
+                data[i * 2] = (byte)(pcm & 0xFF);
+                data[i * 2 + 1] = (byte)((pcm >> 8) & 0xFF);
+            }
+
+            return CreateWav(data, samples);
+        }
+
+        /// <summary>
+        /// Generates a whoosh sound: filtered noise layered with a frequency sweep.
+        /// Used for rocket trails and dash skills (#175).
+        /// </summary>
+        private static AudioStreamWav GenerateWhoosh(
+            float duration, float startFreq, float endFreq, float volume)
+        {
+            int samples = (int)(duration * SampleRate);
+            var data = new byte[samples * 2];
+            var rng = new System.Random(123);
+            float prev = 0f;
+
+            for (int i = 0; i < samples; i++)
+            {
+                float t = (float)i / samples;
+                float freq = Mathf.Lerp(startFreq, endFreq, t);
+                float envelope = (1f - t) * Mathf.Clamp(t * 8f, 0f, 1f); // attack + decay
+                float tone = Mathf.Sin(2f * Mathf.Pi * freq * i / SampleRate) * 0.5f;
+                float noise = (float)rng.NextDouble() * 2f - 1f;
+                noise = (noise + prev) * 0.5f; // low-pass
+                prev = noise;
+                float sample = (tone + noise * 0.5f) * envelope * volume;
+
+                short pcm = (short)(Mathf.Clamp(sample, -1f, 1f) * 32767f);
+                data[i * 2] = (byte)(pcm & 0xFF);
+                data[i * 2 + 1] = (byte)((pcm >> 8) & 0xFF);
+            }
+
+            return CreateWav(data, samples);
+        }
+
+        /// <summary>
+        /// Generates a bright chime: a sine with harmonics and quick attack/decay.
+        /// Used for heal/mend skill activation (#175).
+        /// </summary>
+        private static AudioStreamWav GenerateChime(float duration, float freq, float volume)
+        {
+            int samples = (int)(duration * SampleRate);
+            var data = new byte[samples * 2];
+
+            for (int i = 0; i < samples; i++)
+            {
+                float t = (float)i / samples;
+                float envelope = (1f - t) * Mathf.Clamp(t * 20f, 0f, 1f);
+                float fundamental = Mathf.Sin(2f * Mathf.Pi * freq * i / SampleRate);
+                float harmonic = Mathf.Sin(2f * Mathf.Pi * freq * 2f * i / SampleRate) * 0.3f;
+                float sample = (fundamental + harmonic) * envelope * volume;
 
                 short pcm = (short)(Mathf.Clamp(sample, -1f, 1f) * 32767f);
                 data[i * 2] = (byte)(pcm & 0xFF);
