@@ -70,8 +70,9 @@ namespace Baboomz.Simulation
             new SkillDef
             {
                 SkillId = "mine_layer", Type = SkillType.MineLay,
-                EnergyCost = 25f, Cooldown = 12f, Duration = 0f,
-                Range = 10f, Value = 30f  // mine damage
+                // Balance #125: 12s/30dmg/2max → 10s/35dmg/3max for genuine area denial
+                EnergyCost = 25f, Cooldown = 10f, Duration = 0f,
+                Range = 10f, Value = 35f  // mine damage
             },
             new SkillDef
             {
