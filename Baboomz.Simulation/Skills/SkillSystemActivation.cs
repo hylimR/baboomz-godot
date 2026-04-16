@@ -82,10 +82,10 @@ namespace Baboomz.Simulation
 
                 if (!isCaster && !isTeammate) continue;
 
-                // Solo mode: caster gets stronger buff (1.75x dmg, 1.3x speed)
+                // Solo mode: caster gets stronger buff (1.9x dmg, 1.4x speed) — #126
                 // Team mode: both get 1.5x dmg, 1.2x speed
-                float appliedDmg = (!isTeamMode && isCaster) ? 1.75f : dmgMult;
-                float appliedSpeed = (!isTeamMode && isCaster) ? 1.3f : 1.2f;
+                float appliedDmg = (!isTeamMode && isCaster) ? 1.9f : dmgMult;
+                float appliedSpeed = (!isTeamMode && isCaster) ? 1.4f : 1.2f;
 
                 // Don't stack with DoubleDamage — take higher multiplier
                 target.DamageMultiplier = Math.Max(target.DamageMultiplier, appliedDmg);
