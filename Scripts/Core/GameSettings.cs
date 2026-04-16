@@ -18,6 +18,12 @@ namespace Baboomz
         public int SkillSlot0 { get; set; } = 0; // default: teleport
         public int SkillSlot1 { get; set; } = 3; // default: dash
 
+        // Combat feedback toggles (#127) — allow low-end devices to disable
+        // the per-frame Draw / shader work while keeping gameplay intact.
+        public bool HitMarkersEnabled { get; set; } = true;
+        public bool LowHealthOverlayEnabled { get; set; } = true;
+        public bool ComboEffectsEnabled { get; set; } = true;
+
         public void Load()
         {
             if (_config.Load(SettingsPath) != Error.Ok) return;
@@ -27,6 +33,9 @@ namespace Baboomz
             Fullscreen = (bool)_config.GetValue("display", "fullscreen", false);
             SkillSlot0 = (int)_config.GetValue("loadout", "skill0", 0);
             SkillSlot1 = (int)_config.GetValue("loadout", "skill1", 3);
+            HitMarkersEnabled = (bool)_config.GetValue("feedback", "hit_markers", true);
+            LowHealthOverlayEnabled = (bool)_config.GetValue("feedback", "low_health_overlay", true);
+            ComboEffectsEnabled = (bool)_config.GetValue("feedback", "combo_effects", true);
         }
 
         public void Save()
@@ -37,6 +46,9 @@ namespace Baboomz
             _config.SetValue("display", "fullscreen", Fullscreen);
             _config.SetValue("loadout", "skill0", SkillSlot0);
             _config.SetValue("loadout", "skill1", SkillSlot1);
+            _config.SetValue("feedback", "hit_markers", HitMarkersEnabled);
+            _config.SetValue("feedback", "low_health_overlay", LowHealthOverlayEnabled);
+            _config.SetValue("feedback", "combo_effects", ComboEffectsEnabled);
             _config.Save(SettingsPath);
         }
     }
