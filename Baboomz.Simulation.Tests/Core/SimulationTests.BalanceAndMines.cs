@@ -253,5 +253,39 @@ namespace Baboomz.Tests.Editor
                 "Dynamite MaxDamage must stay within the 65-70 target range");
         }
 
+        [Test]
+        public void WarCryBalance_CooldownAlignedWithTeamBuffTier()
+        {
+            // Regression for #172: War Cry 18s→15s. Conditional team buff (1.5×)
+            // shouldn't match Overcharge's guaranteed 2× at same CD.
+            var config = new GameConfig();
+            SkillDef warcry = default;
+            bool found = false;
+            foreach (var s in config.Skills)
+            {
+                if (s.SkillId == "warcry") { warcry = s; found = true; break; }
+            }
+            Assert.IsTrue(found, "warcry skill definition must exist");
+            Assert.AreEqual(15f, warcry.Cooldown,
+                "War Cry cooldown must be 15s after #172 balance change");
+        }
+
+        [Test]
+        public void DecoyBalance_CooldownAlignedWithEvasionTier()
+        {
+            // Regression for #173: Decoy 16s→13s. Conditional evasion (needs enemy
+            // to shoot dummy) aligned with Deflect (13s).
+            var config = new GameConfig();
+            SkillDef decoy = default;
+            bool found = false;
+            foreach (var s in config.Skills)
+            {
+                if (s.SkillId == "decoy") { decoy = s; found = true; break; }
+            }
+            Assert.IsTrue(found, "decoy skill definition must exist");
+            Assert.AreEqual(13f, decoy.Cooldown,
+                "Decoy cooldown must be 13s after #173 balance change");
+        }
+
     }
 }

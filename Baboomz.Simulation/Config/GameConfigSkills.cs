@@ -71,8 +71,9 @@ namespace Baboomz.Simulation
             new SkillDef
             {
                 SkillId = "warcry", Type = SkillType.WarCry,
-                // Balance #126: 40E -> 30E to close the gap with Overcharge's solo value
-                EnergyCost = 30f, Cooldown = 18f, Duration = 5f,
+                // Balance #172: 18s→15s. Conditional team buff (1.5×) shouldn't
+                // match Overcharge's guaranteed 2× at same CD. 15s ≈ 4 casts/match.
+                EnergyCost = 30f, Cooldown = 15f, Duration = 5f,
                 Range = 0f, Value = 1.5f  // damage multiplier (team); solo gets 1.9x (#126)
             },
             new SkillDef
@@ -101,7 +102,9 @@ namespace Baboomz.Simulation
             new SkillDef
             {
                 SkillId = "decoy", Type = SkillType.Decoy,
-                EnergyCost = 30f, Cooldown = 16f, Duration = 4f,
+                // Balance #173: 16s→13s. Conditional evasion (needs enemy to shoot
+                // dummy) aligned with Deflect (13s) — still riskier than Shadow Step (12s).
+                EnergyCost = 30f, Cooldown = 13f, Duration = 4f,
                 Range = 0f, Value = 30f  // decoy HP (survives chip damage, dies to real weapons)
             },
             new SkillDef
