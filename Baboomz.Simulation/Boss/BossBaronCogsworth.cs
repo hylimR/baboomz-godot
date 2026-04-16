@@ -21,6 +21,12 @@ namespace Baboomz.Simulation
             float dist = MathF.Abs(toTarget.x);
             boss.FacingDirection = toTarget.x >= 0f ? 1 : -1;
 
+            // First-tick initialization (matches SandWyrm pattern — #170)
+            if (attackTimer[index] == 0f)
+                attackTimer[index] = t + 3f;
+            if (specialTimer[index] == 0f)
+                specialTimer[index] = t + 8f;
+
             float hpRatio = boss.Health / boss.MaxHealth;
 
             // Phase transitions

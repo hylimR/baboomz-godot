@@ -21,6 +21,10 @@ namespace Baboomz.Simulation
             // Stationary
             boss.Velocity.x = 0f;
 
+            // First-tick initialization (matches SandWyrm pattern — #170)
+            if (attackTimer[index] == 0f)
+                attackTimer[index] = t + 4f;
+
             // Check phase transition
             float hpRatio = boss.Health / boss.MaxHealth;
             if (hpRatio <= 0.5f && boss.BossPhase == 0)
