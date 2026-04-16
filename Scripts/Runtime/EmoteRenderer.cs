@@ -38,7 +38,7 @@ namespace Baboomz
             // Spawn new bubbles from EmoteEvents
             foreach (var evt in _state.EmoteEvents)
             {
-                string text = EmoteText(evt.Emote);
+                string text = EmoteText.Get(evt.Emote);
                 if (string.IsNullOrEmpty(text)) continue;
 
                 // Replace existing bubble for same player
@@ -116,15 +116,5 @@ namespace Baboomz
             }
         }
 
-        private static string EmoteText(EmoteType type) => type switch
-        {
-            EmoteType.Taunt => "Ha!",
-            EmoteType.Laugh => "Haha!",
-            EmoteType.Cry => "Nooo!",
-            EmoteType.ThumbsUp => "GG!",
-            EmoteType.Clap => "Bravo!",
-            EmoteType.Salute => "Sir!",
-            _ => null
-        };
     }
 }
