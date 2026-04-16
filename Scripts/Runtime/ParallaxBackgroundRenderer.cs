@@ -1,4 +1,5 @@
 using Godot;
+using Baboomz.Simulation;
 
 namespace Baboomz
 {
@@ -10,6 +11,7 @@ namespace Baboomz
     /// </summary>
     public partial class ParallaxBackgroundRenderer : Node2D
     {
+        private const string DefaultFolder = "Default";
         // Scroll scales (0 = static, 1 = moves 1:1 with camera).
         private const float SkyScroll      = 0.00f;
         private const float MountainScroll = 0.10f;
@@ -31,17 +33,32 @@ namespace Baboomz
         private Camera2D _cam;
         private float _cloudDriftAccum;
 
-        public void Init()
+        /// <summary>
+        /// Initialise the parallax stack. When <paramref name="state"/> is non-null we look up
+        /// the current biome's BackgroundFolder (e.g. "Desert", "Arctic", "Steampunk") and load
+        /// assets from Art/Backgrounds/&lt;folder&gt;/. Any missing per-biome layer silently falls
+        /// back to Art/Backgrounds/Default/ so we never regress from the shipped look.
+        /// </summary>
+        public void Init(GameState state = null)
         {
             ZIndex = -50;
             ZAsRelative = false;
 
+            string folder = ResolveBiomeFolder(state);
+
             // Y offsets in Godot Y-down space. Sky spans the whole screen; far layers sit
             // at upper/mid; hills sit just behind the terrain (~y = 0 world).
-            _sky       = CreateLayer("Sky",       "Backgrounds/Default/sky_gradient",  SkyScroll,      new Color(0.55f, 0.80f, 1.00f), -53, yOffset:   0f, heightWorld: 280f, stretchFill: true);
-            _mountains = CreateLayer("Mountains", "Backgrounds/Default/mountains_far", MountainScroll, new Color(0.40f, 0.45f, 0.60f), -52, yOffset: -35f, heightWorld:  60f, stretchFill: false);
-            _clouds    = CreateLayer("Clouds",    "Backgrounds/Default/clouds_layer",  CloudScroll,    new Color(1f, 1f, 1f, 0f),      -51, yOffset: -80f, heightWorld:  40f, stretchFill: false);
-            _hills     = CreateLayer("Hills",     "Backgrounds/Default/hills_near",    HillScroll,     new Color(0.35f, 0.55f, 0.30f), -50, yOffset:  20f, heightWorld:  50f, stretchFill: false);
+            _sky       = CreateLayer("Sky",       folder, "sky_gradient",  SkyScroll,      new Color(0.55f, 0.80f, 1.00f), -53, yOffset:   0f, heightWorld: 280f, stretchFill: true);
+            _mountains = CreateLayer("Mountains", folder, "mountains_far", MountainScroll, new Color(0.40f, 0.45f, 0.60f), -52, yOffset: -35f, heightWorld:  60f, stretchFill: false);
+            _clouds    = CreateLayer("Clouds",    folder, "clouds_layer",  CloudScroll,    new Color(1f, 1f, 1f, 0f),      -51, yOffset: -80f, heightWorld:  40f, stretchFill: false);
+            _hills     = CreateLayer("Hills",     folder, "hills_near",    HillScroll,     new Color(0.35f, 0.55f, 0.30f), -50, yOffset:  20f, heightWorld:  50f, stretchFill: false);
+        }
+
+        internal static string ResolveBiomeFolder(GameState state)
+        {
+            if (state == null) return DefaultFolder;
+            string f = state.Biome.BackgroundFolder;
+            return string.IsNullOrEmpty(f) ? DefaultFolder : f;
         }
 
         public override void _Process(double delta)
@@ -71,7 +88,7 @@ namespace Baboomz
         }
 
         private ParallaxLayerNode CreateLayer(
-            string name, string artPath, float scrollScale, Color fallbackColor, int zIndex,
+            string name, string folder, string asset, float scrollScale, Color fallbackColor, int zIndex,
             float yOffset, float heightWorld, bool stretchFill)
         {
             var layer = new ParallaxLayerNode();
@@ -82,7 +99,10 @@ namespace Baboomz
             layer.ZAsRelative = false;
             AddChild(layer);
 
-            var tex = SpriteLoader.Load(artPath);
+            // Try the biome-specific asset first, then fall back to Default before giving up.
+            var tex = SpriteLoader.Load($"Backgrounds/{folder}/{asset}");
+            if (tex == null && folder != DefaultFolder)
+                tex = SpriteLoader.Load($"Backgrounds/{DefaultFolder}/{asset}");
             if (tex != null)
             {
                 float texW = tex.GetWidth();
