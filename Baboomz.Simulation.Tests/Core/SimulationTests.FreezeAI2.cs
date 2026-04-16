@@ -114,12 +114,16 @@ namespace Baboomz.Tests.Editor
         }
 
         [Test]
-        public void BalanceCheck_EarthquakeCooldown_Is16()
+        public void BalanceCheck_EarthquakeStats_Issue141()
         {
+            // Issue #141: Earthquake underperformed vs Mine Layer (105 dmg / cast) at 20 dmg / 16s.
+            // Damage 20 -> 35 (matches one mine trigger), cooldown 16s -> 14s.
             var config = new GameConfig();
             var eq = config.Skills[7];
             Assert.AreEqual("earthquake", eq.SkillId);
-            Assert.AreEqual(16f, eq.Cooldown, "Earthquake cooldown should be 16s (reduced from 20s)");
+            Assert.AreEqual(35f, eq.EnergyCost, "Earthquake energy cost should remain 35");
+            Assert.AreEqual(14f, eq.Cooldown, "Earthquake cooldown should be 14s (issue #141, was 16s)");
+            Assert.AreEqual(35f, eq.Value, "Earthquake damage should be 35 (issue #141, was 20)");
         }
 
         [Test]
