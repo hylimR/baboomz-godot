@@ -133,5 +133,46 @@ namespace Baboomz.Tests.Editor
                 "Target should lose 30 energy");
         }
 
+        [Test]
+        public void EnergyDrain_RefundsWhenTargetHasZeroEnergy()
+        {
+            // Regression #163: Energy Drain used to commit cost+cooldown against a
+            // 0-energy target despite draining nothing. Now it must whiff like
+            // HookShot/Overcharge: refund cost, skip cooldown, emit no events.
+            var config = SmallConfig();
+            config.MineCount = 0;
+            config.BarrelCount = 0;
+            var state = GameSimulation.CreateMatch(config, 42);
+
+            state.Players[0].Position = new Vec2(0f, 5f);
+            state.Players[1].Position = new Vec2(5f, 5f); // within range
+            state.Players[0].Energy = 50f;
+            state.Players[1].Energy = 0f; // empty target
+            state.Players[1].IsCharging = true; // must not be free-cancelled
+
+            state.Players[0].SkillSlots = new SkillSlotState[]
+            {
+                new SkillSlotState
+                {
+                    SkillId = "energy_drain", Type = SkillType.EnergyDrain,
+                    EnergyCost = 20f, Cooldown = 10f, Range = 12f, Value = 30f
+                },
+                new SkillSlotState()
+            };
+
+            SkillSystem.ActivateSkill(state, 0, 0);
+
+            Assert.AreEqual(50f, state.Players[0].Energy, 0.01f,
+                "Caster energy cost must be refunded when target has no energy");
+            Assert.AreEqual(0f, state.Players[0].SkillSlots[0].CooldownRemaining, 0.01f,
+                "Cooldown must not start on a zero-drain whiff");
+            Assert.AreEqual(0, state.EnergyDrainEvents.Count,
+                "No drain event should fire when drained == 0");
+            Assert.AreEqual(0, state.SkillEvents.Count,
+                "No SkillEvent should be emitted on zero-drain whiff");
+            Assert.IsTrue(state.Players[1].IsCharging,
+                "Target's charging state must not be cancelled by a whiffed drain");
+        }
+
     }
 }

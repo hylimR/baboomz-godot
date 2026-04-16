@@ -231,6 +231,10 @@ namespace Baboomz.Simulation
             if (target < 0) return false;
             ref PlayerState t = ref state.Players[target];
             float drained = MathF.Min(skill.Value > 0f ? skill.Value : 30f, t.Energy);
+            // #163: match HookShot/Overcharge whiff behaviour — if the target
+            // has no energy to drain, refund cost + skip cooldown instead of
+            // consuming the cast for a zero-payload "success".
+            if (drained <= 0f) return false;
             t.Energy -= drained;
             p.Energy = MathF.Min(p.Energy + drained, p.MaxEnergy);
             if (t.IsCharging) t.IsCharging = false;
