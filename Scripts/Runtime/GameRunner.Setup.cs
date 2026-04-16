@@ -57,6 +57,12 @@ namespace Baboomz
             AddChild(debris);
             debris.Init(State);
 
+            // Skill markers (shields, grapple lines, dash trails, etc.)
+            var skillMarkers = new SkillMarkerRenderer();
+            skillMarkers.Name = "SkillMarkers";
+            AddChild(skillMarkers);
+            skillMarkers.Init(State);
+
             // Mode-specific renderers (auto-hide for non-matching types)
             SpawnModeRenderers();
 

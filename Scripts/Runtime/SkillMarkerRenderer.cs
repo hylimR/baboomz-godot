@@ -6,7 +6,7 @@ namespace Baboomz
 {
     /// <summary>
     /// Renders active skill markers: shield bubbles, smoke clouds, grapple lines,
-    /// shadow step markers. Reads SkillSlotState from each player each frame.
+    /// shadow step markers, dash trails. Reads SkillSlotState from each player each frame.
     /// </summary>
     public partial class SkillMarkerRenderer : Node2D
     {
@@ -15,6 +15,7 @@ namespace Baboomz
         private readonly Dictionary<int, Sprite2D> _shadowStepSprites = new();
         private readonly Dictionary<int, Line2D> _grappleLines = new();
         private readonly Dictionary<int, Sprite2D> _smokeSprites = new();
+        private readonly Dictionary<int, Line2D> _dashTrails = new();
 
         public void Init(GameState state)
         {
@@ -29,6 +30,7 @@ namespace Baboomz
             var activeShields = new HashSet<int>();
             var activeGrapples = new HashSet<int>();
             var activeShadowSteps = new HashSet<int>();
+            var activeDashes = new HashSet<int>();
 
             for (int i = 0; i < _state.Players.Length; i++)
             {
@@ -56,6 +58,11 @@ namespace Baboomz
                             activeShadowSteps.Add(i);
                             UpdateShadowStep(i, p.SkillTargetPosition, skill.DurationRemaining);
                             break;
+
+                        case SkillType.Dash:
+                            activeDashes.Add(i);
+                            UpdateDashTrail(i, p.Position, skill.DurationRemaining, skill.Duration);
+                            break;
                     }
                 }
             }
@@ -67,6 +74,7 @@ namespace Baboomz
             CleanupMap(_shieldSprites, activeShields);
             CleanupMap(_grappleLines, activeGrapples);
             CleanupMap(_shadowStepSprites, activeShadowSteps);
+            CleanupMap(_dashTrails, activeDashes);
         }
 
         private void UpdateShield(int playerIndex, Vec2 pos)
@@ -113,6 +121,33 @@ namespace Baboomz
             sprite.Scale = Vector2.One * 1.5f * pulse;
             float alpha = 0.3f + 0.3f * Mathf.Clamp(remaining / 3f, 0f, 1f);
             sprite.Modulate = new Color(1f, 1f, 1f, alpha);
+        }
+
+        private void UpdateDashTrail(int playerIndex, Vec2 pos, float remaining, float total)
+        {
+            if (!_dashTrails.TryGetValue(playerIndex, out var trail))
+            {
+                trail = new Line2D();
+                trail.Width = 4f;
+                trail.DefaultColor = new Color(0.8f, 0.9f, 1f, 0.7f);
+                trail.ZIndex = 13;
+                trail.BeginCapMode = Line2D.LineCapMode.Round;
+                trail.EndCapMode = Line2D.LineCapMode.Round;
+                AddChild(trail);
+                _dashTrails[playerIndex] = trail;
+            }
+
+            // Append current position as a trail point
+            var godotPos = pos.ToGodot();
+            trail.AddPoint(godotPos);
+
+            // Cap trail length to prevent unbounded growth
+            while (trail.GetPointCount() > 12)
+                trail.RemovePoint(0);
+
+            // Fade alpha based on remaining duration
+            float t = total > 0f ? remaining / total : 0f;
+            trail.DefaultColor = new Color(0.8f, 0.9f, 1f, 0.7f * t);
         }
 
         private void SyncSmokeZones()
