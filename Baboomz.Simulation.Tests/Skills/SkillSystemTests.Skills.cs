@@ -50,6 +50,23 @@ namespace Baboomz.Tests.Editor
             Assert.IsFalse(state.Players[0].SkillSlots[0].IsActive);
         }
 
+        [Test]
+        public void Teleport_Config_BalancedVsDash_Issue171()
+        {
+            // Balance #171: Teleport 40E→28E so it's no longer 2.2x worse E/u than Dash.
+            // 28E/15u = 1.87 E/u — still pricier than Dash (1.20) but viable for
+            // instant terrain-bypass repositioning.
+            var cfg = new GameConfig();
+            SkillDef? teleport = null;
+            foreach (var s in cfg.Skills)
+                if (s.SkillId == "teleport") { teleport = s; break; }
+
+            Assert.NotNull(teleport, "Teleport skill missing from GameConfig.Skills");
+            Assert.AreEqual(28f, teleport!.Value.EnergyCost, 0.001f, "Teleport EnergyCost");
+            Assert.AreEqual(8f, teleport!.Value.Cooldown, 0.001f, "Teleport Cooldown (unchanged)");
+            Assert.AreEqual(15f, teleport!.Value.Range, 0.001f, "Teleport Range (unchanged)");
+        }
+
         // --- Shield tests ---
 
         [Test]

@@ -9,7 +9,10 @@ namespace Baboomz.Simulation
             new SkillDef
             {
                 SkillId = "teleport", Type = SkillType.Teleport,
-                EnergyCost = 40f, Cooldown = 8f, Duration = 0f,
+                // Balance #171: 40E→28E. At 40E/15u Teleport was 2.2x worse E/u than
+                // Dash (18E/15u). 28E/15u = 1.87 E/u — still ~1.6x pricier than Dash,
+                // preserving the premium for instant terrain-bypass repositioning.
+                EnergyCost = 28f, Cooldown = 8f, Duration = 0f,
                 Range = 15f, Value = 0f
             },
             new SkillDef
