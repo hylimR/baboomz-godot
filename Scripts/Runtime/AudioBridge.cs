@@ -34,7 +34,7 @@ namespace Baboomz
 
             _sfxPlayer = new AudioStreamPlayer();
             _sfxPlayer.Name = "SfxPlayer";
-            _sfxPlayer.Bus = "Master";
+            _sfxPlayer.Bus = "SFX";
             AddChild(_sfxPlayer);
 
             GenerateClips();
@@ -111,7 +111,7 @@ namespace Baboomz
             var player = new AudioStreamPlayer();
             player.Stream = clip;
             player.VolumeDb = Mathf.LinearToDb(volume);
-            player.Bus = "Master";
+            player.Bus = "SFX";
             AddChild(player);
             player.Play();
             player.Finished += () => player.QueueFree();
@@ -124,7 +124,7 @@ namespace Baboomz
             player.Stream = clip;
             player.VolumeDb = Mathf.LinearToDb(volume);
             player.PitchScale = pitch;
-            player.Bus = "Master";
+            player.Bus = "SFX";
             AddChild(player);
             player.Play();
             player.Finished += () => player.QueueFree();
@@ -136,7 +136,7 @@ namespace Baboomz
         {
             _musicPlayer = new AudioStreamPlayer();
             _musicPlayer.Name = "MusicPlayer";
-            _musicPlayer.Bus = "Master";
+            _musicPlayer.Bus = "Music";
             _musicPlayer.VolumeDb = Mathf.LinearToDb(0.15f); // quiet ambient
             AddChild(_musicPlayer);
 
