@@ -16,7 +16,8 @@ namespace Baboomz.Tests.Editor
             Assert.AreEqual("mine_layer", config.Skills[10].SkillId);
             Assert.AreEqual(SkillType.MineLay, config.Skills[10].Type);
             Assert.AreEqual(25f, config.Skills[10].EnergyCost);
-            Assert.AreEqual(30f, config.Skills[10].Value); // mine damage
+            Assert.AreEqual(10f, config.Skills[10].Cooldown); // #125: 12 -> 10
+            Assert.AreEqual(35f, config.Skills[10].Value); // #125: 30 -> 35
         }
 
         [Test]
@@ -52,12 +53,12 @@ namespace Baboomz.Tests.Editor
             var mine = state.Mines[state.Mines.Count - 1];
             Assert.IsTrue(mine.Active);
             Assert.AreEqual(0, mine.OwnerIndex);
-            Assert.AreEqual(30f, mine.Damage);
+            Assert.AreEqual(30f, mine.Damage); // slot override (from test SkillSlotState.Value)
             Assert.AreEqual(15f, mine.Lifetime);
         }
 
         [Test]
-        public void MineLay_MaxTwoMinesPerPlayer()
+        public void MineLay_MaxThreeMinesPerPlayer()
         {
             var config = SmallConfig();
             config.MineCount = 0;
@@ -80,7 +81,8 @@ namespace Baboomz.Tests.Editor
             };
             state.Players[0].Energy = 1000f;
 
-            // Place 3 mines — third should deactivate the first
+            // Place 4 mines — fourth should deactivate the first (#125: cap is 3)
+            SkillSystem.ActivateSkill(state, 0, 0);
             SkillSystem.ActivateSkill(state, 0, 0);
             SkillSystem.ActivateSkill(state, 0, 0);
             SkillSystem.ActivateSkill(state, 0, 0);
@@ -90,8 +92,8 @@ namespace Baboomz.Tests.Editor
                 if (state.Mines[i].Active && state.Mines[i].OwnerIndex == 0)
                     activeOwned++;
 
-            Assert.LessOrEqual(activeOwned, 2,
-                "Player should have at most 2 active mines");
+            Assert.LessOrEqual(activeOwned, 3,
+                "Player should have at most 3 active mines");
         }
 
         [Test]
@@ -121,8 +123,9 @@ namespace Baboomz.Tests.Editor
             state.Players[0].Energy = 1000f;
 
             // Seed a deactivated-slot scenario: place mine A, kill it, then fill slots
-            // with mines B and C at increasing times. When we place D it should evict
-            // the earliest of {B, C} — which is B — not whichever the loop finds first.
+            // with mines B, C, D at increasing times. When we place E (4th active) it
+            // should evict the earliest of {B, C, D} — which is B — not whichever the
+            // loop finds first. Updated for #125 cap change (2 -> 3 active mines).
             state.Time = 1f;
             SkillSystem.ActivateSkill(state, 0, 0); // Mine A @ t=1
             // Simulate mine A exploding/deactivating: flip its slot dead.
@@ -137,36 +140,41 @@ namespace Baboomz.Tests.Editor
             SkillSystem.ActivateSkill(state, 0, 0); // Mine B @ t=5
             state.Time = 10f;
             SkillSystem.ActivateSkill(state, 0, 0); // Mine C @ t=10
+            state.Time = 12f;
+            SkillSystem.ActivateSkill(state, 0, 0); // Mine D @ t=12
 
-            // Track B's and C's PlacedTime before overflow
+            // Track active placed times before overflow
             float bTime = float.MaxValue;
-            float cTime = float.MinValue;
+            float dTime = float.MinValue;
             for (int i = 0; i < state.Mines.Count; i++)
             {
                 if (!state.Mines[i].Active || state.Mines[i].OwnerIndex != 0) continue;
                 if (state.Mines[i].PlacedTime < bTime) bTime = state.Mines[i].PlacedTime;
-                if (state.Mines[i].PlacedTime > cTime) cTime = state.Mines[i].PlacedTime;
+                if (state.Mines[i].PlacedTime > dTime) dTime = state.Mines[i].PlacedTime;
             }
             Assert.AreEqual(5f, bTime, 0.01f);
-            Assert.AreEqual(10f, cTime, 0.01f);
+            Assert.AreEqual(12f, dTime, 0.01f);
 
-            // Place mine D — B should be evicted (oldest), C should survive alongside D
+            // Place mine E — B should be evicted (oldest), C and D should survive alongside E
             state.Time = 15f;
-            SkillSystem.ActivateSkill(state, 0, 0); // Mine D @ t=15
+            SkillSystem.ActivateSkill(state, 0, 0); // Mine E @ t=15
 
             bool bStillActive = false;
             bool cStillActive = false;
-            bool dActive = false;
+            bool dStillActive = false;
+            bool eActive = false;
             for (int i = 0; i < state.Mines.Count; i++)
             {
                 if (!state.Mines[i].Active || state.Mines[i].OwnerIndex != 0) continue;
                 if (MathF.Abs(state.Mines[i].PlacedTime - 5f) < 0.01f) bStillActive = true;
                 if (MathF.Abs(state.Mines[i].PlacedTime - 10f) < 0.01f) cStillActive = true;
-                if (MathF.Abs(state.Mines[i].PlacedTime - 15f) < 0.01f) dActive = true;
+                if (MathF.Abs(state.Mines[i].PlacedTime - 12f) < 0.01f) dStillActive = true;
+                if (MathF.Abs(state.Mines[i].PlacedTime - 15f) < 0.01f) eActive = true;
             }
             Assert.IsFalse(bStillActive, "Oldest mine (B, t=5) should have been evicted");
-            Assert.IsTrue(cStillActive, "Newer mine (C, t=10) should still be active");
-            Assert.IsTrue(dActive, "Newly placed mine (D, t=15) should be active");
+            Assert.IsTrue(cStillActive, "Mid mine (C, t=10) should still be active");
+            Assert.IsTrue(dStillActive, "Newer mine (D, t=12) should still be active");
+            Assert.IsTrue(eActive, "Newly placed mine (E, t=15) should be active");
         }
 
         [Test]
