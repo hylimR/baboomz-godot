@@ -104,8 +104,8 @@ namespace Baboomz
                             pos + new Vector2(0f, -6f),
                             pos + new Vector2(5f, 0f)
                         }, color);
-                        DrawLine(pos + new Vector2(-6f, -2f), pos + new Vector2(-8f, -8f), color, 0.1f);
-                        DrawLine(pos + new Vector2(6f, -2f), pos + new Vector2(8f, -8f), color, 0.1f);
+                        DrawLine(pos + new Vector2(-6f, -2f), pos + new Vector2(-8f, -8f), color, 1.5f);
+                        DrawLine(pos + new Vector2(6f, -2f), pos + new Vector2(8f, -8f), color, 1.5f);
                         break;
                     case 7: // WizardHat — tall cone
                         DrawColoredPolygon(new[] {
@@ -116,8 +116,8 @@ namespace Baboomz
                         break;
                     case 8: // SamuraiHelmet — flat top with wings
                         DrawRect(new Rect2(pos + new Vector2(-6f, -3f), new Vector2(12f, 3f)), color);
-                        DrawLine(pos + new Vector2(-6f, -3f), pos + new Vector2(-9f, -6f), color, 0.1f);
-                        DrawLine(pos + new Vector2(6f, -3f), pos + new Vector2(9f, -6f), color, 0.1f);
+                        DrawLine(pos + new Vector2(-6f, -3f), pos + new Vector2(-9f, -6f), color, 1.5f);
+                        DrawLine(pos + new Vector2(6f, -3f), pos + new Vector2(9f, -6f), color, 1.5f);
                         break;
                     case 9: // DragonCrown — jagged top
                         DrawColoredPolygon(new[] {
