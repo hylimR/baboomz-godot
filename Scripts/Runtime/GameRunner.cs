@@ -45,11 +45,14 @@ namespace Baboomz
             // random-match. LevelLoader overrides MatchType, map size, spawn,
             // difficulty scaling. Terrain seed (when present in the file)
             // overrides the caller's seed so campaign levels stay deterministic.
+            Simulation.TutorialStepDef[] tutorialSteps = null;
             if (!string.IsNullOrEmpty(GameModeContext.SelectedLevelId))
             {
-                var (loaded, levelSeed) = LevelLoader.TryApply(config, GameModeContext.SelectedLevelId);
+                var (loaded, levelSeed, steps) = LevelLoader.TryApply(config, GameModeContext.SelectedLevelId);
                 if (loaded && levelSeed.HasValue && seed < 0)
                     seed = levelSeed.Value;
+                if (loaded && steps != null)
+                    tutorialSteps = steps;
             }
 
             _matchConfig = config;
@@ -60,6 +63,13 @@ namespace Baboomz
                 GameModeContext.SelectedSkillSlot0, GameModeContext.SelectedSkillSlot1);
             AILogic.Reset(seed, State.Players.Length);
             BossLogic.Reset(seed, State.Players.Length);
+
+            // Initialize tutorial if the level has tutorial steps
+            if (tutorialSteps != null && tutorialSteps.Length > 0)
+            {
+                State.Tutorial = Simulation.TutorialSystem.CreateFromSteps(tutorialSteps);
+                Simulation.TutorialSystem.InitStepTracking(State.Tutorial, State);
+            }
 
             GD.Print($"Match started: seed={seed}, players={State.Players.Length}, phase={State.Phase}");
 

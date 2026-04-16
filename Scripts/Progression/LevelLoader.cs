@@ -14,20 +14,21 @@ namespace Baboomz
     public static class LevelLoader
     {
         /// <summary>
-        /// Returns <c>(loaded, seed)</c>. If the level file is missing or
+        /// Returns <c>(loaded, seed, tutorialSteps)</c>. If the level file is missing or
         /// invalid, <paramref name="cfg"/> is unchanged and loaded = false.
         /// </summary>
-        public static (bool loaded, int? seed) TryApply(GameConfig cfg, string levelId)
+        public static (bool loaded, int? seed, TutorialStepDef[] tutorialSteps) TryApply(
+            GameConfig cfg, string levelId)
         {
             if (cfg == null || string.IsNullOrEmpty(levelId))
-                return (false, null);
+                return (false, null, null);
 
             string path = $"res://Resources/Levels/{levelId}.json";
             using var file = FileAccess.Open(path, FileAccess.ModeFlags.Read);
             if (file == null)
             {
                 GD.PushWarning($"LevelLoader: could not open {path}");
-                return (false, null);
+                return (false, null, null);
             }
 
             string json = file.GetAsText();
@@ -35,11 +36,11 @@ namespace Baboomz
             if (!result.Applied)
             {
                 GD.PushWarning($"LevelLoader: invalid JSON in {path}");
-                return (false, null);
+                return (false, null, null);
             }
 
             GD.Print($"LevelLoader: applied '{result.LevelId}' (seed={result.TerrainSeed})");
-            return (true, result.TerrainSeed);
+            return (true, result.TerrainSeed, result.TutorialSteps);
         }
     }
 }

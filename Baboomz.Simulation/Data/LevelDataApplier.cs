@@ -23,12 +23,15 @@ namespace Baboomz.Simulation
             public readonly bool Applied;
             public readonly int? TerrainSeed;
             public readonly string LevelId;
+            public readonly TutorialStepDef[] TutorialSteps;
 
-            public ApplyResult(bool applied, int? seed, string levelId)
+            public ApplyResult(bool applied, int? seed, string levelId,
+                TutorialStepDef[] tutorialSteps = null)
             {
                 Applied = applied;
                 TerrainSeed = seed;
                 LevelId = levelId;
+                TutorialSteps = tutorialSteps;
             }
         }
 
@@ -97,7 +100,33 @@ namespace Baboomz.Simulation
                         cfg.MineCount = mc;
                 }
 
-                return new ApplyResult(true, seed, levelId);
+                // Tutorial steps
+                TutorialStepDef[] tutorialSteps = null;
+                if (root.TryGetProperty("tutorialSteps", out var steps) &&
+                    steps.ValueKind == JsonValueKind.Array)
+                {
+                    var list = new System.Collections.Generic.List<TutorialStepDef>();
+                    foreach (var s in steps.EnumerateArray())
+                    {
+                        if (s.ValueKind != JsonValueKind.Object) continue;
+                        var step = new TutorialStepDef();
+                        if (TryInt(s, "stepId", out int sid)) step.StepId = sid;
+                        step.Title = TryString(s, "title") ?? "";
+                        step.Description = TryString(s, "description") ?? "";
+                        string action = TryString(s, "actionType") ?? "move_right";
+                        step.ActionType = TutorialSystem.ParseActionType(action);
+                        if (TryFloat(s, "threshold", out float th)) step.Threshold = th;
+                        else step.Threshold = 1f;
+                        if (TryInt(s, "targetWeaponSlot", out int tw)) step.TargetWeaponSlot = tw;
+                        else step.TargetWeaponSlot = -1;
+                        if (TryInt(s, "targetSkillSlot", out int ts)) step.TargetSkillSlot = ts;
+                        else step.TargetSkillSlot = -1;
+                        list.Add(step);
+                    }
+                    if (list.Count > 0) tutorialSteps = list.ToArray();
+                }
+
+                return new ApplyResult(true, seed, levelId, tutorialSteps);
             }
         }
 
