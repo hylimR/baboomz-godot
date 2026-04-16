@@ -224,13 +224,13 @@ No VContainer, no MessagePipe, no UniTask — replaced with:
 - Emote renderer + taunt display (`Scripts/Runtime/EmoteRenderer.cs` + `Baboomz.Simulation/State/EmoteText.cs`)
 - Real sprite loading wired to PlayerRenderer, ExplosionRenderer, ParallaxBackgroundRenderer (`Scripts/Runtime/SpriteLoader.cs`)
 - Combat feedback — hit markers, low-health vignette, combo renderer (`Scripts/Runtime/{HitMarkerRenderer,LowHealthOverlay,ComboRenderer}.cs`)
+- Editor tools — `addons/baboomz_level_validator/` (toolbar button, schema check) and `addons/baboomz_level_preview/` (bottom-panel dock). Validator core is `Baboomz.Simulation/Data/LevelValidator.cs` and runs against all 28 level JSONs in the test suite.
 - 1015+ simulation tests passing (0 failures)
 - 50+ E2E integration tests (match lifecycle, input pipeline, all game modes, scene flow, config)
 
 ### Remaining (nice-to-have)
 - Mode-specific renderers — placeholder shapes need sprite art upgrade (tracked in #113)
 - Campaign UI wiring — LevelSelect / Shop / Achievement flow integrated into MainMenu (tracked in #112)
-- Editor tools (Level Preview, Level Validator as Godot plugins — no `addons/` directory yet)
 
 ## Migrated From
 
