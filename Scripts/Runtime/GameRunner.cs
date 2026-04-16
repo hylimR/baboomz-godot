@@ -38,6 +38,20 @@ namespace Baboomz
             config.Player1Name = GameModeContext.PlayerName;
             PlayerRecord.Load();
             config.UnlockedTier = UnlockRegistry.GetTier(PlayerRecord.Wins);
+
+            // #162: load the selected campaign level so it actually drives the
+            // match. Previously SelectedLevelId was written by LevelSelectPanel
+            // but read by no one, so the campaign silently fell through to a
+            // random-match. LevelLoader overrides MatchType, map size, spawn,
+            // difficulty scaling. Terrain seed (when present in the file)
+            // overrides the caller's seed so campaign levels stay deterministic.
+            if (!string.IsNullOrEmpty(GameModeContext.SelectedLevelId))
+            {
+                var (loaded, levelSeed) = LevelLoader.TryApply(config, GameModeContext.SelectedLevelId);
+                if (loaded && levelSeed.HasValue && seed < 0)
+                    seed = levelSeed.Value;
+            }
+
             _matchConfig = config;
 
             if (seed < 0) seed = (int)(GD.Randi() % 99999);
