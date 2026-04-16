@@ -64,8 +64,8 @@ namespace Baboomz.Simulation
 
             var rng = new Random(seed);
 
-            // Assign random cosmetic hats
-            int hatCount = 5; // HatType values 1-5 (skip None)
+            // Assign random cosmetic hats — all 11 types from PR #130 (skip HatType.None)
+            int hatCount = (int)HatType.GoldenCrown; // = 11
             for (int i = 0; i < state.Players.Length; i++)
                 state.Players[i].Hat = (HatType)(1 + rng.Next(hatCount));
 
