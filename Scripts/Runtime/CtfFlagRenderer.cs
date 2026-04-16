@@ -6,7 +6,7 @@ namespace Baboomz
     /// <summary>
     /// Visualises Capture the Flag state in world space:
     ///   - one flag-post Sprite at each team's HomePosition
-    ///   - a small carried-flag marker that follows the carrying player's head
+    ///   - a triangular pennant drawn via _Draw that follows the carrier's head
     ///   - a pulsing dropped-flag indicator at the drop position
     /// Spawns nothing for non-CTF matches; safe to add unconditionally to GameRunner.
     /// </summary>
@@ -58,14 +58,14 @@ namespace Baboomz
     }
 
     /// <summary>
-    /// Single-flag visual: home post (always visible), pennant (always visible at
-    /// current Position), and a pulsing ring overlay shown only when the flag is
-    /// dropped. The pennant follows the carrier's head when held.
+    /// Single-flag visual: home post (always visible), pennant drawn as a
+    /// waving triangle via _Draw, and a pulsing ring overlay shown only when
+    /// the flag is dropped. The pennant follows the carrier's head when held.
     /// </summary>
     public partial class FlagVisual : Node2D
     {
         private Sprite2D _post;
-        private Sprite2D _pennant;
+        private FlagPennant _pennant;
         private Node2D _dropIndicator;
         private Color _teamColor;
         private float _baseScale = 0.6f;
@@ -74,7 +74,7 @@ namespace Baboomz
         {
             _teamColor = teamColor;
 
-            // Home post: 3 world units tall, slim white pixel rect tinted by team.
+            // Home post: 3 world units tall, slim white pixel rect tinted brown.
             _post = new Sprite2D();
             _post.Name = "Post";
             _post.Texture = ProceduralSprites.WhitePixel;
@@ -83,13 +83,9 @@ namespace Baboomz
             _post.SelfModulate = new Color(0.6f, 0.45f, 0.25f, 1f);
             AddChild(_post);
 
-            // Pennant flag: small triangle made of a 2x1 white rect for now.
-            _pennant = new Sprite2D();
+            // Pennant: triangular flag drawn via _Draw with a subtle wave.
+            _pennant = new FlagPennant { TeamColor = teamColor };
             _pennant.Name = "Pennant";
-            _pennant.Texture = ProceduralSprites.WhitePixel;
-            _pennant.Centered = true;
-            _pennant.Scale = new Vector2(1.6f, 1.0f);
-            _pennant.SelfModulate = teamColor;
             AddChild(_pennant);
 
             // Drop indicator: pulsing dot rendered via _Draw on a child node.
@@ -104,7 +100,6 @@ namespace Baboomz
             // Home post stays at HomePosition.
             var home = flagState.HomePosition.ToGodot();
             _post.GlobalPosition = home + new Vector2(0f, -3f); // grow upward
-            // Sprite2D scale uses pixel basis; the white pixel is 1px so scale = world units * 1.
 
             // Pennant: where to draw it depends on state.
             Vector2 flagWorld;
@@ -118,7 +113,10 @@ namespace Baboomz
             {
                 flagWorld = flagState.Position.ToGodot();
             }
-            _pennant.GlobalPosition = flagWorld + new Vector2(0.6f, -2.6f);
+            // Anchor pennant at the top of the post; the triangle extends to the right.
+            _pennant.GlobalPosition = flagWorld + new Vector2(0.08f, -2.8f);
+            _pennant.WaveTime = pulseTime;
+            _pennant.QueueRedraw();
 
             // Drop indicator: pulse only while dropped (carrier == -1 and not at home).
             bool dropped = flagState.CarrierIndex < 0 && !flagState.IsHome;
@@ -133,6 +131,41 @@ namespace Baboomz
 
         // Avoid CS0414 unused warning while keeping a tunable for future scale work.
         public float BaseScale { get => _baseScale; set => _baseScale = value; }
+    }
+
+    /// <summary>
+    /// Triangular team-colored pennant drawn via _Draw. A subtle wave on the
+    /// trailing tip sells it as a fabric flag rather than a flat rectangle.
+    /// </summary>
+    public partial class FlagPennant : Node2D
+    {
+        public Color TeamColor = Colors.White;
+        public float WaveTime;
+
+        // Pennant geometry (world units). Pole-side edge is vertical, tip waves.
+        private const float Height = 1.2f;
+        private const float Length = 1.8f;
+
+        public override void _Draw()
+        {
+            // Pole-side top and bottom corners (fixed at the anchor).
+            var top = new Vector2(0f, 0f);
+            var bottom = new Vector2(0f, Height);
+
+            // Trailing tip: the meeting point of the triangle, waved vertically.
+            float wave = Mathf.Sin(WaveTime * 4f) * 0.15f;
+            var tip = new Vector2(Length, Height * 0.5f + wave);
+
+            var points = new Vector2[] { top, bottom, tip };
+            DrawColoredPolygon(points, TeamColor);
+
+            // Dark outline so the flag reads against any background.
+            var outline = new Color(TeamColor.R * 0.4f, TeamColor.G * 0.4f,
+                TeamColor.B * 0.4f, 1f);
+            DrawLine(top, tip, outline, 0.08f);
+            DrawLine(bottom, tip, outline, 0.08f);
+            DrawLine(top, bottom, outline, 0.08f);
+        }
     }
 
     /// <summary>Pulses a circle outline to mark a dropped flag.</summary>
