@@ -360,5 +360,17 @@ namespace Baboomz.Tests.Editor
                 "Whirlpool hazard should deal no damage");
         }
 
+        // Issue #142: every biome must declare a BackgroundFolder so the parallax
+        // renderer can switch art per biome instead of hardcoding Default for all.
+        [Test]
+        public void Biome_AllBiomesDeclareBackgroundFolder_Issue142()
+        {
+            foreach (var biome in TerrainBiome.All)
+            {
+                Assert.IsFalse(string.IsNullOrEmpty(biome.BackgroundFolder),
+                    $"Biome '{biome.Name}' must declare a BackgroundFolder (issue #142)");
+            }
+        }
+
     }
 }

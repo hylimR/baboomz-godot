@@ -16,11 +16,13 @@ namespace Baboomz
             AddChild(inputBridge);
             inputBridge.SetState(State);
 
-            // Parallax background (behind terrain — CanvasLayer with negative index)
+            // Parallax background (behind terrain — CanvasLayer with negative index).
+            // Biome folder switches the sky/mountains/clouds/hills art per biome; missing
+            // biome folders fall back to the shared Backgrounds/Default/ set.
             var parallax = new ParallaxBackgroundRenderer();
             parallax.Name = "Parallax";
             AddChild(parallax);
-            parallax.Init();
+            parallax.Init(State.Biome.BackgroundFolder);
 
             // Terrain
             var terrain = new GodotTerrainBridge();

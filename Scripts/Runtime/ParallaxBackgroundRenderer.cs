@@ -31,17 +31,46 @@ namespace Baboomz
         private Camera2D _cam;
         private float _cloudDriftAccum;
 
-        public void Init()
+        /// <summary>
+        /// Default-biome overload (no biome info available). Prefer the overload that
+        /// takes a biome folder name so the parallax switches per biome.
+        /// </summary>
+        public void Init() => Init(null);
+
+        /// <summary>
+        /// Builds the parallax layers using art from <c>Art/Backgrounds/&lt;biomeFolder&gt;/</c>.
+        /// Each layer falls back individually to <c>Backgrounds/Default/</c> if the biome
+        /// art is missing, then to a solid colored rect if Default is also missing.
+        /// </summary>
+        public void Init(string biomeFolder)
         {
             ZIndex = -50;
             ZAsRelative = false;
 
             // Y offsets in Godot Y-down space. Sky spans the whole screen; far layers sit
             // at upper/mid; hills sit just behind the terrain (~y = 0 world).
-            _sky       = CreateLayer("Sky",       "Backgrounds/Default/sky_gradient",  SkyScroll,      new Color(0.55f, 0.80f, 1.00f), -53, yOffset:   0f, heightWorld: 280f, stretchFill: true);
-            _mountains = CreateLayer("Mountains", "Backgrounds/Default/mountains_far", MountainScroll, new Color(0.40f, 0.45f, 0.60f), -52, yOffset: -35f, heightWorld:  60f, stretchFill: false);
-            _clouds    = CreateLayer("Clouds",    "Backgrounds/Default/clouds_layer",  CloudScroll,    new Color(1f, 1f, 1f, 0f),      -51, yOffset: -80f, heightWorld:  40f, stretchFill: false);
-            _hills     = CreateLayer("Hills",     "Backgrounds/Default/hills_near",    HillScroll,     new Color(0.35f, 0.55f, 0.30f), -50, yOffset:  20f, heightWorld:  50f, stretchFill: false);
+            _sky       = CreateLayer("Sky",       biomeFolder, "sky_gradient",  SkyScroll,      new Color(0.55f, 0.80f, 1.00f), -53, yOffset:   0f, heightWorld: 280f, stretchFill: true);
+            _mountains = CreateLayer("Mountains", biomeFolder, "mountains_far", MountainScroll, new Color(0.40f, 0.45f, 0.60f), -52, yOffset: -35f, heightWorld:  60f, stretchFill: false);
+            _clouds    = CreateLayer("Clouds",    biomeFolder, "clouds_layer",  CloudScroll,    new Color(1f, 1f, 1f, 0f),      -51, yOffset: -80f, heightWorld:  40f, stretchFill: false);
+            _hills     = CreateLayer("Hills",     biomeFolder, "hills_near",    HillScroll,     new Color(0.35f, 0.55f, 0.30f), -50, yOffset:  20f, heightWorld:  50f, stretchFill: false);
+        }
+
+        /// <summary>
+        /// Resolves the biome-specific art path, falling back to Default if the biome
+        /// folder is missing or doesn't contain this asset. Returns (texture, path)
+        /// with path used only for logging; texture may still be null so callers fall
+        /// back to the solid colored rect.
+        /// </summary>
+        internal static Texture2D ResolveLayerTexture(string biomeFolder, string assetName)
+        {
+            // Try the biome-specific folder first.
+            if (!string.IsNullOrEmpty(biomeFolder) && biomeFolder != "Default")
+            {
+                var biomeTex = SpriteLoader.Load($"Backgrounds/{biomeFolder}/{assetName}");
+                if (biomeTex != null) return biomeTex;
+            }
+            // Fall back to the shared Default set.
+            return SpriteLoader.Load($"Backgrounds/Default/{assetName}");
         }
 
         public override void _Process(double delta)
@@ -71,7 +100,7 @@ namespace Baboomz
         }
 
         private ParallaxLayerNode CreateLayer(
-            string name, string artPath, float scrollScale, Color fallbackColor, int zIndex,
+            string name, string biomeFolder, string assetName, float scrollScale, Color fallbackColor, int zIndex,
             float yOffset, float heightWorld, bool stretchFill)
         {
             var layer = new ParallaxLayerNode();
@@ -82,7 +111,7 @@ namespace Baboomz
             layer.ZAsRelative = false;
             AddChild(layer);
 
-            var tex = SpriteLoader.Load(artPath);
+            var tex = ResolveLayerTexture(biomeFolder, assetName);
             if (tex != null)
             {
                 float texW = tex.GetWidth();
