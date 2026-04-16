@@ -244,5 +244,87 @@ namespace Baboomz.Tests.Editor
                 "DoubleDamage expiry must not wipe the Overcharge 2x multiplier");
         }
 
+        // Regression: issue #150 — DoubleDamage expiry while Overcharge is armed must
+        // restore Overcharge's *configured* multiplier, not a hardcoded 2f. If design
+        // ever tunes Skills[Overcharge].Value (e.g. to 2.5f), the buff stack must follow.
+        [Test]
+        public void DoubleDamageExpiry_RestoresConfiguredOverchargeMultiplier()
+        {
+            var config = SmallConfig();
+            // Retune Overcharge to 2.5x before match creation so config propagates into state.Config.
+            for (int i = 0; i < config.Skills.Length; i++)
+            {
+                if (config.Skills[i].Type == SkillType.Overcharge)
+                {
+                    config.Skills[i].Value = 2.5f;
+                    break;
+                }
+            }
+
+            var state = GameSimulation.CreateMatch(config, 42);
+            state.Phase = MatchPhase.Playing;
+
+            ref var p = ref state.Players[0];
+            // Short DoubleDamage crate underneath...
+            p.DamageMultiplier = 2f;
+            p.DoubleDamageTimer = 0.5f;
+
+            // ...Overcharge activates on top. Use an Overcharge slot that mirrors the retuned
+            // 2.5x so activation itself doesn't mask the bug.
+            var slot = MakeOverchargeSlot();
+            slot.Value = 2.5f;
+            p.SkillSlots[0] = slot;
+            p.Energy = 100f;
+            SkillSystem.ActivateSkill(state, 0, 0);
+
+            Assert.AreEqual(2.5f, state.Players[0].DamageMultiplier, 0.01f,
+                "Overcharge activation should set multiplier to configured 2.5x");
+
+            // Tick until DoubleDamage expires; Overcharge should still be running.
+            for (int i = 0; i < 40; i++)
+                GameSimulation.Tick(state, 0.016f);
+
+            Assert.AreEqual(0f, state.Players[0].DoubleDamageTimer, 0.01f,
+                "DoubleDamage should have expired");
+            Assert.Greater(state.Players[0].OverchargeTimer, 0f,
+                "Overcharge should still be armed");
+            Assert.AreEqual(2.5f, state.Players[0].DamageMultiplier, 0.01f,
+                "DoubleDamage expiry must restore Overcharge's configured multiplier, not a hardcoded 2f");
+        }
+
+        // Regression: issue #150 — GetOverchargeMultiplier must fall back to 2f if the
+        // skill def is missing or its Value is non-positive, to preserve legacy behavior.
+        [Test]
+        public void OverchargeMultiplier_FallsBackTo2_WhenConfigValueIsZero()
+        {
+            var config = SmallConfig();
+            for (int i = 0; i < config.Skills.Length; i++)
+            {
+                if (config.Skills[i].Type == SkillType.Overcharge)
+                {
+                    config.Skills[i].Value = 0f;
+                    break;
+                }
+            }
+
+            var state = GameSimulation.CreateMatch(config, 42);
+            state.Phase = MatchPhase.Playing;
+
+            ref var p = ref state.Players[0];
+            // DoubleDamage underneath + Overcharge armed at 2x via fallback path.
+            p.DamageMultiplier = 2f;
+            p.DoubleDamageTimer = 0.5f;
+            p.OverchargeTimer = 5f;
+
+            // Tick until DoubleDamage expires.
+            for (int i = 0; i < 40; i++)
+                GameSimulation.Tick(state, 0.016f);
+
+            Assert.AreEqual(0f, state.Players[0].DoubleDamageTimer, 0.01f);
+            Assert.Greater(state.Players[0].OverchargeTimer, 0f);
+            Assert.AreEqual(2f, state.Players[0].DamageMultiplier, 0.01f,
+                "When Overcharge config Value is non-positive, fallback to 2f must apply");
+        }
+
     }
 }
