@@ -101,7 +101,10 @@ namespace Baboomz.Simulation
             new SkillDef
             {
                 SkillId = "decoy", Type = SkillType.Decoy,
-                EnergyCost = 30f, Cooldown = 16f, Duration = 4f,
+                // Balance #173: 16s→13s CD. Decoy had the longest CD among evasion skills
+                // (Deflect 13s, Shadow Step 12s) despite conditional activation and fragile
+                // 30HP dummy. 13s aligns with Deflect — still riskier due to enemy-dependent value.
+                EnergyCost = 30f, Cooldown = 13f, Duration = 4f,
                 Range = 0f, Value = 30f  // decoy HP (survives chip damage, dies to real weapons)
             },
             new SkillDef

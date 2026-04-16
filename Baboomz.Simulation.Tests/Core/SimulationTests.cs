@@ -725,7 +725,7 @@ namespace Baboomz.Tests.Editor
                 {
                     Assert.AreEqual(SkillType.Decoy, skill.Type);
                     Assert.AreEqual(30f, skill.EnergyCost);
-                    Assert.AreEqual(16f, skill.Cooldown);
+                    Assert.AreEqual(13f, skill.Cooldown); // #173: 16 -> 13
                     Assert.AreEqual(4f, skill.Duration);
                     found = true;
                     break;
