@@ -52,8 +52,12 @@ namespace Baboomz.Simulation
             new SkillDef
             {
                 SkillId = "earthquake", Type = SkillType.Earthquake,
-                EnergyCost = 35f, Cooldown = 16f, Duration = 0f,
-                Range = 0f, Value = 20f  // damage to all grounded
+                // Balance #141: Mine Layer (PR #125) at 25E/10s delivers 105 damage (35 x 3 mines).
+                // Earthquake's old 20 damage / 16s made it ~12x less efficient per energy.
+                // Bump damage 20 -> 35 (matches one mine trigger) and cooldown 16 -> 14s so
+                // Earthquake becomes a viable anti-camping counter to Mine Layer area denial.
+                EnergyCost = 35f, Cooldown = 14f, Duration = 0f,
+                Range = 0f, Value = 35f  // damage to all grounded
             },
             new SkillDef
             {
