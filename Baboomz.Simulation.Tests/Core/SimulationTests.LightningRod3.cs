@@ -142,6 +142,25 @@ namespace Baboomz.Tests.Editor
         }
 
         [Test]
+        public void WarCry_Cooldown_BalancedForTeamRotation_Issue172()
+        {
+            // Balance #172: War Cry CD 18s→15s. At 18s it matched Overcharge despite
+            // weaker conditional value (1.5× team vs 2× guaranteed). 15s aligns with
+            // Earthquake/Mend tier and yields ~4 casts/match.
+            var config = new GameConfig();
+            Assert.AreEqual(15f, config.Skills[9].Cooldown, 0.001f,
+                "War Cry CD should be 15s (issue #172)");
+
+            // Invariant: War Cry CD must be strictly less than Overcharge CD
+            SkillDef? overcharge = null;
+            foreach (var s in config.Skills)
+                if (s.SkillId == "overcharge") { overcharge = s; break; }
+            Assert.NotNull(overcharge);
+            Assert.Less(config.Skills[9].Cooldown, overcharge!.Value.Cooldown,
+                "War Cry CD should be shorter than Overcharge since it provides less reliable value");
+        }
+
+        [Test]
         public void WarCry_Solo_AppliesStrongerBuff()
         {
             var config = SmallConfig();
