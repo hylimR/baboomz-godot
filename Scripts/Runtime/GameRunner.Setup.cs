@@ -71,17 +71,25 @@ namespace Baboomz
             AddChild(emoteRenderer);
             emoteRenderer.Init(State);
 
-            // Hit markers
-            var hitMarkers = new HitMarkerRenderer();
-            hitMarkers.Name = "HitMarkers";
-            AddChild(hitMarkers);
-            hitMarkers.Init(State);
+            var settings = GameAutoload.Instance?.Settings;
 
-            // Combo display
-            var comboRenderer = new ComboRenderer();
-            comboRenderer.Name = "ComboRenderer";
-            AddChild(comboRenderer);
-            comboRenderer.Init(State);
+            // Hit markers (#127: skip on low-end if user disabled)
+            if (settings == null || settings.HitMarkersEnabled)
+            {
+                var hitMarkers = new HitMarkerRenderer();
+                hitMarkers.Name = "HitMarkers";
+                AddChild(hitMarkers);
+                hitMarkers.Init(State);
+            }
+
+            // Combo display (#127)
+            if (settings == null || settings.ComboEffectsEnabled)
+            {
+                var comboRenderer = new ComboRenderer();
+                comboRenderer.Name = "ComboRenderer";
+                AddChild(comboRenderer);
+                comboRenderer.Init(State);
+            }
 
             // Audio
             _audioBridge = new AudioBridge();
@@ -113,11 +121,14 @@ namespace Baboomz
             AddChild(deathSlowMo);
             deathSlowMo.Init(State);
 
-            // Low-HP vignette overlay
-            var lowHpOverlay = new LowHealthOverlay();
-            lowHpOverlay.Name = "LowHealthOverlay";
-            AddChild(lowHpOverlay);
-            lowHpOverlay.Init(State, _audioBridge);
+            // Low-HP vignette overlay (#127: skip on low-end if user disabled)
+            if (settings == null || settings.LowHealthOverlayEnabled)
+            {
+                var lowHpOverlay = new LowHealthOverlay();
+                lowHpOverlay.Name = "LowHealthOverlay";
+                AddChild(lowHpOverlay);
+                lowHpOverlay.Init(State, _audioBridge);
+            }
 
             // HUD layer
             var hudLayer = new CanvasLayer();
