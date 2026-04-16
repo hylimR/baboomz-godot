@@ -8,6 +8,27 @@ namespace Baboomz.Simulation
     /// </summary>
     public static partial class GameSimulation
     {
+        // Fallback used when the Overcharge skill def is missing or its Value is non-positive.
+        // Matches the historic literal (see issue #140) so behavior is unchanged in the default config.
+        const float OverchargeMultiplierFallback = 2f;
+
+        /// <summary>
+        /// Reads the Overcharge damage multiplier from the skill config so buff-resolution
+        /// paths don't drift from GameConfigSkills. Falls back to 2f if the skill def is
+        /// missing or Value is non-positive.
+        /// </summary>
+        static float GetOverchargeMultiplier(GameState state)
+        {
+            var skills = state.Config.Skills;
+            if (skills == null) return OverchargeMultiplierFallback;
+            for (int i = 0; i < skills.Length; i++)
+            {
+                if (skills[i].Type == SkillType.Overcharge)
+                    return skills[i].Value > 0f ? skills[i].Value : OverchargeMultiplierFallback;
+            }
+            return OverchargeMultiplierFallback;
+        }
+
         static void TickBuffTimers(GameState state, ref PlayerState p, float dt)
         {
             // Tick emote timer
@@ -26,9 +47,9 @@ namespace Baboomz.Simulation
                     p.DoubleDamageTimer = 0f;
                     // Restore higher-priority active buff if any, otherwise reset to default.
                     // Overcharge must be checked here too — otherwise a shorter DoubleDamage
-                    // crate that expires while Overcharge is armed wipes the 2x multiplier.
+                    // crate that expires while Overcharge is armed wipes its multiplier.
                     if (p.OverchargeTimer > 0f)
-                        p.DamageMultiplier = 2f;
+                        p.DamageMultiplier = GetOverchargeMultiplier(state);
                     else if (p.WarCryTimer > 0f && p.WarCryDamageBuff > 0f)
                         p.DamageMultiplier = p.WarCryDamageBuff;
                     else
@@ -73,6 +94,9 @@ namespace Baboomz.Simulation
         /// </summary>
         internal static void RevertOverchargeMultiplier(GameState state, ref PlayerState p)
         {
+            // DoubleDamage crates always apply a 2x multiplier (see CrateSystem), so its
+            // literal stays hardcoded. WarCry reads from its own stored buff. Overcharge's
+            // own multiplier is read via GetOverchargeMultiplier when relevant.
             if (p.DoubleDamageTimer > 0f)
                 p.DamageMultiplier = 2f;
             else if (p.WarCryTimer > 0f && p.WarCryDamageBuff > 0f)
