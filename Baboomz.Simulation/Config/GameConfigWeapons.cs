@@ -7,10 +7,12 @@ namespace Baboomz.Simulation
             new WeaponDef
             {
                 WeaponId = "cannon",
+                // Balance #133: EnergyCost 8 -> 11 to tame the 2.50 DPS/E outlier
+                // (was 2.81x median). 30 / 11 = 2.73 dmg/E, DPS/E = 1.82 (inside 2x threshold).
                 MinPower = 10f, MaxPower = 30f, ChargeTime = 2f, ShootCooldown = 1.5f,
                 ExplosionRadius = 2f, MaxDamage = 30f, KnockbackForce = 5f,
                 ProjectileCount = 1, SpreadAngle = 0f,
-                DestroysIndestructible = false, EnergyCost = 8f, Ammo = -1
+                DestroysIndestructible = false, EnergyCost = 11f, Ammo = -1
             },
             new WeaponDef
             {
