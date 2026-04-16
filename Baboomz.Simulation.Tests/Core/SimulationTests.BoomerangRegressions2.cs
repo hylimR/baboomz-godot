@@ -19,6 +19,21 @@ namespace Baboomz.Tests.Editor
         }
 
         [Test]
+        public void EnergyDrain_Cooldown_MatchesUtilityTier()
+        {
+            // Balance #156: Energy Drain CD 14s→10s, aligning with the other 20-25E
+            // utility skills (Smoke Screen 10s, Mine Layer 10s) instead of the
+            // damage/terrain tier (Earthquake 14s, Mend 14s). Payload unchanged (30E drained).
+            var config = new GameConfig();
+            var drain = config.Skills[11];
+            Assert.AreEqual("energy_drain", drain.SkillId);
+            Assert.AreEqual(10f, drain.Cooldown, 0.001f,
+                "Energy Drain cooldown should be 10s after #156 balance");
+            Assert.AreEqual(20f, drain.EnergyCost, 0.001f, "Energy cost unchanged");
+            Assert.AreEqual(30f, drain.Value, 0.001f, "Payload unchanged");
+        }
+
+        [Test]
         public void EnergyDrain_TransfersEnergyFromTarget()
         {
             var config = SmallConfig();

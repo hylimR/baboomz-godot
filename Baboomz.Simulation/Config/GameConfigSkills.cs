@@ -85,7 +85,11 @@ namespace Baboomz.Simulation
             new SkillDef
             {
                 SkillId = "energy_drain", Type = SkillType.EnergyDrain,
-                EnergyCost = 20f, Cooldown = 14f, Duration = 0f,
+                // Balance #156: 14s CD matched damage skills (Earthquake/Mend) despite
+                // pure-utility payload. 14s→10s drops it to the Smoke Screen / Mine Layer
+                // utility tier (~6 casts/match instead of 4), making it a real tempo tool
+                // instead of a once-a-match anti-Overcharge gimmick. Payload unchanged.
+                EnergyCost = 20f, Cooldown = 10f, Duration = 0f,
                 Range = 12f, Value = 30f  // energy drained from target
             },
             new SkillDef
