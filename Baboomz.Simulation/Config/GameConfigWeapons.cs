@@ -42,8 +42,10 @@ namespace Baboomz.Simulation
             new WeaponDef
             {
                 WeaponId = "dynamite",
+                // Balance #111: MaxDamage 80 -> 70 to bring DPS (was 26.7, now 23.3)
+                // closer to the 2x median (20) and reduce outlier DPS/Energy ratio.
                 MinPower = 5f, MaxPower = 20f, ChargeTime = 1.5f, ShootCooldown = 3f,
-                ExplosionRadius = 5f, MaxDamage = 80f, KnockbackForce = 15f,
+                ExplosionRadius = 5f, MaxDamage = 70f, KnockbackForce = 15f,
                 ProjectileCount = 1, SpreadAngle = 0f,
                 DestroysIndestructible = false, EnergyCost = 20f, Ammo = 3,
                 Bounces = 2, FuseTime = 3f

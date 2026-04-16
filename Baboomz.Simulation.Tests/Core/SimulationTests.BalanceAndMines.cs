@@ -232,5 +232,26 @@ namespace Baboomz.Tests.Editor
             Assert.Greater(state.ExplosionEvents.Count, 0, "Mine should produce explosion");
         }
 
+        [Test]
+        public void DynamiteBalance_MaxDamageWithinTargetRange()
+        {
+            // Regression for #111: Dynamite MaxDamage reduced from 80 -> 70 to keep
+            // DPS (MaxDamage/ShootCooldown) close to 2x the weapon median and prevent
+            // dynamite from dominating the weapon pool on DPS/Energy efficiency.
+            var config = new GameConfig();
+            bool found = false;
+            WeaponDef dynamite = default;
+            foreach (var w in config.Weapons)
+            {
+                if (w.WeaponId == "dynamite") { dynamite = w; found = true; break; }
+            }
+
+            Assert.IsTrue(found, "dynamite weapon definition must exist");
+            Assert.LessOrEqual(dynamite.MaxDamage, 70f,
+                "Dynamite MaxDamage must be <= 70 after #111 balance change");
+            Assert.GreaterOrEqual(dynamite.MaxDamage, 65f,
+                "Dynamite MaxDamage must stay within the 65-70 target range");
+        }
+
     }
 }
