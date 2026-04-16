@@ -28,6 +28,7 @@ namespace Baboomz
         private LevelSelectPanel _levelSelectPanel;
         private ShopPanel _shopPanel;
         private LoadoutPanel _loadoutPanel;
+        private SettingsPanel _settingsPanel;
 
         private readonly Color _easyColor = new Color(0.3f, 0.6f, 0.3f);
         private readonly Color _normalColor = new Color(0.5f, 0.5f, 0.2f);
@@ -137,6 +138,17 @@ namespace Baboomz
             _levelSelectPanel = new LevelSelectPanel();
             _levelSelectPanel.Name = "LevelSelectPanel";
             AddChild(_levelSelectPanel);
+
+            // --- Settings button ---
+            y += 0.08f;
+            var settingsBtn = UIBuilder.CreateButton("SettingsBtn", "Settings", 24,
+                new Color(0.4f, 0.4f, 0.4f), this);
+            UIBuilder.SetAnchors(settingsBtn, new Vector2(0.3f, y), new Vector2(0.7f, y + 0.06f));
+            settingsBtn.Pressed += OnSettingsPressed;
+
+            _settingsPanel = new SettingsPanel();
+            _settingsPanel.Name = "SettingsPanel";
+            AddChild(_settingsPanel);
 
             // --- QUIT button ---
             y += 0.08f;
@@ -283,6 +295,11 @@ namespace Baboomz
         private void OnShopPressed()
         {
             _shopPanel?.Show();
+        }
+
+        private void OnSettingsPressed()
+        {
+            _settingsPanel?.Show();
         }
     }
 }

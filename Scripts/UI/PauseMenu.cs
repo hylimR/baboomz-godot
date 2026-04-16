@@ -10,6 +10,7 @@ namespace Baboomz
     {
         private Control _overlay;
         private bool _isPaused;
+        private SettingsPanel _settingsPanel;
 
         public override void _Ready()
         {
@@ -42,13 +43,23 @@ namespace Baboomz
             // Resume button
             var resumeBtn = UIBuilder.CreateButton("ResumeBtn", "Resume", 24,
                 new Color(0.3f, 0.5f, 0.3f), panel);
-            UIBuilder.SetAnchors(resumeBtn, new Vector2(0.2f, 0.4f), new Vector2(0.8f, 0.58f));
+            UIBuilder.SetAnchors(resumeBtn, new Vector2(0.2f, 0.35f), new Vector2(0.8f, 0.50f));
             resumeBtn.Pressed += Resume;
+
+            // Settings button
+            var settingsBtn = UIBuilder.CreateButton("SettingsBtn", "Settings", 24,
+                new Color(0.4f, 0.4f, 0.4f), panel);
+            UIBuilder.SetAnchors(settingsBtn, new Vector2(0.2f, 0.53f), new Vector2(0.8f, 0.68f));
+            settingsBtn.Pressed += OnSettingsPressed;
+
+            _settingsPanel = new SettingsPanel();
+            _settingsPanel.Name = "PauseSettingsPanel";
+            AddChild(_settingsPanel);
 
             // Main Menu button
             var menuBtn = UIBuilder.CreateButton("MainMenuBtn", "Main Menu", 24,
                 new Color(0.5f, 0.3f, 0.3f), panel);
-            UIBuilder.SetAnchors(menuBtn, new Vector2(0.2f, 0.65f), new Vector2(0.8f, 0.83f));
+            UIBuilder.SetAnchors(menuBtn, new Vector2(0.2f, 0.72f), new Vector2(0.8f, 0.87f));
             menuBtn.Pressed += QuitToMainMenu;
 
             _overlay.Visible = false;
@@ -81,6 +92,11 @@ namespace Baboomz
             GetTree().Paused = false;
             _overlay.Visible = false;
             Visible = false;
+        }
+
+        private void OnSettingsPressed()
+        {
+            _settingsPanel?.Show();
         }
 
         private void QuitToMainMenu()
