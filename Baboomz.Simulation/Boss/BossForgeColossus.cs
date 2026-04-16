@@ -22,6 +22,10 @@ namespace Baboomz.Simulation
             // Slow walk toward target
             boss.Velocity.x = boss.FacingDirection * 2f;
 
+            // First-tick initialization (matches SandWyrm pattern — #170)
+            if (attackTimer[index] == 0f)
+                attackTimer[index] = t + 4f;
+
             float hpRatio = boss.Health / boss.MaxHealth;
 
             // Armor phase at 75%: 50% damage reduction for 10s

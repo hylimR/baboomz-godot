@@ -19,6 +19,10 @@ namespace Baboomz.Simulation
             boss.FacingDirection = toTarget.x >= 0f ? 1 : -1;
             boss.Velocity.x = 0f;
 
+            // First-tick initialization (matches SandWyrm pattern — #170)
+            if (attackTimer[index] == 0f)
+                attackTimer[index] = t + 6f;
+
             float hpRatio = boss.Health / boss.MaxHealth;
 
             // Phase transitions checked in order: frost (60%) → shield (50%) → frost (30%)
