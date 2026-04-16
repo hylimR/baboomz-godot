@@ -72,7 +72,10 @@ namespace Baboomz.Simulation
             {
                 SkillId = "warcry", Type = SkillType.WarCry,
                 // Balance #126: 40E -> 30E to close the gap with Overcharge's solo value
-                EnergyCost = 30f, Cooldown = 18f, Duration = 5f,
+                // Balance #172: 18s→15s CD. Conditional team buff (1.5×) at 18s was too
+                // infrequent (~3.3 casts/match). 15s aligns with Earthquake/Mend tier
+                // and yields ~4 casts/match — viable rotation skill for team play.
+                EnergyCost = 30f, Cooldown = 15f, Duration = 5f,
                 Range = 0f, Value = 1.5f  // damage multiplier (team); solo gets 1.9x (#126)
             },
             new SkillDef
