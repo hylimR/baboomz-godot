@@ -107,8 +107,15 @@ namespace Baboomz.Simulation
             new SkillDef
             {
                 SkillId = "hookshot", Type = SkillType.HookShot,
-                EnergyCost = 30f, Cooldown = 12f, Duration = 0f,
-                Range = 10f, Value = 10f  // damage dealt to pulled target
+                // Balance #164: 30E/12s/10dmg → 25E/10s/20dmg. HookShot sat at
+                // 0.33 dmg/E — ~3x worse than Earthquake and 12x worse than
+                // Mine Layer — so the "pull + finisher" fantasy never paid off.
+                // Align cost and CD with the utility tier (Drain, Mine Lay) and
+                // bump damage to ~1/3 cannon shot so a hooked target actually
+                // feels threatened, while keeping dmg/E (0.80) the lowest among
+                // damage skills (fits its hybrid utility role).
+                EnergyCost = 25f, Cooldown = 10f, Duration = 0f,
+                Range = 10f, Value = 20f  // damage dealt to pulled target
             },
             new SkillDef
             {
