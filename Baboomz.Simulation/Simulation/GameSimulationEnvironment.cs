@@ -188,10 +188,22 @@ namespace Baboomz.Simulation
                     state.Mines[m] = mine;
                 }
 
+                if (mine.ActivationDelay > 0f)
+                {
+                    mine.ActivationDelay -= dt;
+                    state.Mines[m] = mine;
+                    continue;
+                }
+
+                if (mine.IsHoming)
+                    UpdateHomingMine(state, ref mine, dt);
+
+                state.Mines[m] = mine;
+
                 for (int p = 0; p < state.Players.Length; p++)
                 {
                     if (state.Players[p].IsDead) continue;
-                    if (p == mine.OwnerIndex) continue; // player-laid mines don't trigger on owner
+                    if (p == mine.OwnerIndex) continue;
                     float dist = Vec2.Distance(mine.Position, state.Players[p].Position);
                     if (dist < mine.TriggerRadius)
                     {
@@ -204,10 +216,37 @@ namespace Baboomz.Simulation
                 }
             }
 
-            // Remove inactive mines to prevent unbounded list growth
             for (int i = state.Mines.Count - 1; i >= 0; i--)
                 if (!state.Mines[i].Active)
                     state.Mines.RemoveAt(i);
+        }
+
+        static void UpdateHomingMine(GameState state, ref MineState mine, float dt)
+        {
+            int nearest = -1;
+            float nearestDist = mine.DetectionRange;
+            for (int p = 0; p < state.Players.Length; p++)
+            {
+                if (state.Players[p].IsDead) continue;
+                if (p == mine.OwnerIndex) continue;
+                float dist = Vec2.Distance(mine.Position, state.Players[p].Position);
+                if (dist < nearestDist)
+                {
+                    nearestDist = dist;
+                    nearest = p;
+                }
+            }
+
+            if (nearest < 0) return;
+
+            float dirX = state.Players[nearest].Position.x - mine.Position.x;
+            if (MathF.Abs(dirX) < 0.01f) return;
+            float sign = dirX > 0f ? 1f : -1f;
+            float moveX = sign * mine.MoveSpeed * dt;
+
+            float newX = mine.Position.x + moveX;
+            float groundY = GamePhysics.FindGroundY(state.Terrain, newX, mine.Position.y + 2f, 0.1f);
+            mine.Position = new Vec2(newX, groundY + 0.1f);
         }
 
         static void SpawnBarrels(GameState state, Random rng)

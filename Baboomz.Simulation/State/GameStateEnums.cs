@@ -27,7 +27,8 @@ namespace Baboomz.Simulation
         HookShot,
         ShadowStep,
         Overcharge,
-        Mend
+        Mend,
+        MagneticMine
     }
 
     public enum HatType

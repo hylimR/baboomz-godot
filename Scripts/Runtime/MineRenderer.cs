@@ -29,8 +29,11 @@ namespace Baboomz
                 alive.Add(i);
                 if (!_mineSprites.ContainsKey(i))
                 {
+                    var color = mine.IsHoming
+                        ? new Color(0.7f, 0.1f, 0.8f) // purple for magnetic mines
+                        : new Color(0.8f, 0.1f, 0.1f); // red for regular mines
                     var sprite = new Sprite2D();
-                    sprite.Texture = ProceduralSprites.CreateCircle(16, new Color(0.8f, 0.1f, 0.1f));
+                    sprite.Texture = ProceduralSprites.CreateCircle(16, color);
                     sprite.ZIndex = 3;
                     AddChild(sprite);
                     _mineSprites[i] = sprite;

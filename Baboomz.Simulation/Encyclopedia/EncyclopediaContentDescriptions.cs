@@ -68,6 +68,7 @@ namespace Baboomz.Simulation
                 case "shadow_step": return "Mark your current position, fight freely, then snap back to the marked spot when the duration expires.";
                 case "overcharge": return "Commit all your energy for a charged burst. Your next shot within 5 seconds deals double damage.";
                 case "mend": return "Refill destroyed terrain in a small radius near your aim target. Restores cover without creating indestructible blocks.";
+                case "magnetic_mine": return "Deploy a proximity mine that slowly crawls toward the nearest enemy. Dormant for 1 second, then seeks targets within detection range.";
                 default: return "Unknown skill.";
             }
         }
@@ -94,6 +95,7 @@ namespace Baboomz.Simulation
                 case "shadow_step": return "Mark position, recall after duration";
                 case "overcharge": return $"Drain all energy; next shot deals {value}x damage";
                 case "mend": return $"Refills destroyed terrain ({value}-unit radius)";
+                case "magnetic_mine": return $"Homing mine ({value} damage, crawls toward enemies)";
                 default: return "Unknown effect";
             }
         }
