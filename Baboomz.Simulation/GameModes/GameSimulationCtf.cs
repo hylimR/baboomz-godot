@@ -142,7 +142,11 @@ namespace Baboomz.Simulation
                         : config.DefaultMoveSpeed;
                     p.MoveSpeed = baseSpeed * config.CtfCarrierSpeedMult;
                 }
-                else if (p.MoveSpeed < config.DefaultMoveSpeed && p.WarCryTimer <= 0f)
+                else if (p.WarCryTimer > 0f && p.WarCrySpeedBuff > 0f)
+                {
+                    p.MoveSpeed = config.DefaultMoveSpeed * p.WarCrySpeedBuff;
+                }
+                else if (p.MoveSpeed < config.DefaultMoveSpeed)
                 {
                     p.MoveSpeed = config.DefaultMoveSpeed;
                 }
