@@ -35,9 +35,10 @@ namespace Baboomz.Simulation
                 boss.ArmorMultiplier = 2f;
                 specialTimer[index] = t + 10f;
             }
-            if (boss.BossPhase >= 1 && t >= specialTimer[index])
+            if (boss.BossPhase >= 1 && specialTimer[index] < float.MaxValue && t >= specialTimer[index])
             {
                 boss.ArmorMultiplier = 1f;
+                specialTimer[index] = float.MaxValue;
             }
 
             // Stomp at 50% and 25% — boss is briefly invulnerable to avoid self-damage

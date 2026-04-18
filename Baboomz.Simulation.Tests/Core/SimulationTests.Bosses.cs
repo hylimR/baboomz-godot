@@ -396,5 +396,45 @@ namespace Baboomz.Tests.Editor
             Assert.LessOrEqual(timers[1] - state.Time, 1.6f,
                 "attackTimer should be set to ~t+1.5 for Phase 3 rapid-fire cadence");
         }
+        [Test]
+        public void ForgeColossus_ArmorReset_FiresOnlyOnce()
+        {
+            var config = SmallConfig();
+            config.MineCount = 0;
+            config.BarrelCount = 0;
+            var state = GameSimulation.CreateMatch(config, 42);
+
+            state.Players[1].BossType = "forge_colossus";
+            state.Players[1].IsMob = true;
+            state.Players[1].IsAI = true;
+            state.Players[1].MaxHealth = 200f;
+            state.Players[1].Health = 200f;
+            state.Players[1].BossPhase = 0;
+
+            BossLogic.Reset(42, state.Players.Length);
+
+            // Trigger phase 1 armor (75% HP threshold)
+            state.Players[1].Health = 140f;
+            state.Phase = MatchPhase.Playing;
+            GameSimulation.Tick(state, 0.016f);
+
+            Assert.AreEqual(1, state.Players[1].BossPhase);
+            Assert.AreEqual(2f, state.Players[1].ArmorMultiplier, 0.01f,
+                "Boss should have 2x armor after phase 1");
+
+            // Fast-forward past the 10s armor timer
+            for (int i = 0; i < 700; i++)
+                GameSimulation.Tick(state, 0.016f);
+
+            Assert.AreEqual(1f, state.Players[1].ArmorMultiplier, 0.01f,
+                "Armor should reset to 1x after timer expires");
+
+            // Now set armor to a different value (simulating future mechanic)
+            state.Players[1].ArmorMultiplier = 1.5f;
+            GameSimulation.Tick(state, 0.016f);
+
+            Assert.AreEqual(1.5f, state.Players[1].ArmorMultiplier, 0.01f,
+                "Armor modification after reset should not be overwritten by repeated reset");
+        }
     }
 }
