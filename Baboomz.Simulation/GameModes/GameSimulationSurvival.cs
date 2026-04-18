@@ -48,12 +48,17 @@ namespace Baboomz.Simulation
 
                 if (alive == 0)
                 {
-                    // Wave cleared — award score
-                    surv.Score += state.Config.SurvivalScorePerWave * surv.WaveNumber;
+                    // Wave cleared — award score (1.5x for modifier waves)
+                    int waveScore = state.Config.SurvivalScorePerWave * surv.WaveNumber;
+                    if (surv.ActiveModifier != SurvivalModifier.None)
+                        waveScore = (int)(waveScore * 1.5f);
+                    surv.Score += waveScore;
 
                     // No-damage bonus: check if player at full HP
                     if (state.Players[0].Health >= state.Players[0].MaxHealth)
                         surv.Score += state.Config.SurvivalScoreNoDamageBonus;
+
+                    RevertModifier(state);
 
                     surv.WaveActive = false;
                     surv.BreakTimer = state.Config.SurvivalBreakDuration;
@@ -129,6 +134,8 @@ namespace Baboomz.Simulation
 
             surv.MobsSpawnedTotal += mobCount;
             surv.WaveActive = true;
+
+            RollAndApplyModifier(state, rng);
         }
 
         static float PickSpawnX(Random rng, float halfMap, float playerX)
@@ -172,6 +179,74 @@ namespace Baboomz.Simulation
             // Beyond wave 25: +0.5 per 5-wave loop
             int loopsBeyond = (wave - 25) / 5;
             return 2.0f + loopsBeyond * 0.5f;
+        }
+
+        static void RollAndApplyModifier(GameState state, Random rng)
+        {
+            ref var surv = ref state.Survival;
+            surv.ActiveModifier = SurvivalModifier.None;
+
+            if (surv.WaveNumber < 5) return;
+            if (rng.NextDouble() >= 0.3) return;
+
+            var options = (SurvivalModifier[])Enum.GetValues(typeof(SurvivalModifier));
+            // Skip None (index 0)
+            surv.ActiveModifier = options[rng.Next(1, options.Length)];
+
+            surv.SavedGravity = state.Config.Gravity;
+            surv.SavedWindForce = state.WindForce;
+            surv.SavedWindAngle = state.WindAngle;
+
+            switch (surv.ActiveModifier)
+            {
+                case SurvivalModifier.LowGravity:
+                    state.Config.Gravity *= 0.5f;
+                    break;
+                case SurvivalModifier.HeavyWind:
+                    state.WindForce = state.Config.MaxWindStrength * 2f;
+                    state.WindAngle = rng.Next(2) == 0 ? 0f : 180f;
+                    break;
+                case SurvivalModifier.GlassCannon:
+                    state.Players[0].DamageMultiplier *= 2f;
+                    state.Players[0].ArmorMultiplier *= 0.5f;
+                    break;
+                case SurvivalModifier.ArmoredHorde:
+                    for (int i = 1; i < state.Players.Length; i++)
+                        state.Players[i].ArmorMultiplier *= 0.5f;
+                    break;
+                case SurvivalModifier.SpeedBlitz:
+                    for (int i = 1; i < state.Players.Length; i++)
+                        state.Players[i].MoveSpeed *= 1.8f;
+                    break;
+                case SurvivalModifier.RegenWave:
+                    for (int i = 1; i < state.Players.Length; i++)
+                        state.Players[i].HealthRegen = 3f;
+                    break;
+            }
+        }
+
+        static void RevertModifier(GameState state)
+        {
+            ref var surv = ref state.Survival;
+            if (surv.ActiveModifier == SurvivalModifier.None) return;
+
+            switch (surv.ActiveModifier)
+            {
+                case SurvivalModifier.LowGravity:
+                    state.Config.Gravity = surv.SavedGravity;
+                    break;
+                case SurvivalModifier.HeavyWind:
+                    state.WindForce = surv.SavedWindForce;
+                    state.WindAngle = surv.SavedWindAngle;
+                    break;
+                case SurvivalModifier.GlassCannon:
+                    state.Players[0].DamageMultiplier /= 2f;
+                    state.Players[0].ArmorMultiplier /= 0.5f;
+                    break;
+                // ArmoredHorde, SpeedBlitz, RegenWave: mobs die, no revert needed
+            }
+
+            surv.ActiveModifier = SurvivalModifier.None;
         }
 
         public static void ScoreSurvivalKill(GameState state, int killedIndex)

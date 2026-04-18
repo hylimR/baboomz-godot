@@ -133,6 +133,7 @@ namespace Baboomz.Simulation
         public float Energy;
         public float MaxEnergy;
         public float EnergyRegen;
+        public float HealthRegen;
         public float MoveSpeed;
         public float JumpForce;
         public float AimAngle;

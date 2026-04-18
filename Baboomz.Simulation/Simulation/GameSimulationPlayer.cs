@@ -201,6 +201,8 @@ namespace Baboomz.Simulation
 
             if (p.ShootCooldownRemaining > 0f) p.ShootCooldownRemaining -= dt;
             if (p.Energy < p.MaxEnergy) p.Energy = MathF.Min(p.MaxEnergy, p.Energy + p.EnergyRegen * dt);
+            if (p.HealthRegen > 0f && p.Health < p.MaxHealth)
+                p.Health = MathF.Min(p.MaxHealth, p.Health + p.HealthRegen * dt);
 
             // Tick retreat timer
             if (p.RetreatTimer > 0f) p.RetreatTimer -= dt;
