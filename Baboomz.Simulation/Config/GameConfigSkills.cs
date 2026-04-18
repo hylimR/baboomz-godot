@@ -46,8 +46,8 @@ namespace Baboomz.Simulation
             new SkillDef
             {
                 SkillId = "jetpack", Type = SkillType.Jetpack,
-                EnergyCost = 30f, Cooldown = 6f, Duration = 2f,
-                Range = 0f, Value = 12f  // upward force
+                EnergyCost = 30f, Cooldown = 5f, Duration = 2f,
+                Range = 0f, Value = 15f  // upward force
             },
             new SkillDef
             {
