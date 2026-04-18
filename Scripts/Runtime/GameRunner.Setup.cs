@@ -160,6 +160,15 @@ namespace Baboomz
             _matchResultPanel.Name = "MatchResultPanel";
             hudLayer.AddChild(_matchResultPanel);
 
+            // Tutorial overlay (only shows when Tutorial state is active)
+            if (State.Tutorial != null)
+            {
+                var tutOverlay = new TutorialOverlay();
+                tutOverlay.Name = "TutorialOverlay";
+                hudLayer.AddChild(tutOverlay);
+                tutOverlay.Init(State);
+            }
+
             RenderingServer.SetDefaultClearColor(new Color(0.31f, 0.70f, 0.96f));
             GD.Print("Match setup complete — countdown started");
         }
