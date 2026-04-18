@@ -72,6 +72,10 @@ namespace Baboomz.Simulation
         public float Lifetime;  // >0 = temporary (counts down), <=0 = permanent
         public int OwnerIndex;  // player who placed this mine (-1 = environment)
         public float PlacedTime; // state.Time when this mine was placed (oldest-first overflow eviction)
+        public bool IsHoming;
+        public float DetectionRange;
+        public float MoveSpeed;
+        public float ActivationDelay; // >0 = dormant (counts down before arming)
     }
 
     public struct BarrelState

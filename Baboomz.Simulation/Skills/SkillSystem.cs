@@ -152,6 +152,10 @@ namespace Baboomz.Simulation
                 case SkillType.Mend:
                     ExecuteMend(state, ref p, ref skill);
                     break;
+
+                case SkillType.MagneticMine:
+                    ExecuteMagneticMine(state, playerIndex, ref p, ref skill);
+                    break;
             }
 
             // Start cooldown (apply CooldownMultiplier so skills respect haste/slow modifiers)

@@ -65,10 +65,10 @@ namespace Baboomz.Tests.Editor
         }
 
         [Test]
-        public void GetSkillEntries_Returns18Skills()
+        public void GetSkillEntries_Returns19Skills()
         {
             var entries = EncyclopediaData.GetSkillEntries(config);
-            Assert.AreEqual(18, entries.Length);
+            Assert.AreEqual(19, entries.Length);
         }
 
         [Test]

@@ -80,10 +80,10 @@ namespace Baboomz.Simulation
 
             // Mobility indices: teleport(0), dash(3), jetpack(5), shadow_step(15)
             // Defensive indices: shield(2), heal(4)
-            // Utility indices: girder(6), earthquake(7), smoke(8), warcry(9), mine_layer(10), energy_drain(11), deflect(12), decoy(13), hook_shot(14), overcharge(16), mend(17)
+            // Utility indices: girder(6), earthquake(7), smoke(8), warcry(9), mine_layer(10), energy_drain(11), deflect(12), decoy(13), hook_shot(14), overcharge(16), mend(17), magnetic_mine(18)
             int[] mobility = { 0, 3, 5, 15 };
             int[] defensive = { 2, 4 };
-            int[] utility = { 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17 };
+            int[] utility = { 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18 };
 
             if (config.AIDifficultyLevel <= 0)
             {
@@ -169,6 +169,10 @@ namespace Baboomz.Simulation
             // Mend for defensive terrain cover when HP is low
             if (hpPercent < 0.5f && rng.NextDouble() < 0.008 * dt * 60.0)
                 TryActivateSkillByType(state, index, SkillType.Mend);
+
+            // Magnetic Mine when enemy is within detection range
+            if (rng.NextDouble() < 0.008 * dt * 60.0 && HasEnemyInRange(state, index, 10f))
+                TryActivateSkillByType(state, index, SkillType.MagneticMine);
 
             // Overcharge when saved up energy and an enemy is in firing range (commit to a big shot)
             if (ai.Energy >= 80f && rng.NextDouble() < 0.015 * dt * 60.0 && HasEnemyInRange(state, index, 25f))
