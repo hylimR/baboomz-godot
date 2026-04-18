@@ -256,5 +256,22 @@ namespace Baboomz.Tests.Editor
 
             Assert.IsTrue(selected, "AI should select freeze grenade (slot 12) at close-medium range");
         }
+
+        [Test]
+        public void RicochetDisc_CooldownAndDPS_ExceedBoomerang()
+        {
+            var config = new GameConfig();
+            var ricochet = config.Weapons[17];
+            var boomerang = config.Weapons[15];
+
+            Assert.AreEqual("ricochet_disc", ricochet.WeaponId);
+            Assert.AreEqual("boomerang", boomerang.WeaponId);
+            Assert.AreEqual(2.5f, ricochet.ShootCooldown, 0.01f);
+
+            float ricochetDps = ricochet.MaxDamage / ricochet.ShootCooldown;
+            float boomerangDps = boomerang.MaxDamage / boomerang.ShootCooldown;
+            Assert.Greater(ricochetDps, boomerangDps,
+                "Ricochet Disc DPS should exceed Boomerang to justify lower per-hit damage");
+        }
     }
 }
