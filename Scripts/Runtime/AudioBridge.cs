@@ -38,8 +38,19 @@ namespace Baboomz
         private AudioStreamWav _skillHealClip;
         private AudioStreamWav _skillPowerClip;
 
+        // Event callout clips (#249)
+        private AudioStreamWav _doubleKillClip;
+        private AudioStreamWav _tripleKillClip;
+        private AudioStreamWav _megaKillClip;
+        private AudioStreamWav _matchStartFanfareClip;
+        private AudioStreamWav _matchEndVictoryClip;
+        private AudioStreamWav _matchEndDefeatClip;
+        private AudioStreamWav _lastStandingClip;
+
         private int _lastWeaponSlot = -1;
         private bool _lastJumpState;
+        private MatchPhase _lastPhase;
+        private int _lastAliveCount = -1;
 
         private const int SampleRate = 44100;
 
@@ -53,7 +64,11 @@ namespace Baboomz
             AddChild(_sfxPlayer);
 
             GenerateClips();
+            GenerateCalloutClips();
             StartBackgroundMusic();
+
+            _lastPhase = state.Phase;
+            _lastAliveCount = CountAlivePlayers();
 
             ProcessPriority = 80; // After renderers
         }
@@ -97,6 +112,9 @@ namespace Baboomz
                 PlayClip(_jumpClip, 0.2f);
             }
             _lastJumpState = p.IsGrounded;
+
+            // Event callouts (#249)
+            ProcessCallouts();
         }
 
         /// <summary>
