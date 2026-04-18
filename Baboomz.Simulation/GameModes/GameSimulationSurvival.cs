@@ -212,7 +212,7 @@ namespace Baboomz.Simulation
                     break;
                 case SurvivalModifier.ArmoredHorde:
                     for (int i = 1; i < state.Players.Length; i++)
-                        state.Players[i].ArmorMultiplier *= 0.5f;
+                        state.Players[i].ArmorMultiplier *= 2f;
                     break;
                 case SurvivalModifier.SpeedBlitz:
                     for (int i = 1; i < state.Players.Length; i++)
