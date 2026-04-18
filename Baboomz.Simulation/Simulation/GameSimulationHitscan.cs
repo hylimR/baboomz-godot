@@ -81,6 +81,7 @@ namespace Baboomz.Simulation
                 if (applied > p.MaxSingleDamage) p.MaxSingleDamage = applied;
                 CombatResolver.TrackHit(state, playerIndex);
                 CombatResolver.TrackWeaponHit(state, playerIndex, weapon.WeaponId);
+                CombatResolver.TrackWeaponDamage(state, playerIndex, weapon.WeaponId, applied);
                 if (pt.Health <= 0f)
                 {
                     pt.Health = 0f; pt.IsDead = true; ScoreSurvivalKill(state, primaryTarget);
@@ -149,6 +150,7 @@ namespace Baboomz.Simulation
                     if (chainApplied > p.MaxSingleDamage) p.MaxSingleDamage = chainApplied;
                     CombatResolver.TrackHit(state, playerIndex);
                     CombatResolver.TrackWeaponHit(state, playerIndex, weapon.WeaponId);
+                    CombatResolver.TrackWeaponDamage(state, playerIndex, weapon.WeaponId, chainApplied);
                     if (ct2.Health <= 0f)
                     {
                         ct2.Health = 0f; ct2.IsDead = true; ScoreSurvivalKill(state, chainTarget);

@@ -165,6 +165,9 @@ namespace Baboomz.Simulation
                 Position = origin,
                 TargetPosition = p.Position
             });
+
+            if (state.SkillsActivated != null && playerIndex < state.SkillsActivated.Length)
+                state.SkillsActivated[playerIndex].Add(skill.Type);
         }
 
         public static void Update(GameState state, float dt)

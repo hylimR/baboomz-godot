@@ -95,6 +95,7 @@ namespace Baboomz.Simulation
 
                     // Weapon mastery tracking
                     TrackWeaponHit(state, ownerIndex, sourceWeaponId);
+                    TrackWeaponDamage(state, ownerIndex, sourceWeaponId, damage);
 
                     // Jetpack Ace challenge: hit while jetpacking
                     if (!state.Players[ownerIndex].HitWhileJetpacking)
@@ -247,6 +248,14 @@ namespace Baboomz.Simulation
             var dict = state.WeaponKills[ownerIndex];
             dict.TryGetValue(weaponId, out int count);
             dict[weaponId] = count + 1;
+        }
+
+        public static void TrackWeaponDamage(GameState state, int ownerIndex, string weaponId, float damage)
+        {
+            if (weaponId == null || state.WeaponDamage == null || ownerIndex < 0 || ownerIndex >= state.WeaponDamage.Length) return;
+            var dict = state.WeaponDamage[ownerIndex];
+            dict.TryGetValue(weaponId, out float total);
+            dict[weaponId] = total + damage;
         }
 
         internal static bool IsFrontalHit(in PlayerState player, Vec2 explosionPos)
