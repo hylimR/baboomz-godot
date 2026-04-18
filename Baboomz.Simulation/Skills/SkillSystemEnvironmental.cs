@@ -33,7 +33,19 @@ namespace Baboomz.Simulation
                 if (applied > state.Players[casterIndex].MaxSingleDamage)
                     state.Players[casterIndex].MaxSingleDamage = applied;
 
-                if (target.Health <= 0f) { target.Health = 0f; target.IsDead = true; GameSimulation.ScoreSurvivalKill(state, i); GameSimulation.DropCtfFlag(state, i); GameSimulation.SpawnHeadhunterTokens(state, i); }
+                if (target.Health <= 0f)
+                {
+                    target.Health = 0f;
+                    target.IsDead = true;
+                    GameSimulation.ScoreSurvivalKill(state, i);
+                    GameSimulation.DropCtfFlag(state, i);
+                    GameSimulation.SpawnHeadhunterTokens(state, i);
+                    CombatResolver.TrackKill(state, casterIndex);
+                    state.Players[casterIndex].TotalKills++;
+                    float killDist = Vec2.Distance(state.Players[casterIndex].Position, target.Position);
+                    if (killDist <= 5f)
+                        state.Players[casterIndex].CloseRangeKills++;
+                }
             }
         }
 

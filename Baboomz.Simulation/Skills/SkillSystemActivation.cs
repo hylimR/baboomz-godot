@@ -184,6 +184,11 @@ namespace Baboomz.Simulation
                 GameSimulation.ScoreSurvivalKill(state, target);
                 GameSimulation.DropCtfFlag(state, target);
                 GameSimulation.SpawnHeadhunterTokens(state, target);
+                CombatResolver.TrackKill(state, ci);
+                state.Players[ci].TotalKills++;
+                float killDist = Vec2.Distance(state.Players[ci].Position, t.Position);
+                if (killDist <= 5f)
+                    state.Players[ci].CloseRangeKills++;
             }
 
             return true;
