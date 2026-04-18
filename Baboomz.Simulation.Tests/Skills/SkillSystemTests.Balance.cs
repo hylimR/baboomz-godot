@@ -21,5 +21,22 @@ namespace Baboomz.Tests.Editor
             Assert.AreEqual(12f, mend!.Value.Range, 0.001f, "Mend Range unchanged");
             Assert.AreEqual(3f, mend!.Value.Value, 0.001f, "Mend repair radius unchanged");
         }
+
+        [Test]
+        public void Jetpack_Config_BuffedForVerticalSpecialist_Issue212()
+        {
+            var cfg = new GameConfig();
+            SkillDef? jetpack = null;
+            foreach (var s in cfg.Skills)
+                if (s.SkillId == "jetpack") { jetpack = s; break; }
+
+            Assert.NotNull(jetpack, "Jetpack skill missing from GameConfig.Skills");
+            Assert.AreEqual(30f, jetpack!.Value.EnergyCost, 0.001f, "Jetpack EnergyCost unchanged");
+            Assert.AreEqual(5f, jetpack!.Value.Cooldown, 0.001f,
+                "Jetpack Cooldown should be 5s (reduced from 6s)");
+            Assert.AreEqual(2f, jetpack!.Value.Duration, 0.001f, "Jetpack Duration unchanged");
+            Assert.AreEqual(15f, jetpack!.Value.Value, 0.001f,
+                "Jetpack upward force should be 15 (buffed from 12)");
+        }
     }
 }
