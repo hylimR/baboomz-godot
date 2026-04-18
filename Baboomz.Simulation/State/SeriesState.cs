@@ -33,8 +33,8 @@ namespace Baboomz.Simulation
 
         public void RecordRound(int winnerIndex)
         {
-            if (RoundsPlayed < RoundWinners.Length)
-                RoundWinners[RoundsPlayed] = winnerIndex;
+            if (RoundsPlayed >= RoundWinners.Length) return;
+            RoundWinners[RoundsPlayed] = winnerIndex;
             RoundsPlayed++;
             if (winnerIndex >= 0 && winnerIndex < WinsPerPlayer.Length)
                 WinsPerPlayer[winnerIndex]++;
@@ -43,6 +43,7 @@ namespace Baboomz.Simulation
         public bool IsSeriesOver()
         {
             if (!IsActive) return true;
+            if (RoundsPlayed >= RoundWinners.Length) return true;
             for (int i = 0; i < WinsPerPlayer.Length; i++)
                 if (WinsPerPlayer[i] >= TargetWins) return true;
             return false;

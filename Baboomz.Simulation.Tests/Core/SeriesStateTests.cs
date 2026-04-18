@@ -113,5 +113,30 @@ namespace Baboomz.Tests.Editor
             Assert.AreEqual(1, series.RoundWinners[1]);
             Assert.AreEqual(0, series.RoundWinners[2]);
         }
+
+        [Test]
+        public void IsSeriesOver_AllDraws_BestOf3_ReturnsTrueAfter3Rounds()
+        {
+            var series = SeriesState.Create(SeriesFormat.BestOf3, 2);
+            series.RecordRound(-1);
+            Assert.IsFalse(series.IsSeriesOver());
+            series.RecordRound(-1);
+            Assert.IsFalse(series.IsSeriesOver());
+            series.RecordRound(-1);
+            Assert.IsTrue(series.IsSeriesOver());
+            Assert.AreEqual(-1, series.GetSeriesWinner());
+            Assert.AreEqual(3, series.RoundsPlayed);
+        }
+
+        [Test]
+        public void RecordRound_DrawsDoNotOverflowArray()
+        {
+            var series = SeriesState.Create(SeriesFormat.BestOf3, 2);
+            series.RecordRound(-1);
+            series.RecordRound(-1);
+            series.RecordRound(-1);
+            Assert.DoesNotThrow(() => series.RecordRound(-1));
+            Assert.AreEqual(3, series.RoundsPlayed);
+        }
     }
 }
