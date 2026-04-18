@@ -13,6 +13,11 @@ namespace Baboomz.Simulation
             var config = state.Config;
             float centerX = 0f;
             float surfaceY = GamePhysics.FindGroundY(state.Terrain, centerX, config.SpawnProbeY, 0.1f);
+            int playerCount = state.Players.Length;
+
+            var lives = new int[playerCount];
+            for (int i = 0; i < playerCount; i++)
+                lives[i] = config.PayloadLivesPerPlayer;
 
             state.Payload = new PayloadState
             {
@@ -22,7 +27,9 @@ namespace Baboomz.Simulation
                 GoalRightX = config.Player2SpawnX,
                 StalemateTimer = 0f,
                 Friction = config.PayloadFriction,
-                MatchTimer = config.PayloadMatchTime
+                MatchTimer = config.PayloadMatchTime,
+                RespawnTimers = new float[playerCount],
+                LivesRemaining = lives
             };
         }
 
@@ -31,6 +38,22 @@ namespace Baboomz.Simulation
             if (state.Config.MatchType != MatchType.Payload) return;
 
             ref PayloadState payload = ref state.Payload;
+            var config = state.Config;
+
+            // Respawn dead players
+            for (int i = 0; i < state.Players.Length; i++)
+            {
+                ref PlayerState p = ref state.Players[i];
+                if (!p.IsDead) continue;
+                if (payload.LivesRemaining[i] == 0) continue;
+
+                if (payload.RespawnTimers[i] <= 0f)
+                    payload.RespawnTimers[i] = config.PayloadRespawnDelay;
+
+                payload.RespawnTimers[i] -= dt;
+                if (payload.RespawnTimers[i] <= 0f)
+                    RespawnPayload(state, i);
+            }
 
             // Apply friction
             float frictionFactor = 1f - payload.Friction * dt;
@@ -100,6 +123,31 @@ namespace Baboomz.Simulation
                         state.WinnerIndex = -1; // exact center = draw
                 }
             }
+        }
+
+        static void RespawnPayload(GameState state, int playerIndex)
+        {
+            ref PlayerState p = ref state.Players[playerIndex];
+            var config = state.Config;
+
+            float spawnX = playerIndex == 0 ? config.Player1SpawnX : config.Player2SpawnX;
+            float spawnY = GamePhysics.FindGroundY(state.Terrain, spawnX, config.SpawnProbeY, 0.5f);
+
+            p.IsDead = false;
+            p.Health = config.DefaultMaxHealth;
+            p.Energy = config.DefaultMaxEnergy;
+            p.Position = new Vec2(spawnX, spawnY + 0.5f);
+            p.Velocity = Vec2.Zero;
+            p.FreezeTimer = 0f;
+            p.RetreatTimer = 0f;
+            p.ShootCooldownRemaining = 0f;
+            p.IsSwimming = false;
+            p.SwimTimer = 0f;
+
+            RestoreWeaponAmmo(ref p, config);
+
+            if (state.Payload.LivesRemaining[playerIndex] > 0)
+                state.Payload.LivesRemaining[playerIndex]--;
         }
 
         /// <summary>
