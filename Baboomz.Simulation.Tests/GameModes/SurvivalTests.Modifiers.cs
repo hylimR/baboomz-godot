@@ -86,11 +86,11 @@ namespace Baboomz.Tests.Editor
         }
 
         [Test]
-        public void Modifier_ArmoredHorde_HalvesMobArmor()
+        public void Modifier_ArmoredHorde_DoublesMobArmor()
         {
             var state = CreateStateWithModifier(SurvivalModifier.ArmoredHorde);
             for (int i = 1; i < state.Players.Length; i++)
-                Assert.AreEqual(0.5f, state.Players[i].ArmorMultiplier, 0.01f);
+                Assert.AreEqual(2f, state.Players[i].ArmorMultiplier, 0.01f);
         }
 
         [Test]
@@ -196,7 +196,7 @@ namespace Baboomz.Tests.Editor
                     break;
                 case SurvivalModifier.ArmoredHorde:
                     for (int i = 1; i < state.Players.Length; i++)
-                        state.Players[i].ArmorMultiplier = 0.5f;
+                        state.Players[i].ArmorMultiplier = 2f;
                     break;
                 case SurvivalModifier.SpeedBlitz:
                     for (int i = 1; i < state.Players.Length; i++)
