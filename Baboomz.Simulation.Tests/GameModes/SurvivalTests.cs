@@ -258,5 +258,31 @@ namespace Baboomz.Tests.Editor
                 "Should include wave clear + no-damage bonus");
         }
 
+        [Test]
+        public void Survival_WaveSpawn_PreservesPlayerWeaponTracking()
+        {
+            var state = GameSimulation.CreateMatch(SurvivalConfig(), 42);
+            state.Phase = MatchPhase.Playing;
+            TickPastBreak(state);
+
+            // Populate player 0's tracking data
+            state.WeaponHits[0]["cannon"] = 5;
+            state.WeaponKills[0]["cannon"] = 2;
+            state.WeaponDamage[0]["cannon"] = 120f;
+            state.WeaponsUsed[0].Add("cannon");
+            state.SkillsActivated[0].Add(SkillType.Shield);
+
+            // Clear wave 1 and tick past break to spawn wave 2
+            ClearWave(state);
+            TickPastBreak(state);
+
+            Assert.AreEqual(2, state.Survival.WaveNumber);
+            Assert.AreEqual(5, state.WeaponHits[0]["cannon"], "WeaponHits should survive wave spawn");
+            Assert.AreEqual(2, state.WeaponKills[0]["cannon"], "WeaponKills should survive wave spawn");
+            Assert.AreEqual(120f, state.WeaponDamage[0]["cannon"], 0.01f, "WeaponDamage should survive wave spawn");
+            Assert.IsTrue(state.WeaponsUsed[0].Contains("cannon"), "WeaponsUsed should survive wave spawn");
+            Assert.IsTrue(state.SkillsActivated[0].Contains(SkillType.Shield), "SkillsActivated should survive wave spawn");
+        }
+
     }
 }
