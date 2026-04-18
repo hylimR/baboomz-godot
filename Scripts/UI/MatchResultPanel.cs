@@ -154,9 +154,79 @@ namespace Baboomz
             runner?.StartReplayPlayback(replayData);
         }
 
+        public void ShowRoundResult(GameState state, SeriesState series)
+        {
+            if (state == null) return;
+
+            string roundWinner = state.WinnerIndex >= 0 && state.WinnerIndex < state.Players.Length
+                ? state.Players[state.WinnerIndex].Name ?? "Player"
+                : "Nobody";
+
+            _resultLabel.Text = $"Round {series.RoundsPlayed} — {roundWinner} wins!";
+            _resultLabel.AddThemeColorOverride("font_color", UIBuilder.UiGold);
+
+            string scoreText = "";
+            for (int i = 0; i < series.WinsPerPlayer.Length && i < state.Players.Length; i++)
+            {
+                string name = state.Players[i].Name ?? $"Player {i + 1}";
+                scoreText += $"{name}: {series.WinsPerPlayer[i]} wins\n";
+            }
+            scoreText += $"\nFirst to {series.TargetWins} wins the series.";
+            _statsLabel.Text = scoreText;
+            _progressionLabel.Text = "";
+
+            Visible = true;
+        }
+
+        public void ShowSeriesResult(GameState state, SeriesState series)
+        {
+            if (state == null) return;
+
+            int seriesWinner = series.GetSeriesWinner();
+            string winnerName = seriesWinner >= 0 && seriesWinner < state.Players.Length
+                ? state.Players[seriesWinner].Name ?? "Player"
+                : "Nobody";
+
+            string formatName = series.Format == SeriesFormat.BestOf5 ? "Best of 5" : "Best of 3";
+            _resultLabel.Text = $"{winnerName} wins the {formatName}!";
+            _resultLabel.AddThemeColorOverride("font_color", new Color(0.2f, 0.9f, 0.2f));
+
+            string roundLog = "";
+            for (int r = 0; r < series.RoundsPlayed; r++)
+            {
+                int rw = series.RoundWinners[r];
+                string rwName = rw >= 0 && rw < state.Players.Length
+                    ? state.Players[rw].Name ?? "Player"
+                    : "Draw";
+                roundLog += $"Round {r + 1}: {rwName}\n";
+            }
+
+            string finalScore = "\n";
+            for (int i = 0; i < series.WinsPerPlayer.Length && i < state.Players.Length; i++)
+            {
+                string name = state.Players[i].Name ?? $"Player {i + 1}";
+                finalScore += $"{name}: {series.WinsPerPlayer[i]} wins\n";
+            }
+
+            _statsLabel.Text = roundLog + finalScore;
+            ShowProgression(state);
+            GameModeContext.ActiveSeries = null;
+
+            Visible = true;
+        }
+
         private void OnPlayAgain()
         {
             Visible = false;
+
+            if (GameModeContext.ActiveSeries is SeriesState s && s.IsActive && !s.IsSeriesOver())
+            {
+                var runner = GetParent()?.GetParent() as GameRunner;
+                runner?.StartNextRound();
+                return;
+            }
+
+            GameModeContext.ActiveSeries = null;
             GetTree().ChangeSceneToFile("res://Scenes/Main.tscn");
         }
 

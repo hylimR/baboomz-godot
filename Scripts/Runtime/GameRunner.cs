@@ -71,6 +71,9 @@ namespace Baboomz
                 Simulation.TutorialSystem.InitStepTracking(State.Tutorial, State);
             }
 
+            if (GameModeContext.ActiveSeries == null && GameModeContext.SeriesFormat != SeriesFormat.Single)
+                GameModeContext.ActiveSeries = SeriesState.Create(GameModeContext.SeriesFormat, State.Players.Length);
+
             GD.Print($"Match started: seed={seed}, players={State.Players.Length}, phase={State.Phase}");
 
             _matchResultShown = false;
@@ -114,7 +117,7 @@ namespace Baboomz
                 {
                     _matchResultShown = true;
                     GD.Print($"Match ended! Winner: {State.WinnerIndex}");
-                    _matchResultPanel?.ShowResult(State);
+                    HandleMatchEnd();
                 }
             }
         }
@@ -148,6 +151,40 @@ namespace Baboomz
                 _projectileRenderers.Remove(id);
                 _knownProjectileIds.Remove(id);
             }
+        }
+
+        private void HandleMatchEnd()
+        {
+            if (GameModeContext.ActiveSeries is SeriesState series && series.IsActive)
+            {
+                series.RecordRound(State.WinnerIndex);
+                GameModeContext.ActiveSeries = series;
+
+                if (series.IsSeriesOver())
+                {
+                    _matchResultPanel?.ShowSeriesResult(State, series);
+                }
+                else
+                {
+                    _matchResultPanel?.ShowRoundResult(State, series);
+                }
+            }
+            else
+            {
+                _matchResultPanel?.ShowResult(State);
+            }
+        }
+
+        public void StartNextRound()
+        {
+            foreach (var child in GetChildren())
+            {
+                if (child != _matchResultPanel)
+                    child.QueueFree();
+            }
+            _projectileRenderers.Clear();
+            _knownProjectileIds.Clear();
+            StartMatch();
         }
 
         private static void ApplyDifficulty(GameConfig config, Difficulty difficulty)
