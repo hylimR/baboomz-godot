@@ -17,10 +17,12 @@ namespace Baboomz.Simulation
             new WeaponDef
             {
                 WeaponId = "shotgun",
-                MinPower = 12f, MaxPower = 25f, ChargeTime = 1f, ShootCooldown = 2f,
-                ExplosionRadius = 1.2f, MaxDamage = 15f, KnockbackForce = 3f,
+                // Balance #186: Shotgun strictly dominated by Cannon — buff damage, CD, energy
+                // MaxDamage 15 -> 18 (burst 72, DPS 10.0), CD 2.0 -> 1.8, EnergyCost 18 -> 14
+                MinPower = 12f, MaxPower = 25f, ChargeTime = 1f, ShootCooldown = 1.8f,
+                ExplosionRadius = 1.2f, MaxDamage = 18f, KnockbackForce = 3f,
                 ProjectileCount = 4, SpreadAngle = 25f,
-                DestroysIndestructible = false, EnergyCost = 18f, Ammo = -1
+                DestroysIndestructible = false, EnergyCost = 14f, Ammo = -1
             },
             new WeaponDef
             {

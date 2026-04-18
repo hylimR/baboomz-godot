@@ -338,7 +338,7 @@ namespace Baboomz.Tests.Editor
         public void EnergyWeapon_CannotFire_WhenOutOfEnergy()
         {
             var state = GameSimulation.CreateMatch(SmallConfig(), 42);
-            state.Players[0].ActiveWeaponSlot = 1; // shotgun (18 energy cost)
+            state.Players[0].ActiveWeaponSlot = 1; // shotgun (14 energy cost)
             state.Players[0].AimPower = 20f;
             state.Players[0].Energy = 5f; // not enough
 
@@ -351,7 +351,7 @@ namespace Baboomz.Tests.Editor
         public void Fire_ZeroAmmo_DoesNotDeductEnergy()
         {
             var state = GameSimulation.CreateMatch(SmallConfig(), 42);
-            state.Players[0].ActiveWeaponSlot = 1; // shotgun (18 energy cost)
+            state.Players[0].ActiveWeaponSlot = 1; // shotgun (14 energy cost)
             state.Players[0].AimPower = 20f;
             state.Players[0].Energy = 100f;
             state.Players[0].WeaponSlots[1].Ammo = 0; // depleted
