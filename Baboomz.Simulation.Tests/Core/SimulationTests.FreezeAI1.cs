@@ -276,15 +276,15 @@ namespace Baboomz.Tests.Editor
         }
 
         [Test]
-        public void BalanceCheck_ShotgunStats_Issue186()
+        public void BalanceCheck_ShotgunStats_Issue197()
         {
             var config = new GameConfig();
             var shotgun = config.Weapons[1];
             Assert.AreEqual("shotgun", shotgun.WeaponId);
-            // Balance #186: Shotgun buff — MaxDamage 15->18, CD 2.0->1.8, EnergyCost 18->14
-            Assert.AreEqual(18f, shotgun.MaxDamage, "Shotgun MaxDamage should be 18");
+            // Balance #197: Shotgun DPS/E overcorrected — MaxDamage 18->16, EnergyCost 14->16
+            Assert.AreEqual(16f, shotgun.MaxDamage, "Shotgun MaxDamage should be 16");
             Assert.AreEqual(1.8f, shotgun.ShootCooldown, 0.001f, "Shotgun ShootCooldown should be 1.8");
-            Assert.AreEqual(14f, shotgun.EnergyCost, "Shotgun EnergyCost should be 14");
+            Assert.AreEqual(16f, shotgun.EnergyCost, "Shotgun EnergyCost should be 16");
         }
 
         [Test]
