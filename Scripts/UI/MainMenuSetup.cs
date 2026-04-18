@@ -1,4 +1,5 @@
 using Godot;
+using Baboomz.Simulation;
 
 namespace Baboomz
 {
@@ -23,6 +24,8 @@ namespace Baboomz
         private int _skill0Index;
         private int _skill1Index;
         private GameSettings _settings;
+        private Label _formatLabel;
+        private int _formatIndex; // 0=Single, 1=BO3, 2=BO5
         private LevelSelectPanel _levelSelectPanel;
         private SettingsPanel _settingsPanel;
 
@@ -117,8 +120,12 @@ namespace Baboomz
             y += 0.07f;
             BuildSkillSelector(y);
 
+            // --- Match format ---
+            y += 0.07f;
+            BuildFormatSelector(y);
+
             // --- PLAY button ---
-            y += 0.14f;
+            y += 0.07f;
             var playBtn = UIBuilder.CreateButton("PlayBtn", "PLAY", 32,
                 new Color(0.2f, 0.6f, 0.3f), this);
             UIBuilder.SetAnchors(playBtn, new Vector2(0.3f, y), new Vector2(0.7f, y + 0.07f));
@@ -216,8 +223,44 @@ namespace Baboomz
             btn.AddThemeStyleboxOverride("hover", hover);
         }
 
+        private static readonly string[] FormatNames = { "Single", "Best of 3", "Best of 5" };
+        private static readonly SeriesFormat[] FormatValues =
+            { SeriesFormat.Single, SeriesFormat.BestOf3, SeriesFormat.BestOf5 };
+
+        private void BuildFormatSelector(float y)
+        {
+            UIBuilder.CreateLabel("MATCH FORMAT", 16, new Color(0.8f, 0.8f, 0.8f),
+                this, new Vector2(0.3f, y), new Vector2(0.7f, y + 0.03f),
+                HorizontalAlignment.Center);
+
+            y += 0.03f;
+            var leftBtn = UIBuilder.CreateButton("FormatLeft", "<", 24,
+                new Color(0.3f, 0.3f, 0.4f), this);
+            UIBuilder.SetAnchors(leftBtn, new Vector2(0.32f, y), new Vector2(0.38f, y + 0.04f));
+            leftBtn.Pressed += () => CycleFormat(-1);
+
+            _formatLabel = UIBuilder.CreateLabel(FormatNames[0], 20, UIBuilder.UiGold,
+                this, new Vector2(0.38f, y), new Vector2(0.62f, y + 0.04f),
+                HorizontalAlignment.Center);
+            _formatLabel.VerticalAlignment = VerticalAlignment.Center;
+
+            var rightBtn = UIBuilder.CreateButton("FormatRight", ">", 24,
+                new Color(0.3f, 0.3f, 0.4f), this);
+            UIBuilder.SetAnchors(rightBtn, new Vector2(0.62f, y), new Vector2(0.68f, y + 0.04f));
+            rightBtn.Pressed += () => CycleFormat(1);
+        }
+
+        private void CycleFormat(int direction)
+        {
+            _formatIndex = (_formatIndex + direction + FormatNames.Length) % FormatNames.Length;
+            if (_formatLabel != null)
+                _formatLabel.Text = FormatNames[_formatIndex];
+            GameModeContext.SeriesFormat = FormatValues[_formatIndex];
+        }
+
         private void OnPlayPressed()
         {
+            GameModeContext.ActiveSeries = null;
             GetTree().ChangeSceneToFile("res://Scenes/Main.tscn");
         }
 

@@ -1,3 +1,5 @@
+using Baboomz.Simulation;
+
 namespace Baboomz
 {
     public enum GameMode
@@ -35,6 +37,12 @@ namespace Baboomz
         /// <summary>Weapon slot active at match start (default: 0 = cannon).</summary>
         public static int StartWeaponSlot { get; set; } = 0;
 
+        /// <summary>Match series format (Single, BO3, BO5).</summary>
+        public static SeriesFormat SeriesFormat { get; set; } = SeriesFormat.Single;
+
+        /// <summary>Active series state, carried between rounds.</summary>
+        public static SeriesState? ActiveSeries { get; set; }
+
         public static void Reset()
         {
             Mode = GameMode.VsAI;
@@ -43,6 +51,8 @@ namespace Baboomz
             SelectedSkillSlot0 = 0;
             SelectedSkillSlot1 = 3;
             StartWeaponSlot = 0;
+            SeriesFormat = SeriesFormat.Single;
+            ActiveSeries = null;
         }
     }
 
