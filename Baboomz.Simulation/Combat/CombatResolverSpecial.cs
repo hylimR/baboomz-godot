@@ -121,6 +121,7 @@ namespace Baboomz.Simulation
                     state.FirstBloodPlayerIndex = ownerIndex;
 
                 TrackWeaponHit(state, ownerIndex, sourceWeaponId);
+                TrackWeaponDamage(state, ownerIndex, sourceWeaponId, damage);
                 TrackHit(state, ownerIndex);
             }
 
