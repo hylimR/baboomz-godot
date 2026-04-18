@@ -23,11 +23,7 @@ namespace Baboomz
         private int _skill0Index;
         private int _skill1Index;
         private GameSettings _settings;
-        private EncyclopediaPanel _encyclopediaPanel;
-        private AchievementPanel _achievementPanel;
         private LevelSelectPanel _levelSelectPanel;
-        private ShopPanel _shopPanel;
-        private LoadoutPanel _loadoutPanel;
         private SettingsPanel _settingsPanel;
 
         private readonly Color _easyColor = new Color(0.3f, 0.6f, 0.3f);
@@ -157,50 +153,8 @@ namespace Baboomz
             UIBuilder.SetAnchors(quitBtn, new Vector2(0.35f, y), new Vector2(0.65f, y + 0.06f));
             quitBtn.Pressed += OnQuitPressed;
 
-            // --- Encyclopedia button ---
-            y += 0.08f;
-            var encBtn = UIBuilder.CreateButton("EncyclopediaBtn", "Encyclopedia", 18,
-                new Color(0.3f, 0.3f, 0.5f), this);
-            UIBuilder.SetAnchors(encBtn, new Vector2(0.35f, y), new Vector2(0.65f, y + 0.05f));
-            encBtn.Pressed += OnEncyclopediaPressed;
-
-            // Encyclopedia panel (hidden overlay, shows on button press)
-            _encyclopediaPanel = new EncyclopediaPanel();
-            _encyclopediaPanel.Name = "EncyclopediaPanel";
-            AddChild(_encyclopediaPanel);
-
-            // --- Loadout button ---
-            y += 0.07f;
-            var loadoutBtn = UIBuilder.CreateButton("LoadoutBtn", "Loadout", 18,
-                new Color(0.4f, 0.3f, 0.5f), this);
-            UIBuilder.SetAnchors(loadoutBtn, new Vector2(0.35f, y), new Vector2(0.65f, y + 0.05f));
-            loadoutBtn.Pressed += OnLoadoutPressed;
-
-            _loadoutPanel = new LoadoutPanel();
-            _loadoutPanel.Name = "LoadoutPanel";
-            AddChild(_loadoutPanel);
-
-            // --- Achievements button ---
-            y += 0.07f;
-            var achBtn = UIBuilder.CreateButton("AchievementsBtn", "Achievements", 18,
-                new Color(0.4f, 0.35f, 0.2f), this);
-            UIBuilder.SetAnchors(achBtn, new Vector2(0.35f, y), new Vector2(0.65f, y + 0.05f));
-            achBtn.Pressed += OnAchievementsPressed;
-
-            _achievementPanel = new AchievementPanel();
-            _achievementPanel.Name = "AchievementPanel";
-            AddChild(_achievementPanel);
-
-            // --- Shop button ---
-            y += 0.07f;
-            var shopBtn = UIBuilder.CreateButton("ShopBtn", "Shop", 18,
-                new Color(0.2f, 0.5f, 0.4f), this);
-            UIBuilder.SetAnchors(shopBtn, new Vector2(0.35f, y), new Vector2(0.65f, y + 0.05f));
-            shopBtn.Pressed += OnShopPressed;
-
-            _shopPanel = new ShopPanel();
-            _shopPanel.Name = "ShopPanel";
-            AddChild(_shopPanel);
+            // Secondary panel buttons (encyclopedia, loadout, achievements, shop)
+            BuildPanelButtons(ref y);
 
             // --- Version ---
             var version = UIBuilder.CreateLabel("v0.1.0-alpha", 12,
@@ -275,26 +229,6 @@ namespace Baboomz
         private void OnCampaignPressed()
         {
             _levelSelectPanel?.Show();
-        }
-
-        private void OnEncyclopediaPressed()
-        {
-            _encyclopediaPanel?.Show();
-        }
-
-        private void OnLoadoutPressed()
-        {
-            _loadoutPanel?.Show();
-        }
-
-        private void OnAchievementsPressed()
-        {
-            _achievementPanel?.Show();
-        }
-
-        private void OnShopPressed()
-        {
-            _shopPanel?.Show();
         }
 
         private void OnSettingsPressed()
