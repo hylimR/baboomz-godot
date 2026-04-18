@@ -38,5 +38,22 @@ namespace Baboomz.Tests.Editor
             Assert.AreEqual(15f, jetpack!.Value.Value, 0.001f,
                 "Jetpack upward force should be 15 (buffed from 12)");
         }
+
+        [Test]
+        public void Girder_Config_CheaperAndFasterForUtilityTier_Issue216()
+        {
+            var cfg = new GameConfig();
+            SkillDef? girder = null;
+            foreach (var s in cfg.Skills)
+                if (s.SkillId == "girder") { girder = s; break; }
+
+            Assert.NotNull(girder, "Girder skill missing from GameConfig.Skills");
+            Assert.AreEqual(25f, girder!.Value.EnergyCost, 0.001f,
+                "Girder EnergyCost should be 25 (reduced from 30)");
+            Assert.AreEqual(12f, girder!.Value.Cooldown, 0.001f,
+                "Girder Cooldown should be 12s (reduced from 15s)");
+            Assert.AreEqual(12f, girder!.Value.Range, 0.001f, "Girder Range unchanged");
+            Assert.AreEqual(4f, girder!.Value.Value, 0.001f, "Girder width unchanged");
+        }
     }
 }
