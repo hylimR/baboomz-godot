@@ -82,5 +82,37 @@ namespace Baboomz.Tests.Editor
             Assert.GreaterOrEqual(state.Players[0].MoveSpeed, baseSpeed * 0.9f,
                 "Non-carrier speed should be restored to base (issue #83)");
         }
+        [Test]
+        public void Ctf_WarCrySpeedRestoredAfterFlagDrop_Issue193()
+        {
+            var config = CtfConfig();
+            var state = GameSimulation.CreateMatch(config, 42);
+            state.Phase = MatchPhase.Playing;
+            AILogic.Reset(42, state.Players.Length);
+
+            float warCryBuff = 1.4f;
+            float baseSpeed = state.Players[0].MoveSpeed;
+            state.Players[0].WarCryTimer = 5f;
+            state.Players[0].WarCrySpeedBuff = warCryBuff;
+            state.Players[0].MoveSpeed = baseSpeed * warCryBuff;
+
+            // Carry flag — speed should drop to base * warCry * carrier
+            state.Ctf.Flags[1].CarrierIndex = 0;
+            state.Ctf.Flags[1].IsHome = false;
+            GameSimulation.Tick(state, 0.016f);
+            float carrierSpeed = state.Players[0].MoveSpeed;
+
+            // Drop flag far away so player doesn't auto-pickup
+            state.Ctf.Flags[1].CarrierIndex = -1;
+            state.Ctf.Flags[1].DropTimer = config.CtfFlagDropTime;
+            state.Ctf.Flags[1].Position = new Vec2(99f, 99f);
+            GameSimulation.Tick(state, 0.016f);
+
+            Assert.Greater(state.Players[0].MoveSpeed, carrierSpeed,
+                "After dropping flag with WarCry active, speed should be higher than carrier speed (#193)");
+            float expectedWarCry = config.DefaultMoveSpeed * config.MoveSpeedMult * warCryBuff;
+            Assert.AreEqual(expectedWarCry, state.Players[0].MoveSpeed, 0.5f,
+                "Speed should restore to base * MoveSpeedMult * WarCry (#193)");
+        }
     }
 }
