@@ -52,7 +52,7 @@ namespace Baboomz.Simulation
             new SkillDef
             {
                 SkillId = "girder", Type = SkillType.Girder,
-                EnergyCost = 30f, Cooldown = 15f, Duration = 0f,
+                EnergyCost = 25f, Cooldown = 12f, Duration = 0f,
                 Range = 12f, Value = 4f  // girder width
             },
             new SkillDef
