@@ -174,9 +174,9 @@ namespace Baboomz.Simulation
             new WeaponDef
             {
                 WeaponId = "ricochet_disc",
-                // Balance #187: MaxDamage 22 -> 28 to end strict domination by Boomerang;
-                // DPS/E rises from 1.47 to 1.87, closing gap while Boomerang keeps direct-hit crown.
-                MinPower = 10f, MaxPower = 28f, ChargeTime = 1.5f, ShootCooldown = 3f,
+                // Balance #187/#207: MaxDamage 28, ShootCooldown 3.0->2.5 for DPS 11.2 vs Boomerang 10.0;
+                // spammable bounce weapon niche, Boomerang keeps per-hit crown.
+                MinPower = 10f, MaxPower = 28f, ChargeTime = 1.5f, ShootCooldown = 2.5f,
                 ExplosionRadius = 1.5f, MaxDamage = 28f, KnockbackForce = 3f,
                 ProjectileCount = 1, SpreadAngle = 0f,
                 DestroysIndestructible = false, EnergyCost = 15f, Ammo = -1,
