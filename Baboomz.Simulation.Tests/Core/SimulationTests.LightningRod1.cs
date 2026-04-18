@@ -268,7 +268,7 @@ namespace Baboomz.Tests.Editor
         }
 
         [Test]
-        public void LightningRod_ChainHitDoesNotInflateDirectHits()
+        public void LightningRod_ChainHitIncrementsDirectHits()
         {
             var config = SmallConfig();
             var state = GameSimulation.CreateMatch(config, 42);
@@ -294,8 +294,8 @@ namespace Baboomz.Tests.Editor
             state.Players[0].DirectHits = 0;
             GameSimulation.Fire(state, 0);
 
-            Assert.AreEqual(1, state.Players[0].DirectHits,
-                "Chain hit should not increment DirectHits — only primary hit counts");
+            Assert.AreEqual(2, state.Players[0].DirectHits,
+                "Both primary and chain hits should increment DirectHits for accuracy tracking");
         }
 
         [Test]
