@@ -221,6 +221,8 @@ namespace Baboomz.Simulation
         public float SavedGravity;
         public float SavedWindForce;
         public float SavedWindAngle;
+        public float SavedDamageMultiplier;
+        public float SavedArmorMultiplier;
     }
 
     public struct TargetState

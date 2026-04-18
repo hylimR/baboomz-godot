@@ -207,6 +207,8 @@ namespace Baboomz.Simulation
                     state.WindAngle = rng.Next(2) == 0 ? 0f : 180f;
                     break;
                 case SurvivalModifier.GlassCannon:
+                    surv.SavedDamageMultiplier = state.Players[0].DamageMultiplier;
+                    surv.SavedArmorMultiplier = state.Players[0].ArmorMultiplier;
                     state.Players[0].DamageMultiplier *= 2f;
                     state.Players[0].ArmorMultiplier *= 0.5f;
                     break;
@@ -240,8 +242,8 @@ namespace Baboomz.Simulation
                     state.WindAngle = surv.SavedWindAngle;
                     break;
                 case SurvivalModifier.GlassCannon:
-                    state.Players[0].DamageMultiplier /= 2f;
-                    state.Players[0].ArmorMultiplier /= 0.5f;
+                    state.Players[0].DamageMultiplier = surv.SavedDamageMultiplier;
+                    state.Players[0].ArmorMultiplier = surv.SavedArmorMultiplier;
                     break;
                 // ArmoredHorde, SpeedBlitz, RegenWave: mobs die, no revert needed
             }
