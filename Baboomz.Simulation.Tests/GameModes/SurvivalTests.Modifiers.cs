@@ -155,6 +155,33 @@ namespace Baboomz.Tests.Editor
             Assert.AreEqual(SurvivalModifier.None, state.Survival.ActiveModifier);
         }
 
+        [Test]
+        public void Modifier_GlassCannon_DoubleDamageExpiry_NoDesync()
+        {
+            var state = CreateStateWithModifier(SurvivalModifier.GlassCannon);
+            Assert.AreEqual(2f, state.Players[0].DamageMultiplier, 0.01f);
+
+            // Simulate picking up a DoubleDamage crate (sets timer, multiplier stays 2x)
+            state.Players[0].DoubleDamageTimer = 5f;
+
+            // Tick until DoubleDamage expires
+            for (int i = 0; i < 60; i++)
+                GameSimulation.Tick(state, 0.1f);
+
+            // DoubleDamage expired — buff system resets to DefaultDamageMultiplier (1.0),
+            // losing the GlassCannon bonus. This is the mid-wave state.
+            float midWave = state.Players[0].DamageMultiplier;
+
+            // Clear the wave → GlassCannon reverts using saved value
+            ClearWave(state);
+
+            Assert.AreEqual(state.Config.DefaultDamageMultiplier,
+                state.Players[0].DamageMultiplier, 0.01f,
+                "DamageMultiplier must return to default after GlassCannon revert, not 0.5");
+            Assert.AreEqual(1f, state.Players[0].ArmorMultiplier, 0.01f,
+                "ArmorMultiplier must return to default after GlassCannon revert");
+        }
+
         /// <summary>
         /// Creates a survival state at wave 5+ with a specific modifier forced on.
         /// </summary>
@@ -191,8 +218,10 @@ namespace Baboomz.Tests.Editor
                     state.WindAngle = 0f;
                     break;
                 case SurvivalModifier.GlassCannon:
-                    state.Players[0].DamageMultiplier = 2f;
-                    state.Players[0].ArmorMultiplier = 0.5f;
+                    state.Survival.SavedDamageMultiplier = state.Players[0].DamageMultiplier;
+                    state.Survival.SavedArmorMultiplier = state.Players[0].ArmorMultiplier;
+                    state.Players[0].DamageMultiplier *= 2f;
+                    state.Players[0].ArmorMultiplier *= 0.5f;
                     break;
                 case SurvivalModifier.ArmoredHorde:
                     for (int i = 1; i < state.Players.Length; i++)
@@ -226,8 +255,8 @@ namespace Baboomz.Tests.Editor
                     state.WindAngle = surv.SavedWindAngle;
                     break;
                 case SurvivalModifier.GlassCannon:
-                    state.Players[0].DamageMultiplier = 1f;
-                    state.Players[0].ArmorMultiplier = 1f;
+                    state.Players[0].DamageMultiplier = surv.SavedDamageMultiplier;
+                    state.Players[0].ArmorMultiplier = surv.SavedArmorMultiplier;
                     break;
             }
             surv.ActiveModifier = SurvivalModifier.None;
