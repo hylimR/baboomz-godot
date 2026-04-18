@@ -150,6 +150,20 @@ namespace Baboomz
                 _hud.SetP2HPFill(p2Hp);
             }
 
+            // Survival mode: wave + modifier display
+            if (_state.Config.MatchType == MatchType.Survival
+                && _state.Phase == MatchPhase.Playing)
+            {
+                ref var surv = ref _state.Survival;
+                string modStr = surv.ActiveModifier != SurvivalModifier.None
+                    ? $" [{FormatModifier(surv.ActiveModifier)}]"
+                    : "";
+                string waveStr = surv.WaveActive
+                    ? $"WAVE {surv.WaveNumber} — {surv.MobsAliveCount} left{modStr}"
+                    : $"WAVE {surv.WaveNumber + 1} in {surv.BreakTimer:F0}s";
+                _hud.SetMatchState($"{waveStr}  Score: {surv.Score}");
+            }
+
             // Payload mode: show timer and position
             if (_state.Config.MatchType == MatchType.Payload
                 && _state.Phase == MatchPhase.Playing)
@@ -157,6 +171,13 @@ namespace Baboomz
                 float timer = _state.Payload.MatchTimer;
                 string timerStr = timer > 0f ? $"{timer:F0}s" : "SUDDEN DEATH";
                 _hud.SetMatchState($"PAYLOAD {timerStr}");
+            }
+
+            // Survival match end: show final score
+            if (_state.Config.MatchType == MatchType.Survival
+                && _state.Phase == MatchPhase.Ended)
+            {
+                _hud.SetMatchState($"GAME OVER — Wave {_state.Survival.WaveNumber}  Score: {_state.Survival.Score}");
             }
 
             // Match end
@@ -178,5 +199,16 @@ namespace Baboomz
                 }
             }
         }
+
+        private static string FormatModifier(SurvivalModifier mod) => mod switch
+        {
+            SurvivalModifier.LowGravity => "LOW GRAVITY",
+            SurvivalModifier.HeavyWind => "HEAVY WIND",
+            SurvivalModifier.GlassCannon => "GLASS CANNON",
+            SurvivalModifier.ArmoredHorde => "ARMORED HORDE",
+            SurvivalModifier.SpeedBlitz => "SPEED BLITZ",
+            SurvivalModifier.RegenWave => "REGEN WAVE",
+            _ => ""
+        };
     }
 }

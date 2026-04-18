@@ -212,6 +212,11 @@ namespace Baboomz.Simulation
         public int MobsAliveCount;      // tracked each tick
         public int MobsSpawnedTotal;    // total mobs spawned this wave (including boss)
         public float HighScore;         // best score (loaded from config)
+
+        public SurvivalModifier ActiveModifier;
+        public float SavedGravity;
+        public float SavedWindForce;
+        public float SavedWindAngle;
     }
 
     public struct TargetState

@@ -106,4 +106,15 @@ namespace Baboomz.Simulation
         DoubleKill,
         MultiKill
     }
+
+    public enum SurvivalModifier
+    {
+        None,
+        LowGravity,
+        HeavyWind,
+        GlassCannon,
+        ArmoredHorde,
+        SpeedBlitz,
+        RegenWave
+    }
 }
