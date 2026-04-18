@@ -141,7 +141,7 @@ namespace Baboomz.Simulation
             new SkillDef
             {
                 SkillId = "mend", Type = SkillType.Mend,
-                EnergyCost = 30f, Cooldown = 14f, Duration = 0f,
+                EnergyCost = 20f, Cooldown = 10f, Duration = 0f,
                 Range = 12f, Value = 3f  // repair radius in world units
             }
         };
