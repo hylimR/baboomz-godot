@@ -16,8 +16,8 @@ namespace Baboomz.Tests.Editor
                 if (config.Skills[i].SkillId == "magnetic_mine")
                 {
                     Assert.AreEqual(SkillType.MagneticMine, config.Skills[i].Type);
-                    Assert.AreEqual(30f, config.Skills[i].EnergyCost);
-                    Assert.AreEqual(12f, config.Skills[i].Cooldown);
+                    Assert.AreEqual(25f, config.Skills[i].EnergyCost);
+                    Assert.AreEqual(10f, config.Skills[i].Cooldown);
                     Assert.AreEqual(30f, config.Skills[i].Value);
                     found = true;
                 }
