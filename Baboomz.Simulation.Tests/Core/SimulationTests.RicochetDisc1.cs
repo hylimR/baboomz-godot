@@ -14,7 +14,7 @@ namespace Baboomz.Tests.Editor
             var config = new GameConfig();
             Assert.IsTrue(config.Weapons.Length >= 18, "Should have at least 18 weapons");
             Assert.AreEqual("ricochet_disc", config.Weapons[17].WeaponId);
-            Assert.AreEqual(22f, config.Weapons[17].MaxDamage); // Balance #87: 28→22
+            Assert.AreEqual(28f, config.Weapons[17].MaxDamage); // Balance #187: 22→28
             Assert.AreEqual(-1, config.Weapons[17].Ammo); // infinite
             Assert.IsTrue(config.Weapons[17].IsRicochet);
             Assert.AreEqual(3, config.Weapons[17].Bounces);
