@@ -89,6 +89,10 @@ namespace Baboomz.Simulation
                     SpawnHeadhunterTokens(state, primaryTarget);
                     CombatResolver.TrackKill(state, playerIndex);
                     CombatResolver.TrackWeaponKill(state, playerIndex, weapon.WeaponId);
+                    state.Players[playerIndex].TotalKills++;
+                    float killDist = Vec2.Distance(p.Position, pt.Position);
+                    if (killDist <= 5f)
+                        state.Players[playerIndex].CloseRangeKills++;
                 }
             }
 
@@ -158,6 +162,10 @@ namespace Baboomz.Simulation
                         SpawnHeadhunterTokens(state, chainTarget);
                         CombatResolver.TrackKill(state, playerIndex);
                         CombatResolver.TrackWeaponKill(state, playerIndex, weapon.WeaponId);
+                        state.Players[playerIndex].TotalKills++;
+                        float chainKillDist = Vec2.Distance(p.Position, ct2.Position);
+                        if (chainKillDist <= 5f)
+                            state.Players[playerIndex].CloseRangeKills++;
                     }
                 }
             }
