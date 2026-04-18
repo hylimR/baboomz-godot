@@ -28,15 +28,11 @@ namespace Baboomz.Simulation
                 if (dmg.Amount >= 100f)
                     TryUnlock("cm_7", state, 0);
 
-                // Track cannon hits for cm_2
-                if (state.Players[0].WeaponSlots.Length > 0 &&
-                    state.Players[0].WeaponSlots[state.Players[0].ActiveWeaponSlot].WeaponId == "cannon" &&
-                    dmg.TargetIndex != dmg.SourceIndex)
-                {
-                    _cannonHits++;
-                    if (_cannonHits >= 3)
-                        TryUnlock("cm_2", state, 0);
-                }
+                // cm_2: Cannon Master — 3+ cannon hits (use WeaponHits dict, not ActiveWeaponSlot)
+                if (state.WeaponHits != null && state.WeaponHits.Length > 0
+                    && state.WeaponHits[0].TryGetValue("cannon", out int cannonHits)
+                    && cannonHits >= 3)
+                    TryUnlock("cm_2", state, 0);
 
                 // mi_1: Self-Destruct — player killed self
                 if (dmg.SourceIndex == 0 && dmg.TargetIndex == 0 && state.Players[0].IsDead)

@@ -360,5 +360,38 @@ namespace Baboomz.Tests.Editor
             AchievementTracker.Update(state);
             Assert.IsTrue(AchievementTracker.IsUnlocked("cm_5"));
         }
+        [Test]
+        public void CannonMaster_cm2_UnlocksViaWeaponHitsNotActiveSlot()
+        {
+            var state = GameSimulation.CreateMatch(SmallConfig(), 42);
+            state.Phase = MatchPhase.Playing;
+            AchievementTracker.OnMatchStart(state);
+
+            // Simulate 3 cannon hits tracked in WeaponHits (as CombatResolver does)
+            state.WeaponHits[0]["cannon"] = 2;
+            state.DamageEvents.Add(new DamageEvent
+            {
+                SourceIndex = 0, TargetIndex = 1,
+                Amount = 25f, Position = state.Players[1].Position
+            });
+
+            AchievementTracker.Update(state);
+            Assert.IsFalse(AchievementTracker.IsUnlocked("cm_2"),
+                "Should not unlock at 2 cannon hits");
+
+            state.WeaponHits[0]["cannon"] = 3;
+            state.DamageEvents.Clear();
+            state.DamageEvents.Add(new DamageEvent
+            {
+                SourceIndex = 0, TargetIndex = 1,
+                Amount = 25f, Position = state.Players[1].Position
+            });
+
+            // Player's active weapon is NOT cannon — should still unlock via WeaponHits
+            state.Players[0].ActiveWeaponSlot = 1;
+            AchievementTracker.Update(state);
+            Assert.IsTrue(AchievementTracker.IsUnlocked("cm_2"),
+                "cm_2 should unlock based on WeaponHits dict, not ActiveWeaponSlot");
+        }
     }
 }
