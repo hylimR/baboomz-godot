@@ -28,6 +28,8 @@ namespace Baboomz.Simulation
         public float StalemateTimer;  // time payload has been nearly stationary
         public float Friction;        // current friction (can reduce during stalemate)
         public float MatchTimer;      // countdown to time limit
+        public float[] RespawnTimers; // per-player respawn countdown
+        public int[] LivesRemaining;  // per-player lives (-1 = unlimited)
     }
 
     public struct FlagState
