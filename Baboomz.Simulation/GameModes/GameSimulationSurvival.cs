@@ -109,11 +109,20 @@ namespace Baboomz.Simulation
 
             state.Players = newPlayers;
 
-            // Re-initialize weapon tracking arrays to match new player count.
-            // Preserves player[0]'s existing tracking data by re-using InitWeaponTracking
-            // which creates fresh arrays — player[0]'s per-weapon stats are on PlayerState
-            // (ShotsFired, DirectHits, TotalDamageDealt) which were preserved via struct copy.
+            // Save player 0's weapon tracking before reinit (InitWeaponTracking replaces all arrays)
+            var savedHits = state.WeaponHits?[0];
+            var savedKills = state.WeaponKills?[0];
+            var savedDamage = state.WeaponDamage?[0];
+            var savedUsed = state.WeaponsUsed?[0];
+            var savedSkills = state.SkillsActivated?[0];
+
             state.InitWeaponTracking(state.Players.Length);
+
+            if (savedHits != null) state.WeaponHits[0] = savedHits;
+            if (savedKills != null) state.WeaponKills[0] = savedKills;
+            if (savedDamage != null) state.WeaponDamage[0] = savedDamage;
+            if (savedUsed != null) state.WeaponsUsed[0] = savedUsed;
+            if (savedSkills != null) state.SkillsActivated[0] = savedSkills;
 
             AILogic.Reset(state.Seed + wave, state.Players.Length);
             BossLogic.Reset(state.Seed + wave, state.Players.Length);
