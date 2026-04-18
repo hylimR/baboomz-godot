@@ -59,8 +59,17 @@ namespace Baboomz.Simulation
                 {
                     p.Health = 0f;
                     p.IsDead = true;
+                    GameSimulation.ScoreSurvivalKill(state, i);
                     GameSimulation.DropCtfFlag(state, i);
                     GameSimulation.SpawnHeadhunterTokens(state, i);
+                    if (ownerIndex >= 0 && ownerIndex < state.Players.Length && i != ownerIndex)
+                    {
+                        TrackKill(state, ownerIndex);
+                        state.Players[ownerIndex].TotalKills++;
+                        float killDist = Vec2.Distance(state.Players[ownerIndex].Position, p.Position);
+                        if (killDist <= 5f)
+                            state.Players[ownerIndex].CloseRangeKills++;
+                    }
                 }
             }
 
@@ -145,6 +154,10 @@ namespace Baboomz.Simulation
                 {
                     TrackKill(state, ownerIndex);
                     TrackWeaponKill(state, ownerIndex, sourceWeaponId);
+                    state.Players[ownerIndex].TotalKills++;
+                    float killDist = Vec2.Distance(state.Players[ownerIndex].Position, p.Position);
+                    if (killDist <= 5f)
+                        state.Players[ownerIndex].CloseRangeKills++;
                 }
             }
         }
