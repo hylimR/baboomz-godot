@@ -83,11 +83,8 @@ namespace Baboomz.Simulation
                 else if (t.Type == TargetType.MovingVertical)
                 {
                     t.MovePhase += dt;
-                    float baseY = t.Position.y;
-                    // Bob around a ground-level anchor stored as initial Y + amplitude
-                    float groundY = GamePhysics.FindGroundY(state.Terrain, t.Position.x, state.Config.SpawnProbeY);
                     float offsetY = MathF.Abs(MathF.Sin(t.MovePhase * cfg.TargetMoveSpeedV)) * cfg.TargetMoveAmplitude;
-                    t.Position = new Vec2(t.Position.x, groundY + 2f + offsetY);
+                    t.Position = new Vec2(t.Position.x, t.SpawnY + offsetY);
                     state.Targets[i] = t;
                 }
             }
@@ -162,6 +159,7 @@ namespace Baboomz.Simulation
                     t.Active = true;
                     t.RespawnTimer = 0f;
                     t.MovePhase = (float)rng.NextDouble() * MathF.PI * 2f;
+                    t.SpawnY = newPos.y;
                 }
                 state.Targets[i] = t;
             }
@@ -191,7 +189,8 @@ namespace Baboomz.Simulation
                 Points = points,
                 Active = true,
                 RespawnTimer = 0f,
-                MovePhase = (float)rng.NextDouble() * MathF.PI * 2f
+                MovePhase = (float)rng.NextDouble() * MathF.PI * 2f,
+                SpawnY = pos.y
             });
         }
 

@@ -2342,6 +2342,44 @@ namespace Baboomz.Tests.Editor
 
             Assert.AreNotEqual(posBefore.x, posAfter.x, "Moving target X should change over time");
         }
+
+        [Test]
+        public void TP_VerticalTarget_BobsAroundSpawnY_NotCurrentGround()
+        {
+            var state = GameSimulation.CreateMatch(TPConfig(), 42);
+
+            // Find a vertical moving target
+            int vIdx = -1;
+            for (int i = 0; i < state.Targets.Count; i++)
+            {
+                if (state.Targets[i].Type == TargetType.MovingVertical)
+                {
+                    vIdx = i;
+                    break;
+                }
+            }
+            Assert.GreaterOrEqual(vIdx, 0, "Should have a moving vertical target");
+
+            float spawnY = state.Targets[vIdx].SpawnY;
+
+            // Destroy terrain under the target by clearing a wide column
+            var t = state.Targets[vIdx];
+            int px = state.Terrain.WorldToPixelX(t.Position.x);
+            px = Math.Clamp(px, 0, state.Terrain.Width - 1);
+            for (int row = 0; row < state.Terrain.Height; row++)
+                state.Terrain.SetSolid(px, row, false);
+
+            // Tick the simulation a few times — target should keep bobbing around SpawnY
+            for (int tick = 0; tick < 30; tick++)
+                TargetPractice.Update(state, 0.05f);
+
+            var afterTarget = state.Targets[vIdx];
+            float deviation = MathF.Abs(afterTarget.Position.y - spawnY);
+            float maxBob = state.Config.TargetMoveAmplitude + 0.1f;
+            Assert.LessOrEqual(deviation, maxBob,
+                $"Vertical target should stay within {maxBob} of SpawnY ({spawnY}), " +
+                $"but was at {afterTarget.Position.y} (deviation {deviation})");
+        }
     }
 
     [TestFixture]
