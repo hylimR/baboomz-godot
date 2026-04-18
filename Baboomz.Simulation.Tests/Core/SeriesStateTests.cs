@@ -113,5 +113,45 @@ namespace Baboomz.Tests.Editor
             Assert.AreEqual(1, series.RoundWinners[1]);
             Assert.AreEqual(0, series.RoundWinners[2]);
         }
+
+        [Test]
+        public void RecordRound_AllDraws_RoundsPlayedClamped()
+        {
+            var series = SeriesState.Create(SeriesFormat.BestOf3, 2);
+            series.RecordRound(-1);
+            series.RecordRound(-1);
+            series.RecordRound(-1);
+            // Extra draw should not overflow
+            series.RecordRound(-1);
+
+            Assert.AreEqual(3, series.RoundsPlayed, "RoundsPlayed must not exceed RoundWinners.Length");
+            Assert.AreEqual(0, series.WinsPerPlayer[0]);
+            Assert.AreEqual(0, series.WinsPerPlayer[1]);
+        }
+
+        [Test]
+        public void IsSeriesOver_AllDraws_ReturnsTrueWhenRoundsExhausted()
+        {
+            var series = SeriesState.Create(SeriesFormat.BestOf3, 2);
+            series.RecordRound(-1);
+            series.RecordRound(-1);
+            Assert.IsFalse(series.IsSeriesOver());
+            series.RecordRound(-1);
+            Assert.IsTrue(series.IsSeriesOver(), "Series should end when all rounds are exhausted");
+            Assert.AreEqual(-1, series.GetSeriesWinner(), "No winner when all rounds are draws");
+        }
+
+        [Test]
+        public void RecordRound_MixedDrawsAndWins_NoOverflow()
+        {
+            var series = SeriesState.Create(SeriesFormat.BestOf3, 2);
+            series.RecordRound(-1); // draw
+            series.RecordRound(0);  // player 0 wins
+            series.RecordRound(-1); // draw — fills all 3 slots
+
+            Assert.AreEqual(3, series.RoundsPlayed);
+            Assert.AreEqual(1, series.WinsPerPlayer[0]);
+            Assert.IsTrue(series.IsSeriesOver(), "Rounds exhausted, series should be over");
+        }
     }
 }

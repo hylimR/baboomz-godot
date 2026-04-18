@@ -1,3 +1,4 @@
+using System;
 using Godot;
 using Baboomz.Simulation;
 
@@ -192,7 +193,8 @@ namespace Baboomz
             _resultLabel.AddThemeColorOverride("font_color", new Color(0.2f, 0.9f, 0.2f));
 
             string roundLog = "";
-            for (int r = 0; r < series.RoundsPlayed; r++)
+            int displayRounds = Math.Min(series.RoundsPlayed, series.RoundWinners.Length);
+            for (int r = 0; r < displayRounds; r++)
             {
                 int rw = series.RoundWinners[r];
                 string rwName = rw >= 0 && rw < state.Players.Length
