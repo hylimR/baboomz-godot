@@ -13,7 +13,6 @@ namespace Baboomz.Simulation
         static HashSet<string> _unlocked = new HashSet<string>();
 
         // Per-match tracking counters
-        static int _cannonHits;
         static float _fireDamageTotal;
         static int _warCryKills;
         static bool _playerTookDamage;
@@ -32,7 +31,6 @@ namespace Baboomz.Simulation
 
         public static void Reset()
         {
-            _cannonHits = 0;
             _fireDamageTotal = 0f;
             _warCryKills = 0;
             _playerTookDamage = false;
