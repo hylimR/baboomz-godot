@@ -337,6 +337,104 @@ namespace Baboomz.Tests.Editor
                 "Mine projectile velocity should be reversed on deflect");
         }
 
+        // --- Earthquake / HookShot kill stat tracking (#191) ---
+
+        [Test]
+        public void Earthquake_Kill_TracksTotalKills()
+        {
+            var state = CreateState();
+            SetSkillSlot(ref state.Players[0].SkillSlots[0],
+                FindSkill(state.Config, SkillType.Earthquake));
+
+            state.Players[1].Health = 1f;
+            state.Players[1].IsGrounded = true;
+            state.Players[0].TotalKills = 0;
+
+            SkillSystem.ActivateSkill(state, 0, 0);
+
+            Assert.IsTrue(state.Players[1].IsDead);
+            Assert.AreEqual(1, state.Players[0].TotalKills,
+                "Earthquake kill should increment TotalKills");
+        }
+
+        [Test]
+        public void Earthquake_Kill_TracksKillsInWindow()
+        {
+            var state = CreateState();
+            SetSkillSlot(ref state.Players[0].SkillSlots[0],
+                FindSkill(state.Config, SkillType.Earthquake));
+
+            state.Players[1].Health = 1f;
+            state.Players[1].IsGrounded = true;
+
+            SkillSystem.ActivateSkill(state, 0, 0);
+
+            Assert.IsTrue(state.Players[1].IsDead);
+            Assert.AreEqual(1, state.Players[0].KillsInWindow,
+                "Earthquake kill should track KillsInWindow for combo system");
+        }
+
+        [Test]
+        public void Earthquake_Kill_TracksCloseRangeKills()
+        {
+            var state = CreateState();
+            SetSkillSlot(ref state.Players[0].SkillSlots[0],
+                FindSkill(state.Config, SkillType.Earthquake));
+
+            // Place target close to caster (within 5 units)
+            state.Players[1].Position = state.Players[0].Position + new Vec2(3f, 0f);
+            state.Players[1].Health = 1f;
+            state.Players[1].IsGrounded = true;
+            state.Players[0].CloseRangeKills = 0;
+
+            SkillSystem.ActivateSkill(state, 0, 0);
+
+            Assert.IsTrue(state.Players[1].IsDead);
+            Assert.AreEqual(1, state.Players[0].CloseRangeKills,
+                "Close-range Earthquake kill should increment CloseRangeKills");
+        }
+
+        [Test]
+        public void HookShot_Kill_TracksTotalKills()
+        {
+            var state = CreateState();
+            SetSkillSlot(ref state.Players[0].SkillSlots[0],
+                FindSkill(state.Config, SkillType.HookShot));
+
+            // Place target in range and at lethal health
+            state.Players[1].Position = state.Players[0].Position + new Vec2(5f, 0f);
+            state.Players[1].Health = 1f;
+            state.Players[0].FacingDirection = 1;
+            state.Players[0].AimAngle = 0f;
+            state.Players[0].TotalKills = 0;
+
+            SkillSystem.ActivateSkill(state, 0, 0);
+
+            Assert.IsTrue(state.Players[1].IsDead);
+            Assert.AreEqual(1, state.Players[0].TotalKills,
+                "HookShot kill should increment TotalKills");
+        }
+
+        [Test]
+        public void HookShot_Kill_TracksCombo()
+        {
+            var state = CreateState();
+            SetSkillSlot(ref state.Players[0].SkillSlots[0],
+                FindSkill(state.Config, SkillType.HookShot));
+
+            // First kill via HookShot to set up KillsInWindow
+            state.Players[1].Position = state.Players[0].Position + new Vec2(5f, 0f);
+            state.Players[1].Health = 1f;
+            state.Players[0].FacingDirection = 1;
+            state.Players[0].AimAngle = 0f;
+
+            SkillSystem.ActivateSkill(state, 0, 0);
+
+            Assert.IsTrue(state.Players[1].IsDead);
+            Assert.AreEqual(1, state.Players[0].KillsInWindow,
+                "HookShot kill should track KillsInWindow for combo system");
+        }
+
         // --- Rope swing double-gravity regression (#359) ---
 
         [Test]
