@@ -222,6 +222,7 @@ namespace Baboomz.Simulation
         public float RespawnTimer;  // >0 = waiting to respawn
         public bool Active;
         public float MovePhase;     // oscillation phase for moving targets
+        public float SpawnY;        // initial Y at spawn — vertical movers bob around this
     }
 
     public struct TargetHitEvent
