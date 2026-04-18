@@ -34,8 +34,10 @@ namespace Baboomz.Simulation
         public void RecordRound(int winnerIndex)
         {
             if (RoundsPlayed < RoundWinners.Length)
+            {
                 RoundWinners[RoundsPlayed] = winnerIndex;
-            RoundsPlayed++;
+                RoundsPlayed++;
+            }
             if (winnerIndex >= 0 && winnerIndex < WinsPerPlayer.Length)
                 WinsPerPlayer[winnerIndex]++;
         }
@@ -45,6 +47,8 @@ namespace Baboomz.Simulation
             if (!IsActive) return true;
             for (int i = 0; i < WinsPerPlayer.Length; i++)
                 if (WinsPerPlayer[i] >= TargetWins) return true;
+            // All rounds exhausted with no winner — series ends as a draw
+            if (RoundsPlayed >= RoundWinners.Length) return true;
             return false;
         }
 
