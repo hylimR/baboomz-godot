@@ -169,7 +169,8 @@ namespace Baboomz
                 Simulation.SkillType.Teleport or Simulation.SkillType.ShadowStep => _skillTeleportClip,
                 Simulation.SkillType.Dash or Simulation.SkillType.Jetpack => _skillDashClip,
                 Simulation.SkillType.Shield or Simulation.SkillType.Deflect => _skillShieldClip,
-                Simulation.SkillType.Earthquake or Simulation.SkillType.MineLay => _skillQuakeClip,
+                Simulation.SkillType.Earthquake or Simulation.SkillType.MineLay
+                    or Simulation.SkillType.Landslide => _skillQuakeClip,
                 Simulation.SkillType.Heal or Simulation.SkillType.Mend => _skillHealClip,
                 Simulation.SkillType.Overcharge or Simulation.SkillType.WarCry
                     or Simulation.SkillType.EnergyDrain => _skillPowerClip,

@@ -164,6 +164,10 @@ namespace Baboomz.Simulation
                 case SkillType.Sprint:
                     ExecuteSprint(ref p, ref skill);
                     break;
+
+                case SkillType.Landslide:
+                    ExecuteLandslide(state, ref p, ref skill);
+                    break;
             }
 
             // Start cooldown (apply CooldownMultiplier so skills respect haste/slow modifiers)

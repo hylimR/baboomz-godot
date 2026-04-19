@@ -138,7 +138,7 @@ namespace Baboomz.Tests.Editor
         public void GetUnlockedSkillIndices_Tier4_ReturnsAll20Skills()
         {
             var indices = UnlockRegistry.GetUnlockedSkillIndices(4);
-            Assert.AreEqual(21, indices.Count);
+            Assert.AreEqual(22, indices.Count);
         }
 
         [Test]
