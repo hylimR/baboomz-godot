@@ -15,10 +15,12 @@ namespace Baboomz
         private int _playerIndex;
         private GameState _state;
 
-        // Damage flash
+        // Damage flash + stagger
         private float _lastHealth;
         private float _flashTimer;
-        private const float FlashDuration = 0.2f;
+        private float _flashDuration;
+        private float _staggerOffset;
+        private float _staggerTimer;
         private Color _baseColor;
 
         // Death / victory animation
@@ -215,12 +217,46 @@ namespace Baboomz
             _aimLine.SetPointPosition(1, aimDir * aimLen);
             _aimLine.Visible = !p.IsAI;
 
-            // Damage flash: red tint alternating 20 Hz for FlashDuration
-            if (p.Health < _lastHealth)
+            // Damage flash + stagger: tiered by damage amount
+            float dmg = _lastHealth - p.Health;
+            if (dmg > 0f)
             {
-                _flashTimer = FlashDuration;
+                if (dmg >= 60f)
+                {
+                    _flashDuration = 0.5f;
+                    _staggerOffset = 6f;
+                }
+                else if (dmg >= 30f)
+                {
+                    _flashDuration = 0.3f;
+                    _staggerOffset = 4f;
+                }
+                else if (dmg >= 10f)
+                {
+                    _flashDuration = 0.15f;
+                    _staggerOffset = 2f;
+                }
+                else
+                {
+                    _flashDuration = 0.1f;
+                    _staggerOffset = 0f;
+                }
+                _flashTimer = _flashDuration;
+                _staggerTimer = _flashDuration;
             }
             _lastHealth = p.Health;
+
+            // Stagger sprite offset (backward from facing)
+            if (_staggerTimer > 0f)
+            {
+                _staggerTimer -= (float)delta;
+                float t = Mathf.Clamp(_staggerTimer / Mathf.Max(_flashDuration, 0.01f), 0f, 1f);
+                _body.Position = new Vector2(-p.FacingDirection * _staggerOffset * t, 0f);
+            }
+            else
+            {
+                _body.Position = Vector2.Zero;
+            }
 
             Color tint = _baseColor;
             if (_flashTimer > 0f)
