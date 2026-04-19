@@ -145,6 +145,7 @@ namespace Baboomz.Simulation
             p.SwimTimer = 0f;
 
             RestoreWeaponAmmo(ref p, config);
+            ResetSkillCooldowns(ref p);
 
             if (state.Payload.LivesRemaining[playerIndex] > 0)
                 state.Payload.LivesRemaining[playerIndex]--;

@@ -165,6 +165,13 @@ namespace Baboomz.Simulation
             }
         }
 
+        internal static void ResetSkillCooldowns(ref PlayerState p)
+        {
+            if (p.SkillSlots == null) return;
+            for (int s = 0; s < p.SkillSlots.Length; s++)
+                p.SkillSlots[s].CooldownRemaining = 0f;
+        }
+
         public static void Tick(GameState state, float dt)
         {
             state.ExplosionEvents.Clear();
