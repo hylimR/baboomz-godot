@@ -15,6 +15,7 @@ namespace Baboomz.Simulation
         // Per-match tracking counters
         static float _fireDamageTotal;
         static int _warCryKills;
+        static HashSet<int> _warCryKillsThisTick = new HashSet<int>();
         static bool _playerTookDamage;
         static int _playerShotsFiredAtStart;
         static int _lastTerrainPixels; // for cm_5 per-tick delta detection
@@ -110,11 +111,15 @@ namespace Baboomz.Simulation
                         dmg.TargetIndex < state.Players.Length &&
                         state.Players[dmg.TargetIndex].IsDead)
                     {
-                        _warCryKills++;
-                        if (_warCryKills >= 3)
-                            TryUnlock("sm_7", state, 0);
+                        if (_warCryKillsThisTick.Add(dmg.TargetIndex))
+                        {
+                            _warCryKills++;
+                            if (_warCryKills >= 3)
+                                TryUnlock("sm_7", state, 0);
+                        }
                     }
                 }
+                _warCryKillsThisTick.Clear();
             }
 
             // sm_8: Jet Fighter — hit while jetpack active
