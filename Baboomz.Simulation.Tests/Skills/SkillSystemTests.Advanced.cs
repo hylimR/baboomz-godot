@@ -249,5 +249,24 @@ namespace Baboomz.Tests.Editor
                 "Decoy CD should match Deflect CD — both are reactive evasion skills");
         }
 
+        [Test]
+        public void Heal_PausesDuringFreeze()
+        {
+            var state = CreateState();
+            ref PlayerState p = ref state.Players[0];
+            SetSkillSlot(ref p.SkillSlots[0], FindSkill(state.Config, SkillType.Heal));
+            p.Energy = 100f;
+            p.Health = 50f;
+
+            SkillSystem.ActivateSkill(state, 0, 0);
+            Assert.IsTrue(p.SkillSlots[0].IsActive);
+
+            p.FreezeTimer = 2f;
+            float healthBefore = p.Health;
+            SkillSystem.Update(state, 0.5f);
+
+            Assert.AreEqual(healthBefore, p.Health, 0.001f,
+                "Heal should not restore HP while frozen");
+        }
     }
 }

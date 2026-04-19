@@ -9,6 +9,7 @@ namespace Baboomz.Simulation
             switch (skill.Type)
             {
                 case SkillType.Heal:
+                    if (p.FreezeTimer > 0f) return;
                     float healDuration = skill.Duration > 0f ? skill.Duration : 1f;
                     float healPerSecond = skill.Value / healDuration;
                     p.Health = MathF.Min(p.MaxHealth, p.Health + healPerSecond * dt);
