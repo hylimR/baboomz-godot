@@ -286,6 +286,46 @@ namespace Baboomz.Tests.Editor
             };
         }
 
+        [Test]
+        public void FireZone_DoT_TracksWeaponMasteryHitsAndDamage()
+        {
+            var config = new GameConfig
+            {
+                MineCount = 0, BarrelCount = 0,
+                TerrainWidth = 320, TerrainHeight = 160, TerrainPPU = 8f,
+                MapWidth = 40f, TerrainMinHeight = -2f, TerrainMaxHeight = 5f,
+                TerrainHillFrequency = 0.1f, TerrainFloorDepth = -10f,
+                Player1SpawnX = -10f, Player2SpawnX = 10f,
+                SpawnProbeY = 20f, DeathBoundaryY = -25f,
+                Gravity = 9.81f, DefaultMaxHealth = 100f,
+                DefaultMoveSpeed = 5f, DefaultJumpForce = 10f,
+                DefaultShootCooldown = 0.5f
+            };
+            var state = GameSimulation.CreateMatch(config, 42);
+            state.Phase = MatchPhase.Playing;
+
+            state.FireZones.Add(new FireZoneState
+            {
+                Position = state.Players[1].Position,
+                Radius = 5f,
+                DamagePerSecond = 20f,
+                RemainingTime = 5f,
+                OwnerIndex = 0,
+                SourceWeaponId = "napalm",
+                Active = true,
+                DamageEventTimer = 0f
+            });
+
+            GameSimulation.Tick(state, 0.1f);
+
+            Assert.IsTrue(state.WeaponHits[0].ContainsKey("napalm"),
+                "Fire zone DoT should track weapon hits for mastery");
+            Assert.IsTrue(state.WeaponDamage[0].ContainsKey("napalm"),
+                "Fire zone DoT should track weapon damage for mastery");
+            Assert.Greater(state.WeaponDamage[0]["napalm"], 0f,
+                "Fire zone DoT weapon damage should be positive");
+        }
+
         private GameState CreateStateWithTracking()
         {
             var gs = new GameState();
