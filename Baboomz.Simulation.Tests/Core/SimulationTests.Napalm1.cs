@@ -278,5 +278,42 @@ namespace Baboomz.Tests.Editor
                 "Fire zone kill should track weapon mastery kill for napalm");
             Assert.AreEqual(1, state.WeaponKills[0]["napalm"]);
         }
+        [Test]
+        public void FireZone_Kill_TracksTotalAndCloseRangeKills_Issue269()
+        {
+            var config = SmallConfig();
+            config.MineCount = 0;
+            config.BarrelCount = 0;
+            config.SuddenDeathTime = 0f;
+
+            var state = GameSimulation.CreateMatch(config, 42);
+            AILogic.Reset(42);
+
+            state.Players[1].IsAI = false;
+            state.Players[1].Health = 1f;
+            state.Players[0].TotalKills = 0;
+            state.Players[0].CloseRangeKills = 0;
+
+            state.Players[0].Position = state.Players[1].Position;
+
+            state.FireZones.Add(new FireZoneState
+            {
+                Position = state.Players[1].Position,
+                Radius = 3f,
+                DamagePerSecond = 200f,
+                RemainingTime = 5f,
+                OwnerIndex = 0,
+                SourceWeaponId = "napalm",
+                Active = true
+            });
+
+            GameSimulation.Tick(state, 0.016f);
+
+            Assert.IsTrue(state.Players[1].IsDead);
+            Assert.AreEqual(1, state.Players[0].TotalKills,
+                "Fire zone kill must increment TotalKills");
+            Assert.AreEqual(1, state.Players[0].CloseRangeKills,
+                "Fire zone kill at close range must increment CloseRangeKills");
+        }
     }
 }
