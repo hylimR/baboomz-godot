@@ -393,5 +393,31 @@ namespace Baboomz.Tests.Editor
             Assert.IsTrue(AchievementTracker.IsUnlocked("cm_2"),
                 "cm_2 should unlock based on WeaponHits dict, not ActiveWeaponSlot");
         }
+
+        [Test]
+        public void WarMachine_sm7_DeduplicatesMultiHitKills()
+        {
+            var state = GameSimulation.CreateMatch(SmallConfig(), 42);
+            state.Phase = MatchPhase.Playing;
+            AchievementTracker.OnMatchStart(state);
+
+            state.Players[0].WarCryTimer = 5f;
+            state.Players[1].IsDead = true;
+            state.Players[1].Health = 0f;
+
+            // Shotgun-like: 4 damage events to same dead target in one tick
+            for (int i = 0; i < 4; i++)
+            {
+                state.DamageEvents.Add(new DamageEvent
+                {
+                    SourceIndex = 0, TargetIndex = 1,
+                    Amount = 10f, Position = state.Players[1].Position
+                });
+            }
+
+            AchievementTracker.Update(state);
+            Assert.IsFalse(AchievementTracker.IsUnlocked("sm_7"),
+                "4 damage events to 1 target should count as 1 kill, not 4");
+        }
     }
 }
