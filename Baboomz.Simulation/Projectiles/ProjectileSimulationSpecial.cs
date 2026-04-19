@@ -21,9 +21,13 @@ namespace Baboomz.Simulation
                 proj.Velocity.y = 0f;
             }
 
+            int ownerTeam = proj.OwnerIndex >= 0 && proj.OwnerIndex < state.Players.Length
+                ? state.Players[proj.OwnerIndex].TeamIndex : -1;
             for (int pi = 0; pi < state.Players.Length; pi++)
             {
                 if (state.Players[pi].IsDead || pi == proj.OwnerIndex) continue;
+                if (state.Players[pi].IsInvulnerable) continue;
+                if (state.Config.TeamMode && ownerTeam >= 0 && state.Players[pi].TeamIndex == ownerTeam) continue;
                 if (Vec2.Distance(newPos, state.Players[pi].Position + new Vec2(0f, 0.5f)) < 0.8f)
                 {
                     CombatResolver.ApplyExplosion(state, newPos, proj.ExplosionRadius,
@@ -69,9 +73,13 @@ namespace Baboomz.Simulation
                 state.Terrain.ClearCircleDestructible(px, py, drillRadius);
             }
 
+            int drillOwnerTeam = proj.OwnerIndex >= 0 && proj.OwnerIndex < state.Players.Length
+                ? state.Players[proj.OwnerIndex].TeamIndex : -1;
             for (int pi = 0; pi < state.Players.Length; pi++)
             {
                 if (state.Players[pi].IsDead || pi == proj.OwnerIndex) continue;
+                if (state.Players[pi].IsInvulnerable) continue;
+                if (state.Config.TeamMode && drillOwnerTeam >= 0 && state.Players[pi].TeamIndex == drillOwnerTeam) continue;
                 float dist = Vec2.Distance(newPos, state.Players[pi].Position + new Vec2(0f, 0.5f));
                 if (dist < 0.8f)
                 {
