@@ -26,18 +26,18 @@ namespace Baboomz.Simulation
             float hpRatio = boss.Health / boss.MaxHealth;
 
             // Phase transitions checked in order: frost (60%) → shield (50%) → frost (30%)
-            if (hpRatio <= 0.6f && boss.BossPhase < 1)
+            if (hpRatio <= 0.6f && boss.BossPhase == 0)
             {
                 boss.BossPhase = 1;
                 SpawnFrostZones(state, target.Position, 4);
             }
-            if (hpRatio <= 0.5f && boss.BossPhase < 2)
+            else if (hpRatio <= 0.5f && boss.BossPhase == 1)
             {
                 boss.BossPhase = 2;
                 boss.IsInvulnerable = true;
                 specialTimer[index] = t + 8f;
             }
-            if (hpRatio <= 0.3f && boss.BossPhase < 3)
+            else if (hpRatio <= 0.3f && boss.BossPhase == 2)
             {
                 boss.BossPhase = 3;
                 SpawnFrostZones(state, target.Position, 4);
