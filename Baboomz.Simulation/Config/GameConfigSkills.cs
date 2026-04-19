@@ -158,6 +158,12 @@ namespace Baboomz.Simulation
             },
             new SkillDef
             {
+                SkillId = "landslide", Type = SkillType.Landslide,
+                EnergyCost = 35f, Cooldown = 12f, Duration = 0f,
+                Range = 10f, Value = 6f  // column height in world units
+            },
+            new SkillDef
+            {
                 SkillId = "sprint", Type = SkillType.Sprint,
                 // Between Dash (18E/3s) and Teleport (28E/8s) — sustained horizontal repositioning
                 // without terrain bypass. 1.5x speed for 2s covers ~15u at default MoveSpeed.

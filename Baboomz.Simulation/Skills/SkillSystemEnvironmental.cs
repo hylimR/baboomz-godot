@@ -103,6 +103,28 @@ namespace Baboomz.Simulation
             return px * px + py * py;
         }
 
+        static void ExecuteLandslide(GameState state, ref PlayerState p, ref SkillSlotState skill)
+        {
+            float rad = p.AimAngle * MathF.PI / 180f;
+            Vec2 direction = new Vec2(MathF.Cos(rad) * p.FacingDirection, MathF.Sin(rad));
+            float range = Math.Min(skill.Range, 12f);
+            Vec2 target = p.Position + direction * range;
+
+            float columnWidth = 3f;
+            float columnHeight = skill.Value > 0f ? skill.Value : 6f;
+
+            int px = state.Terrain.WorldToPixelX(target.x - columnWidth / 2f);
+            int pw = (int)(columnWidth * state.Terrain.PixelsPerUnit);
+            int ph = (int)(columnHeight * state.Terrain.PixelsPerUnit);
+            int centerY = state.Terrain.WorldToPixelY(target.y);
+            int py = centerY - ph / 2;
+
+            state.Terrain.ClearRectDestructible(px, py, pw, ph);
+
+            int sealPh = Math.Max(1, (int)(0.3f * state.Terrain.PixelsPerUnit));
+            state.Terrain.FillRectIndestructible(px, py, pw, sealPh);
+        }
+
         static void ExecuteGirder(GameState state, ref PlayerState p, ref SkillSlotState skill)
         {
             // Place a horizontal indestructible platform at aim target

@@ -71,6 +71,7 @@ namespace Baboomz.Simulation
                 case "magnetic_mine": return "Deploy a proximity mine that slowly crawls toward the nearest enemy. Dormant for 1 second, then seeks targets within detection range.";
                 case "petrify": return "Freeze all enemies near the target location for 2 seconds. They cannot move or jump but still take full damage.";
                 case "sprint": return "Boost your movement speed by 1.5x for 2 seconds. Great for repositioning without teleporting. Cannot fire while sprinting.";
+                case "landslide": return "Collapse a wide column of terrain at your aim target. Enemies standing on top fall into the pit. A thin indestructible seal forms at the bottom.";
                 default: return "Unknown skill.";
             }
         }
@@ -100,6 +101,7 @@ namespace Baboomz.Simulation
                 case "magnetic_mine": return $"Homing mine ({value} damage, crawls toward enemies)";
                 case "petrify": return $"AoE freeze ({value}-unit radius, 2s duration)";
                 case "sprint": return $"{value}x movement speed for duration";
+                case "landslide": return $"Removes terrain column ({value}-unit depth)";
                 default: return "Unknown effect";
             }
         }

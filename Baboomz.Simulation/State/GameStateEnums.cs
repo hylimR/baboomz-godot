@@ -30,7 +30,8 @@ namespace Baboomz.Simulation
         Mend,
         MagneticMine,
         Petrify,
-        Sprint
+        Sprint,
+        Landslide
     }
 
     public enum HatType

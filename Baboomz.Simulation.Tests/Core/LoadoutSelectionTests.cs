@@ -161,7 +161,7 @@ namespace Baboomz.Tests.Editor
             // Regression: #275 — Hard difficulty should use strategic mobility + defensive picks
             var config = SmallConfig();
             config.AIDifficultyLevel = 2; // Hard
-            int[] mobility = { 0, 3, 5, 15, 20 };
+            int[] mobility = { 0, 3, 5, 15, 21 };
             int[] defensive = { 2, 4 };
             for (int seed = 0; seed < 50; seed++)
             {
@@ -181,7 +181,7 @@ namespace Baboomz.Tests.Editor
             // Normal (AIDifficultyLevel=1) should still pick mobility + defensive/utility
             var config = SmallConfig();
             config.AIDifficultyLevel = 1;
-            int[] mobility = { 0, 3, 5, 15, 20 };
+            int[] mobility = { 0, 3, 5, 15, 21 };
             for (int seed = 0; seed < 50; seed++)
             {
                 int[] loadout = AILogic.PickLoadout(config, seed);

@@ -255,6 +255,27 @@ namespace Baboomz.Simulation
             }
         }
 
+        public void ClearRectDestructible(int x, int y, int w, int h)
+        {
+            int minX = Math.Max(0, x);
+            int maxX = Math.Min(Width - 1, x + w - 1);
+            int minY = Math.Max(0, y);
+            int maxY = Math.Min(Height - 1, y + h - 1);
+
+            for (int py = minY; py <= maxY; py++)
+            {
+                for (int px = minX; px <= maxX; px++)
+                {
+                    int idx = (py * Width + px) * 4;
+                    if (Pixels[idx + 2] == 255 && Pixels[idx + 3] == 255) continue;
+                    Pixels[idx] = 0;
+                    Pixels[idx + 1] = 0;
+                    Pixels[idx + 2] = 0;
+                    Pixels[idx + 3] = 0;
+                }
+            }
+        }
+
         public void FillRectIndestructible(int x, int y, int w, int h)
         {
             int minX = Math.Max(0, x);
