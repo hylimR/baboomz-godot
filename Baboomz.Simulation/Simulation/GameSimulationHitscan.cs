@@ -150,6 +150,7 @@ namespace Baboomz.Simulation
                     });
                     if (state.FirstBloodPlayerIndex < 0)
                         state.FirstBloodPlayerIndex = playerIndex;
+                    p.DirectHits++;
                     p.TotalDamageDealt += chainApplied;
                     if (chainApplied > p.MaxSingleDamage) p.MaxSingleDamage = chainApplied;
                     CombatResolver.TrackHit(state, playerIndex);
