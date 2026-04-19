@@ -43,6 +43,11 @@ namespace Baboomz.Simulation
 
                 case SkillType.ShadowStep:
                     break;
+
+                case SkillType.Sprint:
+                    // Speed buff already applied on activation; no per-tick logic needed.
+                    // Firing is blocked in ProcessInput via SprintTimer check.
+                    break;
             }
         }
 
@@ -71,6 +76,10 @@ namespace Baboomz.Simulation
 
                 case SkillType.ShadowStep:
                     DeactivateShadowStep(state, ref p, playerIndex);
+                    break;
+
+                case SkillType.Sprint:
+                    ClearSprint(ref p);
                     break;
             }
         }

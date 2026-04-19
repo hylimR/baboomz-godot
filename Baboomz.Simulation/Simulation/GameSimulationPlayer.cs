@@ -82,6 +82,9 @@ namespace Baboomz.Simulation
             // Invisible players cannot fire
             if (p.IsInvisible) return;
 
+            // Sprinting players cannot fire (can still move, jump, aim)
+            if (p.SprintTimer > 0f) return;
+
             if (input.FireHeld && p.ShootCooldownRemaining <= 0f)
             {
                 p.IsCharging = true;

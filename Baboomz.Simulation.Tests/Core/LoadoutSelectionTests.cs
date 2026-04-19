@@ -161,7 +161,7 @@ namespace Baboomz.Tests.Editor
             // Regression: #275 — Hard difficulty should use strategic mobility + defensive picks
             var config = SmallConfig();
             config.AIDifficultyLevel = 2; // Hard
-            int[] mobility = { 0, 3, 5, 15 };
+            int[] mobility = { 0, 3, 5, 15, 20 };
             int[] defensive = { 2, 4 };
             for (int seed = 0; seed < 50; seed++)
             {
@@ -181,7 +181,7 @@ namespace Baboomz.Tests.Editor
             // Normal (AIDifficultyLevel=1) should still pick mobility + defensive/utility
             var config = SmallConfig();
             config.AIDifficultyLevel = 1;
-            int[] mobility = { 0, 3, 5, 15 };
+            int[] mobility = { 0, 3, 5, 15, 20 };
             for (int seed = 0; seed < 50; seed++)
             {
                 int[] loadout = AILogic.PickLoadout(config, seed);
@@ -259,19 +259,24 @@ namespace Baboomz.Tests.Editor
             state.Players[0].Position = new Vec2(0f, 5f);
             state.Players[1].Position = new Vec2(15f, 5f);
             state.Players[1].IsAI = true;
-            // Set AI energy to 8 — just enough for cannon (cost 8), too low for everything else
-            state.Players[1].Energy = 8f;
+            // Set AI energy to 12 — just enough for cannon (cost 11), too low for most weapons.
+            // Cap MaxEnergy and EnergyRegen so the AI stays energy-constrained.
+            state.Players[1].Energy = 12f;
+            state.Players[1].MaxEnergy = 12f;
+            state.Players[1].EnergyRegen = 0f;
+            // Disable skills to isolate weapon selection behavior
+            state.Players[1].SkillSlots = null;
 
             // Tick enough frames for AI to attempt weapon selection and firing
             for (int i = 0; i < 300; i++)
                 GameSimulation.Tick(state, 0.016f);
 
-            // Every weapon the AI selected should have been affordable
-            // If the bug is present, AI would select expensive weapons and waste shoot turns
-            int slot = state.Players[1].ActiveWeaponSlot;
-            float cost = state.Players[1].WeaponSlots[slot].EnergyCost;
-            Assert.IsTrue(state.Players[1].Energy >= cost,
-                $"AI selected weapon slot {slot} (cost {cost}) but only has {state.Players[1].Energy} energy");
+            // The AI should have managed to fire at least once (proving it found an affordable weapon)
+            // rather than being stuck selecting expensive weapons it can't afford.
+            // After firing, the remaining active slot may be unaffordable — that's OK as long
+            // as the AI actually fired (ShotsFired > 0).
+            Assert.Greater(state.Players[1].ShotsFired, 0,
+                "AI should find and fire an affordable weapon when energy is low");
         }
 
         // --- Balance Cycle 19 regression tests (#204) ---

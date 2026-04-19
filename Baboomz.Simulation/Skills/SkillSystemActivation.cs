@@ -245,6 +245,19 @@ namespace Baboomz.Simulation
             }
         }
 
+        static void ExecuteSprint(ref PlayerState p, ref SkillSlotState skill)
+        {
+            float speedMult = skill.Value > 0f ? skill.Value : 1.5f;
+            // Restore previous sprint buff before applying new one to prevent stacking
+            if (p.SprintSpeedBuff > 0f)
+                p.MoveSpeed /= p.SprintSpeedBuff;
+            p.SprintSpeedBuff = speedMult;
+            p.MoveSpeed *= speedMult;
+            p.SprintTimer = skill.Duration > 0f ? skill.Duration : 2f;
+            skill.IsActive = true;
+            skill.DurationRemaining = p.SprintTimer;
+        }
+
         static bool ExecuteEnergyDrain(GameState state, int ci, ref PlayerState p, ref SkillSlotState skill)
         {
             float range = skill.Range > 0f ? skill.Range : 12f;

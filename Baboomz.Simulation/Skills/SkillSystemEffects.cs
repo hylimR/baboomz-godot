@@ -124,6 +124,16 @@ namespace Baboomz.Simulation
             p.DecoyPosition = Vec2.Zero;
         }
 
+        static void ClearSprint(ref PlayerState p)
+        {
+            if (p.SprintSpeedBuff > 0f)
+            {
+                p.MoveSpeed /= p.SprintSpeedBuff;
+                p.SprintSpeedBuff = 0f;
+            }
+            p.SprintTimer = 0f;
+        }
+
         static void DeactivateShadowStep(GameState state, ref PlayerState p, int playerIndex)
         {
             // Capture pre-recall position before teleporting (mirrors Teleport fix in SkillSystem.cs)

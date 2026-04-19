@@ -32,8 +32,8 @@ namespace Baboomz.Simulation
         {
             // Tier 0 — teleport(0), grapple(1), shield(2), dash(3), heal(4), jetpack(5)
             new[] { 0, 1, 2, 3, 4, 5 },
-            // Tier 1 — girder(6), earthquake(7), smoke(8)
-            new[] { 6, 7, 8 },
+            // Tier 1 — girder(6), earthquake(7), smoke(8), sprint(20)
+            new[] { 6, 7, 8, 20 },
             // Tier 2 — warcry(9), mine_layer(10), energy_drain(11)
             new[] { 9, 10, 11 },
             // Tier 3 — deflect(12), decoy(13), hookshot(14), magnetic_mine(18), petrify(19)

@@ -76,6 +76,21 @@ namespace Baboomz.Simulation
                 }
             }
 
+            // Sprint: tick speed buff timer (mirrors WarCry speed restoration pattern)
+            if (p.SprintTimer > 0f)
+            {
+                p.SprintTimer -= dt;
+                if (p.SprintTimer <= 0f)
+                {
+                    p.SprintTimer = 0f;
+                    if (p.SprintSpeedBuff > 0f)
+                    {
+                        p.MoveSpeed /= p.SprintSpeedBuff;
+                        p.SprintSpeedBuff = 0f;
+                    }
+                }
+            }
+
             // Overcharge: expires unused if the player doesn't fire in time
             if (p.OverchargeTimer > 0f)
             {

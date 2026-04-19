@@ -16,6 +16,7 @@ namespace Baboomz
         private readonly Dictionary<int, Line2D> _grappleLines = new();
         private readonly Dictionary<int, Sprite2D> _smokeSprites = new();
         private readonly Dictionary<int, Line2D> _dashTrails = new();
+        private readonly Dictionary<int, Line2D> _sprintTrails = new();
 
         public void Init(GameState state)
         {
@@ -31,6 +32,7 @@ namespace Baboomz
             var activeGrapples = new HashSet<int>();
             var activeShadowSteps = new HashSet<int>();
             var activeDashes = new HashSet<int>();
+            var activeSprints = new HashSet<int>();
 
             for (int i = 0; i < _state.Players.Length; i++)
             {
@@ -63,6 +65,11 @@ namespace Baboomz
                             activeDashes.Add(i);
                             UpdateDashTrail(i, p.Position, skill.DurationRemaining, skill.Duration);
                             break;
+
+                        case SkillType.Sprint:
+                            activeSprints.Add(i);
+                            UpdateSprintTrail(i, p.Position, skill.DurationRemaining, skill.Duration);
+                            break;
                     }
                 }
             }
@@ -75,6 +82,7 @@ namespace Baboomz
             CleanupMap(_grappleLines, activeGrapples);
             CleanupMap(_shadowStepSprites, activeShadowSteps);
             CleanupMap(_dashTrails, activeDashes);
+            CleanupMap(_sprintTrails, activeSprints);
         }
 
         private void UpdateShield(int playerIndex, Vec2 pos)
@@ -148,6 +156,31 @@ namespace Baboomz
             // Fade alpha based on remaining duration
             float t = total > 0f ? remaining / total : 0f;
             trail.DefaultColor = new Color(0.8f, 0.9f, 1f, 0.7f * t);
+        }
+
+        private void UpdateSprintTrail(int playerIndex, Vec2 pos, float remaining, float total)
+        {
+            if (!_sprintTrails.TryGetValue(playerIndex, out var trail))
+            {
+                trail = new Line2D();
+                trail.Width = 3f;
+                trail.DefaultColor = new Color(1f, 0.85f, 0.3f, 0.6f);
+                trail.ZIndex = 13;
+                trail.BeginCapMode = Line2D.LineCapMode.Round;
+                trail.EndCapMode = Line2D.LineCapMode.Round;
+                AddChild(trail);
+                _sprintTrails[playerIndex] = trail;
+            }
+
+            var godotPos = pos.ToGodot();
+            trail.AddPoint(godotPos);
+
+            // Longer trail than dash (sprint is sustained)
+            while (trail.GetPointCount() > 20)
+                trail.RemovePoint(0);
+
+            float t = total > 0f ? remaining / total : 0f;
+            trail.DefaultColor = new Color(1f, 0.85f, 0.3f, 0.6f * t);
         }
 
         private void SyncSmokeZones()
