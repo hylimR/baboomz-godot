@@ -80,6 +80,12 @@ namespace Baboomz.Simulation
                                 Position = player.Position,
                                 SourceIndex = zone.OwnerIndex
                             });
+
+                            if (zone.OwnerIndex >= 0 && zone.OwnerIndex < state.Players.Length && p != zone.OwnerIndex)
+                            {
+                                CombatResolver.TrackWeaponHit(state, zone.OwnerIndex, zone.SourceWeaponId);
+                                CombatResolver.TrackWeaponDamage(state, zone.OwnerIndex, zone.SourceWeaponId, eventDamage);
+                            }
                         }
 
                         // Track stats
