@@ -27,6 +27,12 @@ namespace Baboomz.Simulation
                     p.Velocity = p.Velocity + dir * (knockback * ratio * state.Config.KnockbackMult);
                 }
 
+                if (ownerIndex >= 0 && ownerIndex < state.Players.Length)
+                {
+                    p.LastDamagedByIndex = ownerIndex;
+                    p.LastDamagedByTimer = 5f;
+                }
+
                 // Arms Race: gust cannon deals minimum damage so it can advance
                 float gustDmg = 0f;
                 if (state.Config.MatchType == MatchType.ArmsRace)

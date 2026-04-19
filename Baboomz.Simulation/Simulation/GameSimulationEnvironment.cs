@@ -52,6 +52,21 @@ namespace Baboomz.Simulation
                         ScoreSurvivalKill(state, i);
                         DropCtfFlag(state, i);
                         SpawnHeadhunterTokens(state, i);
+
+                        int attacker = p.LastDamagedByIndex;
+                        if (attacker >= 0 && attacker < state.Players.Length
+                            && attacker != i && p.LastDamagedByTimer > 0f)
+                        {
+                            CombatResolver.TrackKill(state, attacker);
+                            state.Players[attacker].TotalKills++;
+                            state.DamageEvents.Add(new DamageEvent
+                            {
+                                TargetIndex = i,
+                                Amount = 0f,
+                                Position = p.Position,
+                                SourceIndex = attacker
+                            });
+                        }
                     }
                 }
                 else if (p.IsSwimming)

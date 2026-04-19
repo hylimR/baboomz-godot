@@ -114,6 +114,7 @@ namespace Baboomz.Simulation
                 IsGrounded = false, IsDead = false, IsAI = isAI, IsCharging = false,
                 ActiveWeaponSlot = 0, FacingDirection = isAI ? -1 : 1,
                 Name = name, LastGroundedY = y, TeamIndex = -1,
+                LastDamagedByIndex = -1,
                 WeaponSlots = slots, SkillSlots = skillSlots
             };
         }
