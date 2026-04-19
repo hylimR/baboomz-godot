@@ -147,7 +147,7 @@ namespace Baboomz.Simulation
             new SkillDef
             {
                 SkillId = "magnetic_mine", Type = SkillType.MagneticMine,
-                EnergyCost = 30f, Cooldown = 12f, Duration = 0f,
+                EnergyCost = 25f, Cooldown = 10f, Duration = 0f,
                 Range = 10f, Value = 30f  // mine damage
             }
         };
