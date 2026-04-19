@@ -80,10 +80,10 @@ namespace Baboomz.Simulation
 
             // Mobility indices: teleport(0), dash(3), jetpack(5), shadow_step(15), sprint(20)
             // Defensive indices: shield(2), heal(4)
-            // Utility indices: girder(6), earthquake(7), smoke(8), warcry(9), mine_layer(10), energy_drain(11), deflect(12), decoy(13), hook_shot(14), overcharge(16), mend(17), magnetic_mine(18)
+            // Utility indices: girder(6), earthquake(7), smoke(8), warcry(9), mine_layer(10), energy_drain(11), deflect(12), decoy(13), hook_shot(14), overcharge(16), mend(17), magnetic_mine(18), petrify(19)
             int[] mobility = { 0, 3, 5, 15, 20 };
             int[] defensive = { 2, 4 };
-            int[] utility = { 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18 };
+            int[] utility = { 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19 };
 
             if (config.AIDifficultyLevel <= 0)
             {
@@ -161,6 +161,10 @@ namespace Baboomz.Simulation
             if (rng.NextDouble() < 0.01 * dt * 60.0 && CountGroundedEnemies(state, index) >= 2)
                 TryActivateSkillByType(state, index, SkillType.Earthquake);
 
+            // Petrify when 2+ enemies are clustered within range (AoE freeze)
+            if (rng.NextDouble() < 0.01 * dt * 60.0 && CountEnemiesInRange(state, index, 10f) >= 2)
+                TryActivateSkillByType(state, index, SkillType.Petrify);
+
             // GrapplingHook for mobility (near map edge or after knockback)
             float halfMap = state.Config.MapWidth / 2f;
             if (MathF.Abs(ai.Position.x) > halfMap * 0.8f && rng.NextDouble() < 0.01 * dt * 60.0)
@@ -206,6 +210,20 @@ namespace Baboomz.Simulation
                 // Skip teammates in team mode
                 if (state.Config.TeamMode && selfTeam >= 0 && state.Players[e].TeamIndex == selfTeam) continue;
                 count++;
+            }
+            return count;
+        }
+
+        static int CountEnemiesInRange(GameState state, int selfIndex, float range)
+        {
+            int count = 0;
+            int selfTeam = state.Players[selfIndex].TeamIndex;
+            Vec2 pos = state.Players[selfIndex].Position;
+            for (int e = 0; e < state.Players.Length; e++)
+            {
+                if (e == selfIndex || state.Players[e].IsDead) continue;
+                if (state.Config.TeamMode && selfTeam >= 0 && state.Players[e].TeamIndex == selfTeam) continue;
+                if (Vec2.Distance(pos, state.Players[e].Position) < range) count++;
             }
             return count;
         }
