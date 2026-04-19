@@ -21,6 +21,8 @@ namespace Baboomz.Simulation
                 target.Health -= applied;
                 target.TotalDamageTaken += applied;
                 target.Velocity.y = 5f; // bounce players up
+                target.LastDamagedByIndex = casterIndex;
+                target.LastDamagedByTimer = 5f;
                 state.DamageEvents.Add(new DamageEvent
                 {
                     TargetIndex = i, Amount = applied, Position = target.Position,

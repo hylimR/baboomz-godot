@@ -149,6 +149,10 @@ namespace Baboomz.Simulation
             if (finalDamage > p.MaxSingleDamage)
                 p.MaxSingleDamage = finalDamage;
 
+            // Track knockback attribution for environmental kills
+            t.LastDamagedByIndex = ci;
+            t.LastDamagedByTimer = 5f;
+
             // Pull target toward caster
             Vec2 direction = p.Position - t.Position;
             float dist = MathF.Sqrt(direction.x * direction.x + direction.y * direction.y);

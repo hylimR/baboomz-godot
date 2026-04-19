@@ -153,5 +153,23 @@ namespace Baboomz.Tests.Editor
             Assert.Greater(state.Players[1].Velocity.y, 0f,
                 "Target should receive upward velocity after pull");
         }
+
+        [Test]
+        public void HookShot_SetsLastDamagedByIndex()
+        {
+            var state = CreateState();
+            SetSkillSlot(ref state.Players[0].SkillSlots[0],
+                state.Config.Skills[14]);
+            state.Players[0].Energy = 100f;
+            state.Players[1].Position = state.Players[0].Position + new Vec2(8f, 0f);
+            state.Players[1].LastDamagedByIndex = -1;
+
+            SkillSystem.ActivateSkill(state, 0, 0);
+
+            Assert.AreEqual(0, state.Players[1].LastDamagedByIndex,
+                "HookShot should set LastDamagedByIndex for knockback kill attribution");
+            Assert.AreEqual(5f, state.Players[1].LastDamagedByTimer, 0.01f,
+                "HookShot should set LastDamagedByTimer grace window");
+        }
     }
 }
