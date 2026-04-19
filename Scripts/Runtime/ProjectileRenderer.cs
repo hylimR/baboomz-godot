@@ -18,6 +18,12 @@ namespace Baboomz
         private Line2D _trail;
         private const int MaxTrailPoints = 15;
 
+        // Trail fade-out
+        private bool _fading;
+        private float _fadeTimer;
+        private const float FadeDuration = 0.4f;
+        private float _trailBaseWidth;
+
         public void Init(int id, GameState state)
         {
             _projId = id;
@@ -93,6 +99,16 @@ namespace Baboomz
 
         public override void _Process(double delta)
         {
+            if (_fading)
+            {
+                _fadeTimer -= (float)delta;
+                if (_fadeTimer <= 0f) { QueueFree(); return; }
+                float t = _fadeTimer / FadeDuration;
+                _trail.Modulate = new Color(1f, 1f, 1f, t);
+                _trail.Width = _trailBaseWidth * t;
+                return;
+            }
+
             if (_state == null) { QueueFree(); return; }
 
             bool found = false;
@@ -100,20 +116,14 @@ namespace Baboomz
             {
                 if (proj.Id == _projId)
                 {
-                    if (!proj.Alive)
-                    {
-                        QueueFree();
-                        return;
-                    }
+                    if (!proj.Alive) { StartFade(); return; }
 
                     GlobalPosition = proj.Position.ToGodot();
 
-                    // Update trail (points in local space relative to parent)
                     _trail.AddPoint(GlobalPosition);
                     while (_trail.GetPointCount() > MaxTrailPoints)
                         _trail.RemovePoint(0);
 
-                    // Rotate sprite to face velocity direction
                     if (proj.Velocity.SqrMagnitude > 0.01f)
                     {
                         var vel = proj.Velocity.ToGodot();
@@ -125,7 +135,15 @@ namespace Baboomz
                 }
             }
 
-            if (!found) QueueFree();
+            if (!found) StartFade();
+        }
+
+        private void StartFade()
+        {
+            _fading = true;
+            _fadeTimer = FadeDuration;
+            _trailBaseWidth = _trail.Width;
+            _sprite.Visible = false;
         }
     }
 }
