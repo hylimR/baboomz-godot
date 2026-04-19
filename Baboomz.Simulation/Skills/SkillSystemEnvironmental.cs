@@ -32,6 +32,7 @@ namespace Baboomz.Simulation
                 state.Players[casterIndex].DirectHits++;
                 if (applied > state.Players[casterIndex].MaxSingleDamage)
                     state.Players[casterIndex].MaxSingleDamage = applied;
+                GameSimulation.OnArmsRaceDamage(state, casterIndex, i);
 
                 if (target.Health <= 0f)
                 {

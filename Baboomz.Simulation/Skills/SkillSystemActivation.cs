@@ -148,6 +148,7 @@ namespace Baboomz.Simulation
             p.DirectHits++;
             if (finalDamage > p.MaxSingleDamage)
                 p.MaxSingleDamage = finalDamage;
+            GameSimulation.OnArmsRaceDamage(state, ci, target);
 
             // Pull target toward caster
             Vec2 direction = p.Position - t.Position;
