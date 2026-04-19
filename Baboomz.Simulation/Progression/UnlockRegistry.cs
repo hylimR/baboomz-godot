@@ -36,8 +36,8 @@ namespace Baboomz.Simulation
             new[] { 6, 7, 8 },
             // Tier 2 — warcry(9), mine_layer(10), energy_drain(11)
             new[] { 9, 10, 11 },
-            // Tier 3 — deflect(12), decoy(13), hookshot(14), magnetic_mine(18)
-            new[] { 12, 13, 14, 18 },
+            // Tier 3 — deflect(12), decoy(13), hookshot(14), magnetic_mine(18), petrify(19)
+            new[] { 12, 13, 14, 18, 19 },
             // Tier 4 — shadow_step(15), overcharge(16), mend(17)
             new[] { 15, 16, 17 }
         };

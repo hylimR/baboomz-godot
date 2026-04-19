@@ -221,6 +221,30 @@ namespace Baboomz.Simulation
             return true;
         }
 
+        static void ExecutePetrify(GameState state, int casterIndex, ref PlayerState p, ref SkillSlotState skill)
+        {
+            float range = skill.Range > 0f ? skill.Range : 10f;
+            float radius = skill.Value > 0f ? skill.Value : 2f;
+            float freezeDuration = skill.Duration > 0f ? skill.Duration : 2f;
+
+            float rad = p.AimAngle * MathF.PI / 180f;
+            Vec2 direction = new Vec2(MathF.Cos(rad) * p.FacingDirection, MathF.Sin(rad));
+            Vec2 target = p.Position + direction * range;
+
+            int casterTeam = p.TeamIndex;
+            for (int i = 0; i < state.Players.Length; i++)
+            {
+                if (i == casterIndex) continue;
+                ref PlayerState t = ref state.Players[i];
+                if (t.IsDead || t.IsInvulnerable) continue;
+                if (state.Config.TeamMode && casterTeam >= 0 && t.TeamIndex == casterTeam) continue;
+
+                float dist = Vec2.Distance(t.Position, target);
+                if (dist <= radius)
+                    t.FreezeTimer = MathF.Max(t.FreezeTimer, freezeDuration);
+            }
+        }
+
         static bool ExecuteEnergyDrain(GameState state, int ci, ref PlayerState p, ref SkillSlotState skill)
         {
             float range = skill.Range > 0f ? skill.Range : 12f;

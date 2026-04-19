@@ -69,6 +69,7 @@ namespace Baboomz.Simulation
                 case "overcharge": return "Commit all your energy for a charged burst. Your next shot within 5 seconds deals double damage.";
                 case "mend": return "Refill destroyed terrain in a small radius near your aim target. Restores cover without creating indestructible blocks.";
                 case "magnetic_mine": return "Deploy a proximity mine that slowly crawls toward the nearest enemy. Dormant for 1 second, then seeks targets within detection range.";
+                case "petrify": return "Freeze all enemies near the target location for 2 seconds. They cannot move or jump but still take full damage.";
                 default: return "Unknown skill.";
             }
         }
@@ -96,6 +97,7 @@ namespace Baboomz.Simulation
                 case "overcharge": return $"Drain all energy; next shot deals {value}x damage";
                 case "mend": return $"Refills destroyed terrain ({value}-unit radius)";
                 case "magnetic_mine": return $"Homing mine ({value} damage, crawls toward enemies)";
+                case "petrify": return $"AoE freeze ({value}-unit radius, 2s duration)";
                 default: return "Unknown effect";
             }
         }
