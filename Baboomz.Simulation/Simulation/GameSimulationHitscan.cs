@@ -55,6 +55,14 @@ namespace Baboomz.Simulation
                 ref PlayerState pt = ref state.Players[primaryTarget];
                 float applied = damage * (1f / MathF.Max(pt.ArmorMultiplier, 0.01f));
 
+                // Freeze Shatter — bonus damage to frozen/petrified targets
+                bool isShatter = pt.FreezeTimer > 0f && primaryTarget != playerIndex;
+                if (isShatter)
+                {
+                    applied *= state.Config.ShatterMultiplier;
+                    pt.FreezeTimer = 0f;
+                }
+
                 // Shield absorption (frontal hit check)
                 if (pt.ShieldHP > 0f && pt.MaxShieldHP > 0f)
                 {
@@ -72,7 +80,7 @@ namespace Baboomz.Simulation
                 state.DamageEvents.Add(new DamageEvent
                 {
                     TargetIndex = primaryTarget, Amount = applied, Position = pt.Position,
-                    SourceIndex = playerIndex
+                    SourceIndex = playerIndex, IsShatter = isShatter
                 });
                 if (applied > 0f)
                 {
@@ -84,6 +92,10 @@ namespace Baboomz.Simulation
                     CombatResolver.TrackHit(state, playerIndex);
                     CombatResolver.TrackWeaponHit(state, playerIndex, weapon.WeaponId);
                     CombatResolver.TrackWeaponDamage(state, playerIndex, weapon.WeaponId, applied);
+
+                    // Freeze Tag challenge: hit a frozen enemy
+                    if (isShatter)
+                        p.FreezeToHitCombo = true;
                 }
                 if (pt.Health <= 0f)
                 {
@@ -132,6 +144,14 @@ namespace Baboomz.Simulation
                     ref PlayerState ct2 = ref state.Players[chainTarget];
                     float chainApplied = weapon.ChainDamage * p.DamageMultiplier * (1f / MathF.Max(ct2.ArmorMultiplier, 0.01f));
 
+                    // Freeze Shatter — bonus damage to frozen/petrified chain target
+                    bool chainShatter = ct2.FreezeTimer > 0f && chainTarget != playerIndex;
+                    if (chainShatter)
+                    {
+                        chainApplied *= state.Config.ShatterMultiplier;
+                        ct2.FreezeTimer = 0f;
+                    }
+
                     // Shield absorption for chain target
                     if (ct2.ShieldHP > 0f && ct2.MaxShieldHP > 0f)
                     {
@@ -149,7 +169,7 @@ namespace Baboomz.Simulation
                     state.DamageEvents.Add(new DamageEvent
                     {
                         TargetIndex = chainTarget, Amount = chainApplied, Position = ct2.Position,
-                        SourceIndex = playerIndex
+                        SourceIndex = playerIndex, IsShatter = chainShatter
                     });
                     if (chainApplied > 0f)
                     {
@@ -161,6 +181,9 @@ namespace Baboomz.Simulation
                         CombatResolver.TrackHit(state, playerIndex);
                         CombatResolver.TrackWeaponHit(state, playerIndex, weapon.WeaponId);
                         CombatResolver.TrackWeaponDamage(state, playerIndex, weapon.WeaponId, chainApplied);
+
+                        if (chainShatter)
+                            p.FreezeToHitCombo = true;
                     }
                     if (ct2.Health <= 0f)
                     {
