@@ -179,6 +179,32 @@ namespace Baboomz.Tests.Editor
         }
 
         [Test]
+        public void Earthquake_SetsLastDamagedByIndex()
+        {
+            var config = SmallConfig();
+            config.MineCount = 0;
+            config.BarrelCount = 0;
+            var state = GameSimulation.CreateMatch(config, 42);
+            AILogic.Reset(42);
+
+            state.Players[0].SkillSlots[0] = new SkillSlotState
+            {
+                SkillId = "earthquake", Type = SkillType.Earthquake,
+                EnergyCost = 0f, Cooldown = 0f, Value = 20f
+            };
+            state.Players[0].Energy = 100f;
+            state.Players[1].IsGrounded = true;
+            state.Players[1].LastDamagedByIndex = -1;
+
+            SkillSystem.ActivateSkill(state, 0, 0);
+
+            Assert.AreEqual(0, state.Players[1].LastDamagedByIndex,
+                "Earthquake should set LastDamagedByIndex for knockback kill attribution");
+            Assert.AreEqual(5f, state.Players[1].LastDamagedByTimer, 0.01f,
+                "Earthquake should set LastDamagedByTimer grace window");
+        }
+
+        [Test]
         public void Earthquake_ZeroArmorMultiplier_DoesNotCauseInfinityDamage()
         {
             var config = SmallConfig();
