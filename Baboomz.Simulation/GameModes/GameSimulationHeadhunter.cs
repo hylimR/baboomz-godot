@@ -42,6 +42,14 @@ namespace Baboomz.Simulation
                     RespawnHeadhunter(state, i);
             }
 
+            // Deactivate tokens submerged by rising water
+            float waterY = MathF.Max(config.DeathBoundaryY, state.WaterLevel);
+            for (int t = 0; t < hh.TokenCount; t++)
+            {
+                if (hh.Tokens[t].Active && hh.Tokens[t].Position.y < waterY)
+                    hh.Tokens[t].Active = false;
+            }
+
             // Token collection
             float collectR = config.HeadhunterTokenCollectRadius;
             for (int i = 0; i < state.Players.Length; i++)
