@@ -33,10 +33,12 @@ namespace Baboomz
         // Bottom bar
         private ColorRect[] weaponSlots;
         private Label[] weaponLabels;
+        private Label weaponPaginationLabel;
         private ColorRect[] skillSlotRects;
         private Label[] skillSlotLabels;
         private Label[] skillCooldownLabels;
         private Button fireButton;
+        private DamageDirectionOverlay damageDirectionOverlay;
 
         // Weapon viewport state
         private int activeWeaponIndex;
@@ -67,10 +69,12 @@ namespace Baboomz
 
             weaponSlots = refs.WeaponSlots;
             weaponLabels = refs.WeaponLabels;
+            weaponPaginationLabel = refs.WeaponPaginationLabel;
             skillSlotRects = refs.SkillSlotRects;
             skillSlotLabels = refs.SkillSlotLabels;
             skillCooldownLabels = refs.SkillCooldownLabels;
             fireButton = refs.FireButton;
+            damageDirectionOverlay = refs.DamageDirectionOverlay;
         }
 
         // --- Public API ---
@@ -233,6 +237,8 @@ namespace Baboomz
             fill.AnchorRight = normalised;
         }
 
+        public DamageDirectionOverlay GetDamageOverlay() => damageDirectionOverlay;
+
         private void RefreshWeaponSlots()
         {
             if (weaponSlots == null) return;
@@ -246,11 +252,11 @@ namespace Baboomz
 
                 Color tint = (i == activeWeaponIndex) ? UIBuilder.UiGold : UIBuilder.Inactive;
                 tint.A = 1f;
-                // Modulate propagates to the texture overlay child (when present);
-                // when there is no overlay, the underlying ColorRect is also tinted
-                // because Modulate multiplies its Color.
                 weaponSlots[i].Modulate = tint;
             }
+
+            if (weaponPaginationLabel != null && totalWeapons > VisibleWeaponSlots)
+                weaponPaginationLabel.Text = $"Weapon {activeWeaponIndex + 1} / {totalWeapons}";
         }
     }
 }
