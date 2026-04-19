@@ -263,6 +263,24 @@ namespace Baboomz.Tests.Editor
                 "Pierce shatter should consume freeze timer");
         }
 
+        [Test]
+        public void Shatter_SetsFreezeToHitCombo_Issue268()
+        {
+            var config = SmallConfig();
+            config.MineCount = 0;
+            config.BarrelCount = 0;
+            var state = GameSimulation.CreateMatch(config, 42);
+
+            state.Players[1].Position = new Vec2(1f, 5f);
+            state.Players[1].Health = 100f;
+            state.Players[1].FreezeTimer = 2f;
+
+            CombatResolver.ApplyExplosion(state, state.Players[1].Position, 3f, 30f, 5f, 0, false);
+
+            Assert.IsTrue(state.Players[0].FreezeToHitCombo,
+                "Hitting a frozen target should set FreezeToHitCombo for Freeze Tag challenge");
+        }
+
         // --- Dash skill tests ---
 
         [Test]

@@ -117,7 +117,7 @@ namespace Baboomz.Simulation
                     }
 
                     // Freeze Tag challenge: hit a frozen enemy
-                    if (p.FreezeTimer > 0f)
+                    if (isShatter)
                         state.Players[ownerIndex].FreezeToHitCombo = true;
 
                     // Combo tracking — increment consecutive hits
