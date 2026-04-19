@@ -212,6 +212,30 @@ namespace Baboomz.Tests.Editor
         }
 
         [Test]
+        public void HitscanFullShieldBlock_DoesNotSetLastDamagedByIndex()
+        {
+            var state = CreateState();
+            AILogic.Reset(42);
+
+            state.Players[0].Position = new Vec2(0f, 5f);
+            state.Players[0].FacingDirection = 1;
+            state.Players[1].Position = new Vec2(5f, 5f);
+            state.Players[1].FacingDirection = -1; // facing attacker for frontal shield
+            state.Players[1].ShieldHP = 999f;
+            state.Players[1].MaxShieldHP = 999f;
+            state.Players[1].LastDamagedByIndex = -1;
+
+            state.Players[0].ActiveWeaponSlot = 14; // lightning rod
+            state.Players[0].AimAngle = 0f;
+            state.Players[0].AimPower = 20f;
+            state.Players[0].Energy = 100f;
+            GameSimulation.Fire(state, 0);
+
+            Assert.AreEqual(-1, state.Players[1].LastDamagedByIndex,
+                "Full shield block should NOT set LastDamagedByIndex (#319)");
+        }
+
+        [Test]
         public void HitscanChainDamage_SetsLastDamagedByIndex()
         {
             // Regression: #305 — hitscan chain damage didn't set LastDamagedByIndex
