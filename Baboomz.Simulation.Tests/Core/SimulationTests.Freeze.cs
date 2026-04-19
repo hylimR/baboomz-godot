@@ -163,6 +163,106 @@ namespace Baboomz.Tests.Editor
                 "Freeze grenade detonation should produce exactly one ExplosionEvent");
         }
 
+        // --- Freeze Shatter tests (#262) ---
+
+        [Test]
+        public void Shatter_FrozenTarget_Takes1_5xDamage()
+        {
+            var config = SmallConfig();
+            config.MineCount = 0;
+            config.BarrelCount = 0;
+            var state = GameSimulation.CreateMatch(config, 42);
+
+            state.Players[1].Position = new Vec2(1f, 5f);
+            state.Players[1].Health = 100f;
+            state.Players[1].FreezeTimer = 2f;
+
+            CombatResolver.ApplyExplosion(state, state.Players[1].Position, 3f, 30f, 5f, 0, false);
+
+            float expected = 30f * config.ShatterMultiplier;
+            Assert.AreEqual(100f - expected, state.Players[1].Health, 0.5f,
+                "Frozen target should take 1.5x damage from shatter");
+        }
+
+        [Test]
+        public void Shatter_ConsumesFreezeTimer()
+        {
+            var config = SmallConfig();
+            config.MineCount = 0;
+            config.BarrelCount = 0;
+            var state = GameSimulation.CreateMatch(config, 42);
+
+            state.Players[1].Position = new Vec2(1f, 5f);
+            state.Players[1].FreezeTimer = 2f;
+
+            CombatResolver.ApplyExplosion(state, state.Players[1].Position, 3f, 30f, 5f, 0, false);
+
+            Assert.AreEqual(0f, state.Players[1].FreezeTimer,
+                "Shatter should consume the freeze timer");
+        }
+
+        [Test]
+        public void Shatter_SelfDamage_DoesNotTrigger()
+        {
+            var config = SmallConfig();
+            config.MineCount = 0;
+            config.BarrelCount = 0;
+            var state = GameSimulation.CreateMatch(config, 42);
+
+            state.Players[0].Position = new Vec2(1f, 5f);
+            state.Players[0].Health = 100f;
+            state.Players[0].FreezeTimer = 2f;
+
+            CombatResolver.ApplyExplosion(state, state.Players[0].Position, 3f, 30f, 5f, 0, false);
+
+            Assert.AreEqual(100f - 30f, state.Players[0].Health, 0.5f,
+                "Self-damage should NOT trigger shatter bonus");
+            Assert.Greater(state.Players[0].FreezeTimer, 0f,
+                "Self-damage should not consume freeze timer");
+        }
+
+        [Test]
+        public void Shatter_DamageEvent_HasIsShatterFlag()
+        {
+            var config = SmallConfig();
+            config.MineCount = 0;
+            config.BarrelCount = 0;
+            var state = GameSimulation.CreateMatch(config, 42);
+
+            state.Players[1].Position = new Vec2(1f, 5f);
+            state.Players[1].FreezeTimer = 2f;
+
+            CombatResolver.ApplyExplosion(state, state.Players[1].Position, 3f, 30f, 5f, 0, false);
+
+            bool foundShatter = false;
+            for (int i = 0; i < state.DamageEvents.Count; i++)
+                if (state.DamageEvents[i].TargetIndex == 1 && state.DamageEvents[i].IsShatter)
+                    foundShatter = true;
+
+            Assert.IsTrue(foundShatter, "DamageEvent should have IsShatter=true for shattered target");
+        }
+
+        [Test]
+        public void Shatter_PierceDamage_AppliesBonus()
+        {
+            var config = SmallConfig();
+            config.MineCount = 0;
+            config.BarrelCount = 0;
+            var state = GameSimulation.CreateMatch(config, 42);
+
+            state.Players[1].Position = new Vec2(5f, 5f);
+            state.Players[1].Health = 100f;
+            state.Players[1].FreezeTimer = 2f;
+
+            CombatResolver.ApplyPierceDamage(state, 1, 20f, 0f, state.Players[1].Position, 0);
+
+            float expected = 20f * config.ShatterMultiplier;
+            Assert.AreEqual(100f - expected, state.Players[1].Health, 0.5f,
+                "Pierce damage should trigger shatter on frozen target");
+            Assert.AreEqual(0f, state.Players[1].FreezeTimer,
+                "Pierce shatter should consume freeze timer");
+        }
+
         // --- Dash skill tests ---
 
         [Test]

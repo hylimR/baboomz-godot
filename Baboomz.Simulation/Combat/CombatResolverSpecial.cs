@@ -86,6 +86,13 @@ namespace Baboomz.Simulation
             damage *= (1f / MathF.Max(p.ArmorMultiplier, 0.01f));
             if (damage <= 0f) return;
 
+            bool isShatter = p.FreezeTimer > 0f && targetIndex != ownerIndex;
+            if (isShatter)
+            {
+                damage *= state.Config.ShatterMultiplier;
+                p.FreezeTimer = 0f;
+            }
+
             // Shield blocks pierce — caller checks ShieldHP to decide whether to stop
             if (p.ShieldHP > 0f && p.MaxShieldHP > 0f)
             {
@@ -103,7 +110,8 @@ namespace Baboomz.Simulation
                             TargetIndex = targetIndex,
                             Amount = 0f,
                             Position = p.Position,
-                            SourceIndex = ownerIndex
+                            SourceIndex = ownerIndex,
+                            IsShatter = isShatter
                         });
                         return;
                     }
@@ -117,7 +125,8 @@ namespace Baboomz.Simulation
                 TargetIndex = targetIndex,
                 Amount = damage,
                 Position = p.Position,
-                SourceIndex = ownerIndex
+                SourceIndex = ownerIndex,
+                IsShatter = isShatter
             });
 
             if (ownerIndex >= 0 && ownerIndex < state.Players.Length && targetIndex != ownerIndex)
