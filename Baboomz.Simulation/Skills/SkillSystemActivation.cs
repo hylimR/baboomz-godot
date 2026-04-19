@@ -153,6 +153,8 @@ namespace Baboomz.Simulation
             // Track knockback attribution for environmental kills
             t.LastDamagedByIndex = ci;
             t.LastDamagedByTimer = 5f;
+            if (state.FirstBloodPlayerIndex < 0)
+                state.FirstBloodPlayerIndex = ci;
 
             // Pull target toward caster
             Vec2 direction = p.Position - t.Position;
