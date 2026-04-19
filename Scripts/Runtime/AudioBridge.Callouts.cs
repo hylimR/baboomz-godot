@@ -3,20 +3,8 @@ using Baboomz.Simulation;
 
 namespace Baboomz
 {
-    /// <summary>
-    /// Audio event callouts: kill announcements, match fanfares, last-standing cue.
-    /// Reads ComboEvents for kill combos, tracks phase transitions and alive count.
-    /// Issue #249.
-    /// </summary>
     public partial class AudioBridge
     {
-        /// <summary>
-        /// Detects and plays event callouts each frame:
-        /// - Kill announcements from ComboEvents (DoubleKill, MultiKill)
-        /// - Match start fanfare on Waiting -> Playing transition
-        /// - Match end stinger on Playing -> Ended transition
-        /// - Last-standing tension cue when exactly 2 players remain alive
-        /// </summary>
         private void ProcessCallouts()
         {
             // Kill combo callouts from ComboEvents
@@ -74,25 +62,17 @@ namespace Baboomz
             return count;
         }
 
-        /// <summary>
-        /// Generates all callout audio clips. Called during Init().
-        /// Each clip is a short procedural synth -- no external audio files.
-        /// </summary>
         private void GenerateCalloutClips()
         {
             _doubleKillClip = GenerateKillAnnounce(2);
             _tripleKillClip = GenerateKillAnnounce(3);
             _megaKillClip = GenerateKillAnnounce(4);
             _matchStartFanfareClip = GenerateFanfare(true);
-            _matchEndVictoryClip = GenerateFanfare(true);
+            _matchEndVictoryClip = GenerateFanfare(false);
             _matchEndDefeatClip = GenerateDefeatStinger();
             _lastStandingClip = GenerateTensionCue();
         }
 
-        /// <summary>
-        /// Generates an escalating kill announcement tone (#249).
-        /// Higher kill counts produce more notes at higher pitch with richer harmonics.
-        /// </summary>
         private static AudioStreamWav GenerateKillAnnounce(int killCount)
         {
             float duration = 0.15f + killCount * 0.08f;
@@ -124,10 +104,6 @@ namespace Baboomz
             return CreateWav(data, samples);
         }
 
-        /// <summary>
-        /// Generates a short ascending fanfare for match start or victory (#249).
-        /// Three bright notes rising in a major triad (C5-E5-G5).
-        /// </summary>
         private static AudioStreamWav GenerateFanfare(bool ascending)
         {
             float duration = 0.5f;
@@ -160,10 +136,6 @@ namespace Baboomz
             return CreateWav(data, samples);
         }
 
-        /// <summary>
-        /// Generates a descending minor stinger for match defeat (#249).
-        /// Three notes descending: Eb5-C5-Ab4.
-        /// </summary>
         private static AudioStreamWav GenerateDefeatStinger()
         {
             float duration = 0.6f;
@@ -191,10 +163,6 @@ namespace Baboomz
             return CreateWav(data, samples);
         }
 
-        /// <summary>
-        /// Generates a low pulsing tension cue for last-standing (#249).
-        /// Two-pulse drone at ~80 Hz that signals two players remain.
-        /// </summary>
         private static AudioStreamWav GenerateTensionCue()
         {
             float duration = 0.8f;

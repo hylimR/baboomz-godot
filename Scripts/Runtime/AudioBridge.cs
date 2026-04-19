@@ -38,7 +38,7 @@ namespace Baboomz
         private AudioStreamWav _skillHealClip;
         private AudioStreamWav _skillPowerClip;
 
-        // Event callout clips (#249)
+        // Event callout clips
         private AudioStreamWav _doubleKillClip;
         private AudioStreamWav _tripleKillClip;
         private AudioStreamWav _megaKillClip;
@@ -113,7 +113,7 @@ namespace Baboomz
             }
             _lastJumpState = p.IsGrounded;
 
-            // Event callouts (#249)
+            // Event callouts
             ProcessCallouts();
         }
 
