@@ -137,14 +137,23 @@ namespace Baboomz.Simulation
                 // Preserve WarCry buff if active. Restore base speed when no longer carrying.
                 if (carrying)
                 {
-                    float baseSpeed = p.WarCryTimer > 0f && p.WarCrySpeedBuff > 0f
-                        ? config.DefaultMoveSpeed * p.WarCrySpeedBuff
-                        : config.DefaultMoveSpeed;
+                    float baseSpeed = config.DefaultMoveSpeed;
+                    if (p.WarCryTimer > 0f && p.WarCrySpeedBuff > 0f)
+                        baseSpeed *= p.WarCrySpeedBuff;
+                    if (p.SprintTimer > 0f && p.SprintSpeedBuff > 0f)
+                        baseSpeed *= p.SprintSpeedBuff;
                     p.MoveSpeed = baseSpeed * config.CtfCarrierSpeedMult;
                 }
                 else if (p.WarCryTimer > 0f && p.WarCrySpeedBuff > 0f)
                 {
-                    p.MoveSpeed = config.DefaultMoveSpeed * p.WarCrySpeedBuff;
+                    float baseSpeed = config.DefaultMoveSpeed * p.WarCrySpeedBuff;
+                    if (p.SprintTimer > 0f && p.SprintSpeedBuff > 0f)
+                        baseSpeed *= p.SprintSpeedBuff;
+                    p.MoveSpeed = baseSpeed;
+                }
+                else if (p.SprintTimer > 0f && p.SprintSpeedBuff > 0f)
+                {
+                    p.MoveSpeed = config.DefaultMoveSpeed * p.SprintSpeedBuff;
                 }
                 else if (p.MoveSpeed < config.DefaultMoveSpeed)
                 {

@@ -190,6 +190,8 @@ namespace Baboomz.Simulation
         public bool IsInvisible;           // true while decoy is active (player hidden from AI)
         public bool IsSwimming;            // true while submerged below water level
         public float SwimTimer;            // seconds spent swimming (drowns at SwimDuration)
+        public float SprintTimer;          // >0 = sprint active (speed multiplied)
+        public float SprintSpeedBuff;      // stored multiplier to restore on expiry
 
         // Kill distance tracking (for Close Quarters challenge)
         public int TotalKills;             // total enemy kills

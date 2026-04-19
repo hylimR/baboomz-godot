@@ -68,7 +68,7 @@ namespace Baboomz.Tests.Editor
         public void GetSkillEntries_Returns19Skills()
         {
             var entries = EncyclopediaData.GetSkillEntries(config);
-            Assert.AreEqual(20, entries.Length);
+            Assert.AreEqual(21, entries.Length);
         }
 
         [Test]

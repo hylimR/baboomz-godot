@@ -29,7 +29,8 @@ namespace Baboomz.Simulation
         Overcharge,
         Mend,
         MagneticMine,
-        Petrify
+        Petrify,
+        Sprint
     }
 
     public enum HatType

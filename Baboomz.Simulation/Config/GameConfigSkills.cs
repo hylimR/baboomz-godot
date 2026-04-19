@@ -155,6 +155,14 @@ namespace Baboomz.Simulation
                 SkillId = "petrify", Type = SkillType.Petrify,
                 EnergyCost = 35f, Cooldown = 14f, Duration = 2f, // Duration = freeze time applied to targets
                 Range = 10f, Value = 2f  // Value = AoE radius
+            },
+            new SkillDef
+            {
+                SkillId = "sprint", Type = SkillType.Sprint,
+                // Between Dash (18E/3s) and Teleport (28E/8s) — sustained horizontal repositioning
+                // without terrain bypass. 1.5x speed for 2s covers ~15u at default MoveSpeed.
+                EnergyCost = 22f, Cooldown = 7f, Duration = 2f,
+                Range = 0f, Value = 1.5f  // speed multiplier
             }
         };
         public int DefaultSkillSlot0 = 0;  // teleport
