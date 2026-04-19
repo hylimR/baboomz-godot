@@ -74,14 +74,17 @@ namespace Baboomz.Simulation
                     TargetIndex = primaryTarget, Amount = applied, Position = pt.Position,
                     SourceIndex = playerIndex
                 });
-                if (state.FirstBloodPlayerIndex < 0)
-                    state.FirstBloodPlayerIndex = playerIndex;
-                p.DirectHits++;
-                p.TotalDamageDealt += applied;
-                if (applied > p.MaxSingleDamage) p.MaxSingleDamage = applied;
-                CombatResolver.TrackHit(state, playerIndex);
-                CombatResolver.TrackWeaponHit(state, playerIndex, weapon.WeaponId);
-                CombatResolver.TrackWeaponDamage(state, playerIndex, weapon.WeaponId, applied);
+                if (applied > 0f)
+                {
+                    if (state.FirstBloodPlayerIndex < 0)
+                        state.FirstBloodPlayerIndex = playerIndex;
+                    p.DirectHits++;
+                    p.TotalDamageDealt += applied;
+                    if (applied > p.MaxSingleDamage) p.MaxSingleDamage = applied;
+                    CombatResolver.TrackHit(state, playerIndex);
+                    CombatResolver.TrackWeaponHit(state, playerIndex, weapon.WeaponId);
+                    CombatResolver.TrackWeaponDamage(state, playerIndex, weapon.WeaponId, applied);
+                }
                 if (pt.Health <= 0f)
                 {
                     pt.Health = 0f; pt.IsDead = true; ScoreSurvivalKill(state, primaryTarget);
@@ -148,14 +151,17 @@ namespace Baboomz.Simulation
                         TargetIndex = chainTarget, Amount = chainApplied, Position = ct2.Position,
                         SourceIndex = playerIndex
                     });
-                    if (state.FirstBloodPlayerIndex < 0)
-                        state.FirstBloodPlayerIndex = playerIndex;
-                    p.DirectHits++;
-                    p.TotalDamageDealt += chainApplied;
-                    if (chainApplied > p.MaxSingleDamage) p.MaxSingleDamage = chainApplied;
-                    CombatResolver.TrackHit(state, playerIndex);
-                    CombatResolver.TrackWeaponHit(state, playerIndex, weapon.WeaponId);
-                    CombatResolver.TrackWeaponDamage(state, playerIndex, weapon.WeaponId, chainApplied);
+                    if (chainApplied > 0f)
+                    {
+                        if (state.FirstBloodPlayerIndex < 0)
+                            state.FirstBloodPlayerIndex = playerIndex;
+                        p.DirectHits++;
+                        p.TotalDamageDealt += chainApplied;
+                        if (chainApplied > p.MaxSingleDamage) p.MaxSingleDamage = chainApplied;
+                        CombatResolver.TrackHit(state, playerIndex);
+                        CombatResolver.TrackWeaponHit(state, playerIndex, weapon.WeaponId);
+                        CombatResolver.TrackWeaponDamage(state, playerIndex, weapon.WeaponId, chainApplied);
+                    }
                     if (ct2.Health <= 0f)
                     {
                         ct2.Health = 0f; ct2.IsDead = true; ScoreSurvivalKill(state, chainTarget);

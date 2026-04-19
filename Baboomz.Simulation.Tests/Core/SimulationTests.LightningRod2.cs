@@ -113,5 +113,31 @@ namespace Baboomz.Tests.Editor
                 "Hitscan hit should set FirstBloodPlayerIndex even via chain path");
         }
 
+        [Test]
+        public void Hitscan_ShieldFullyAbsorbs_DoesNotCountDirectHit()
+        {
+            var config = SmallConfig();
+            var state = GameSimulation.CreateMatch(config, 42);
+            state.Phase = MatchPhase.Playing;
+
+            state.Players[0].Position = new Vec2(0f, 5f);
+            state.Players[0].FacingDirection = 1;
+            state.Players[0].AimAngle = 0f;
+            state.Players[0].AimPower = 20f;
+            state.Players[0].Energy = 100f;
+            state.Players[0].DirectHits = 0;
+
+            state.Players[1].Position = new Vec2(5f, 5f);
+            state.Players[1].FacingDirection = -1;
+            state.Players[1].ShieldHP = 999f;
+            state.Players[1].MaxShieldHP = 999f;
+
+            state.Players[0].ActiveWeaponSlot = 14;
+            GameSimulation.Fire(state, 0);
+
+            Assert.AreEqual(0, state.Players[0].DirectHits,
+                "Fully shield-blocked hitscan should not count as DirectHit");
+        }
+
     }
 }
