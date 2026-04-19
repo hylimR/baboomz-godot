@@ -146,10 +146,10 @@ namespace Baboomz.Simulation
             new WeaponDef
             {
                 WeaponId = "lightning_rod",
-                MinPower = 10f, MaxPower = 30f, ChargeTime = 2.5f, ShootCooldown = 4f,
+                MinPower = 10f, MaxPower = 30f, ChargeTime = 2.5f, ShootCooldown = 3.5f,
                 ExplosionRadius = 0f, MaxDamage = 40f, KnockbackForce = 2f,
                 ProjectileCount = 1, SpreadAngle = 0f,
-                DestroysIndestructible = false, EnergyCost = 30f, Ammo = 3,
+                DestroysIndestructible = false, EnergyCost = 22f, Ammo = 3,
                 IsHitscan = true, ChainRange = 6f, ChainDamage = 20f
             },
             new WeaponDef
