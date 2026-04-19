@@ -153,7 +153,7 @@ namespace Baboomz.Simulation
             new SkillDef
             {
                 SkillId = "petrify", Type = SkillType.Petrify,
-                EnergyCost = 35f, Cooldown = 16f, Duration = 2f, // Duration = freeze time applied to targets
+                EnergyCost = 35f, Cooldown = 14f, Duration = 2f, // Duration = freeze time applied to targets
                 Range = 10f, Value = 2f  // Value = AoE radius
             }
         };

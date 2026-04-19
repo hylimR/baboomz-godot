@@ -17,7 +17,7 @@ namespace Baboomz.Tests.Editor
                 {
                     Assert.AreEqual(SkillType.Petrify, config.Skills[i].Type);
                     Assert.AreEqual(35f, config.Skills[i].EnergyCost);
-                    Assert.AreEqual(16f, config.Skills[i].Cooldown);
+                    Assert.AreEqual(14f, config.Skills[i].Cooldown);
                     Assert.AreEqual(2f, config.Skills[i].Duration);
                     Assert.AreEqual(10f, config.Skills[i].Range);
                     Assert.AreEqual(2f, config.Skills[i].Value);
