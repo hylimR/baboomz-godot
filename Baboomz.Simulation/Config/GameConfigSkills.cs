@@ -149,6 +149,12 @@ namespace Baboomz.Simulation
                 SkillId = "magnetic_mine", Type = SkillType.MagneticMine,
                 EnergyCost = 25f, Cooldown = 10f, Duration = 0f,
                 Range = 10f, Value = 30f  // mine damage
+            },
+            new SkillDef
+            {
+                SkillId = "petrify", Type = SkillType.Petrify,
+                EnergyCost = 35f, Cooldown = 16f, Duration = 2f, // Duration = freeze time applied to targets
+                Range = 10f, Value = 2f  // Value = AoE radius
             }
         };
         public int DefaultSkillSlot0 = 0;  // teleport
