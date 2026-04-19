@@ -23,12 +23,16 @@ namespace Baboomz
         private AudioStreamWav _hitTickClip;
         private AudioStreamWav _heartbeatClip;
 
-        // Per-weapon fire sounds (#175)
+        // Per-weapon fire sounds (#175, #286)
         private AudioStreamWav _fireCannonClip;
         private AudioStreamWav _fireRocketClip;
         private AudioStreamWav _fireSniperClip;
         private AudioStreamWav _fireTossClip;
         private AudioStreamWav _fireSpecialClip;
+        private AudioStreamWav _fireEnergyClip;
+        private AudioStreamWav _fireHhgClip;
+        private AudioStreamWav _fireDrillClip;
+        private AudioStreamWav _fireAnimalClip;
 
         // Per-skill activation sounds (#175)
         private AudioStreamWav _skillTeleportClip;
@@ -141,16 +145,17 @@ namespace Baboomz
         {
             return weaponId switch
             {
-                "cannon" or "shotgun" or "flak_cannon" => _fireCannonClip,
-                "rocket" or "homing" or "harpoon" => _fireRocketClip,
+                "cannon" or "shotgun" or "flak_cannon" or "harpoon" => _fireCannonClip,
+                "rocket" or "cluster" or "homing" or "airstrike"
+                    or "dynamite" or "napalm" => _fireRocketClip,
                 "lightning_rod" or "blowtorch" => _fireSniperClip,
-                "dynamite" or "sticky_bomb" or "banana_bomb"
-                    or "holy_hand_grenade" or "freeze_grenade"
-                    or "napalm" or "gravity_bomb" => _fireTossClip,
-                "drill" or "boomerang" or "ricochet_disc"
-                    or "sheep" or "magma_ball" or "gust_cannon" => _fireSpecialClip,
-                "cluster" or "airstrike" => _fireRocketClip,
-                _ => _fireClip // fallback for unknown weapons
+                "banana_bomb" or "freeze_grenade" or "sticky_bomb" => _fireTossClip,
+                "lightning_rod_chain" or "gravity_bomb" or "magma_ball" => _fireEnergyClip,
+                "holy_hand_grenade" => _fireHhgClip,
+                "drill" => _fireDrillClip,
+                "sheep" => _fireAnimalClip,
+                "boomerang" or "gust_cannon" or "ricochet_disc" => _fireSpecialClip,
+                _ => _fireClip
             };
         }
 
