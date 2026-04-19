@@ -168,5 +168,79 @@ namespace Baboomz.Tests.Editor
             Assert.AreEqual(15f, state.Players[1].ShieldDamageBlocked, 0.01f,
                 "Pierce damage absorbed by shield must track ShieldDamageBlocked");
         }
+
+        // --- #305: Hitscan and Pierce LastDamagedByIndex ---
+
+        [Test]
+        public void PierceDamage_SetsLastDamagedByIndex()
+        {
+            // Regression: #305 — pierce damage didn't set LastDamagedByIndex
+            var state = CreateState();
+            state.Players[1].LastDamagedByIndex = -1;
+
+            CombatResolver.ApplyPierceDamage(state, 1, 20f, 5f,
+                state.Players[1].Position, 0, "harpoon");
+
+            Assert.AreEqual(0, state.Players[1].LastDamagedByIndex,
+                "Pierce damage should set LastDamagedByIndex for knockback kill attribution");
+            Assert.AreEqual(5f, state.Players[1].LastDamagedByTimer, 0.01f,
+                "Pierce damage should set LastDamagedByTimer to 5s grace window");
+        }
+
+        [Test]
+        public void HitscanDamage_SetsLastDamagedByIndex()
+        {
+            // Regression: #305 — hitscan damage didn't set LastDamagedByIndex
+            var state = CreateState();
+            AILogic.Reset(42);
+
+            state.Players[0].Position = new Vec2(0f, 5f);
+            state.Players[0].FacingDirection = 1;
+            state.Players[1].Position = new Vec2(5f, 5f);
+            state.Players[1].LastDamagedByIndex = -1;
+
+            state.Players[0].ActiveWeaponSlot = 14; // lightning rod
+            state.Players[0].AimAngle = 0f;
+            state.Players[0].AimPower = 20f;
+            state.Players[0].Energy = 100f;
+            GameSimulation.Fire(state, 0);
+
+            Assert.AreEqual(0, state.Players[1].LastDamagedByIndex,
+                "Hitscan damage should set LastDamagedByIndex for knockback kill attribution");
+            Assert.AreEqual(5f, state.Players[1].LastDamagedByTimer, 0.01f,
+                "Hitscan damage should set LastDamagedByTimer to 5s grace window");
+        }
+
+        [Test]
+        public void HitscanChainDamage_SetsLastDamagedByIndex()
+        {
+            // Regression: #305 — hitscan chain damage didn't set LastDamagedByIndex
+            var state = CreateState();
+            AILogic.Reset(42);
+
+            var players = new PlayerState[3];
+            players[0] = state.Players[0];
+            players[1] = state.Players[1];
+            players[2] = state.Players[1];
+            players[2].Name = "Player3";
+            state.Players = players;
+
+            state.Players[0].Position = new Vec2(-10f, 5f);
+            state.Players[0].FacingDirection = 1;
+            state.Players[1].Position = new Vec2(0f, 5f);
+            state.Players[2].Position = new Vec2(4f, 5f);
+            state.Players[2].LastDamagedByIndex = -1;
+
+            state.Players[0].ActiveWeaponSlot = 14;
+            state.Players[0].AimAngle = 0f;
+            state.Players[0].AimPower = 20f;
+            state.Players[0].Energy = 100f;
+            GameSimulation.Fire(state, 0);
+
+            Assert.AreEqual(0, state.Players[2].LastDamagedByIndex,
+                "Hitscan chain damage should set LastDamagedByIndex on chain target");
+            Assert.AreEqual(5f, state.Players[2].LastDamagedByTimer, 0.01f,
+                "Hitscan chain damage should set LastDamagedByTimer on chain target");
+        }
     }
 }
