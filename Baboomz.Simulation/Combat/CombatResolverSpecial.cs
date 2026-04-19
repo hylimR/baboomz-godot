@@ -107,6 +107,7 @@ namespace Baboomz.Simulation
                 {
                     float absorbed = MathF.Min(damage, p.ShieldHP);
                     p.ShieldHP -= absorbed;
+                    p.ShieldDamageBlocked += absorbed;
                     damage -= absorbed;
 
                     if (damage <= 0f)
