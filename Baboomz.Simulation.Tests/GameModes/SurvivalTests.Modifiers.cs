@@ -161,6 +161,11 @@ namespace Baboomz.Tests.Editor
             var state = CreateStateWithModifier(SurvivalModifier.GlassCannon);
             Assert.AreEqual(2f, state.Players[0].DamageMultiplier, 0.01f);
 
+            // Prevent player death during tick loop — GlassCannon halves armor,
+            // making death likely which stops buff timers (#307)
+            state.Players[0].Health = 9999f;
+            state.Players[0].MaxHealth = 9999f;
+
             // Simulate picking up a DoubleDamage crate (sets timer, multiplier stays 2x)
             state.Players[0].DoubleDamageTimer = 5f;
 

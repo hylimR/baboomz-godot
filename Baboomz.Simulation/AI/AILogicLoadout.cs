@@ -143,6 +143,12 @@ namespace Baboomz.Simulation
             if (HasIncomingProjectile(state, index, 3f))
             {
                 if (TryActivateSkillByType(state, index, SkillType.Dash)) return;
+                if (TryActivateSkillByType(state, index, SkillType.Deflect)) return;
+            }
+
+            if (hpPercent < 0.5f && HasIncomingProjectile(state, index, 5f))
+            {
+                if (TryActivateSkillByType(state, index, SkillType.Decoy)) return;
             }
 
             if (rng.NextDouble() < 0.005 * dt * 60.0)
@@ -185,6 +191,26 @@ namespace Baboomz.Simulation
             // Sprint for repositioning (random chance, similar to Teleport/ShadowStep)
             if (rng.NextDouble() < 0.006 * dt * 60.0)
                 TryActivateSkillByType(state, index, SkillType.Sprint);
+
+            // Smoke when low HP and enemy is nearby (obscure line of sight)
+            if (hpPercent < 0.5f && rng.NextDouble() < 0.01 * dt * 60.0 && HasEnemyInRange(state, index, 15f))
+                TryActivateSkillByType(state, index, SkillType.SmokeScreen);
+
+            // WarCry for damage boost before engaging
+            if (rng.NextDouble() < 0.008 * dt * 60.0 && HasEnemyInRange(state, index, 20f))
+                TryActivateSkillByType(state, index, SkillType.WarCry);
+
+            // Energy Drain when enemy is nearby
+            if (rng.NextDouble() < 0.008 * dt * 60.0 && HasEnemyInRange(state, index, 12f))
+                TryActivateSkillByType(state, index, SkillType.EnergyDrain);
+
+            // Mine Layer — place mine near enemy paths
+            if (rng.NextDouble() < 0.006 * dt * 60.0 && HasEnemyInRange(state, index, 15f))
+                TryActivateSkillByType(state, index, SkillType.MineLay);
+
+            // Girder when falling near death boundary (emergency platform)
+            if (ai.Position.y < dangerY + 3f && ai.Velocity.y < 0f)
+                TryActivateSkillByType(state, index, SkillType.Girder);
         }
 
         static bool HasEnemyInRange(GameState state, int selfIndex, float range)
