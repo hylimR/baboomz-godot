@@ -154,6 +154,13 @@ namespace Baboomz.Simulation
             if (damage > 0f && ownerIndex >= 0 && ownerIndex < state.Players.Length && targetIndex != ownerIndex)
                 GameSimulation.OnArmsRaceDamage(state, ownerIndex, targetIndex);
 
+            // Kill attribution — track who last dealt damage for knockback/fall kills
+            if (ownerIndex >= 0 && ownerIndex < state.Players.Length && targetIndex != ownerIndex)
+            {
+                p.LastDamagedByIndex = ownerIndex;
+                p.LastDamagedByTimer = 5f;
+            }
+
             if (knockback > 0f)
             {
                 Vec2 dir = (p.Position - hitPos).Normalized;

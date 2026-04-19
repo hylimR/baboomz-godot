@@ -85,6 +85,11 @@ namespace Baboomz.Simulation
                     CombatResolver.TrackWeaponHit(state, playerIndex, weapon.WeaponId);
                     CombatResolver.TrackWeaponDamage(state, playerIndex, weapon.WeaponId, applied);
                 }
+
+                // Kill attribution — track who last dealt damage for knockback/fall kills
+                pt.LastDamagedByIndex = playerIndex;
+                pt.LastDamagedByTimer = 5f;
+
                 if (pt.Health <= 0f)
                 {
                     pt.Health = 0f; pt.IsDead = true; ScoreSurvivalKill(state, primaryTarget);
@@ -162,6 +167,11 @@ namespace Baboomz.Simulation
                         CombatResolver.TrackWeaponHit(state, playerIndex, weapon.WeaponId);
                         CombatResolver.TrackWeaponDamage(state, playerIndex, weapon.WeaponId, chainApplied);
                     }
+
+                    // Kill attribution for chain target
+                    ct2.LastDamagedByIndex = playerIndex;
+                    ct2.LastDamagedByTimer = 5f;
+
                     if (ct2.Health <= 0f)
                     {
                         ct2.Health = 0f; ct2.IsDead = true; ScoreSurvivalKill(state, chainTarget);
