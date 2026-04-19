@@ -81,16 +81,8 @@ namespace Baboomz.Simulation
                                 SourceIndex = zone.OwnerIndex
                             });
 
-                            if (zone.OwnerIndex >= 0 && zone.OwnerIndex < state.Players.Length && p != zone.OwnerIndex)
-                            {
-                                CombatResolver.TrackWeaponHit(state, zone.OwnerIndex, zone.SourceWeaponId);
-                                CombatResolver.TrackWeaponDamage(state, zone.OwnerIndex, zone.SourceWeaponId, eventDamage);
-                            }
+                            CombatResolver.TrackDamageStats(state, zone.OwnerIndex, p, eventDamage, zone.SourceWeaponId);
                         }
-
-                        // Track stats
-                        if (zone.OwnerIndex >= 0 && zone.OwnerIndex < state.Players.Length && p != zone.OwnerIndex)
-                            state.Players[zone.OwnerIndex].TotalDamageDealt += damage;
 
                         if (player.Health <= 0f)
                         {
