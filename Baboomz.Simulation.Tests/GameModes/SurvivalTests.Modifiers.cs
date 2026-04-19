@@ -161,31 +161,20 @@ namespace Baboomz.Tests.Editor
             var state = CreateStateWithModifier(SurvivalModifier.GlassCannon);
             Assert.AreEqual(2f, state.Players[0].DamageMultiplier, 0.01f);
 
-            // Prevent player death during tick loop — GlassCannon halves armor,
-            // making death likely which stops buff timers (#307)
+            // Isolate from AI RNG: disable skills on all mobs so AI loadout
+            // changes don't alter the RNG path and cause cascading failures (#307)
+            for (int i = 1; i < state.Players.Length; i++)
+                state.Players[i].SkillSlots = null;
             state.Players[0].Health = 9999f;
             state.Players[0].MaxHealth = 9999f;
 
-            // Simulate picking up a DoubleDamage crate (sets timer, multiplier stays 2x)
             state.Players[0].DoubleDamageTimer = 5f;
 
-            // Make player invulnerable so mobs can't kill them during the tick loop
-            // (armor halved by GlassCannon makes death likely, which stops buff timers).
-            state.Players[0].Health = 9999f;
-            state.Players[0].MaxHealth = 9999f;
-
-            // Tick until DoubleDamage expires
             for (int i = 0; i < 60; i++)
                 GameSimulation.Tick(state, 0.1f);
 
-            // DoubleDamage expired — buff system resets to DefaultDamageMultiplier (1.0),
-            // losing the GlassCannon bonus. This is the mid-wave state.
             float midWave = state.Players[0].DamageMultiplier;
 
-            // Clear the wave → GlassCannon reverts using saved value.
-            // Temporarily drop WaveNumber below 5 so the next wave spawn
-            // does not randomly re-roll a modifier (which would overwrite
-            // SavedDamageMultiplier and make this test RNG-dependent).
             int savedWave = state.Survival.WaveNumber;
             state.Survival.WaveNumber = 1;
             ClearWave(state);
