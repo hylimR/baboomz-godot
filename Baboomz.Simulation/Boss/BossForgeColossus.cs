@@ -29,32 +29,30 @@ namespace Baboomz.Simulation
             float hpRatio = boss.Health / boss.MaxHealth;
 
             // Armor phase at 75%: 50% damage reduction for 10s
-            if (hpRatio <= 0.75f && boss.BossPhase < 1)
+            if (hpRatio <= 0.75f && boss.BossPhase == 0)
             {
                 boss.BossPhase = 1;
                 boss.ArmorMultiplier = 2f;
                 specialTimer[index] = t + 10f;
             }
-            if (boss.BossPhase >= 1 && specialTimer[index] < float.MaxValue && t >= specialTimer[index])
-            {
-                boss.ArmorMultiplier = 1f;
-                specialTimer[index] = float.MaxValue;
-            }
-
-            // Stomp at 50% and 25% — boss is briefly invulnerable to avoid self-damage
-            if (hpRatio <= 0.5f && boss.BossPhase < 2)
+            else if (hpRatio <= 0.5f && boss.BossPhase == 1)
             {
                 boss.BossPhase = 2;
                 boss.IsInvulnerable = true;
                 CombatResolver.ApplyExplosion(state, boss.Position, 6f, 30f, 12f, index, false);
                 boss.IsInvulnerable = false;
             }
-            if (hpRatio <= 0.25f && boss.BossPhase < 3)
+            else if (hpRatio <= 0.25f && boss.BossPhase == 2)
             {
                 boss.BossPhase = 3;
                 boss.IsInvulnerable = true;
                 CombatResolver.ApplyExplosion(state, boss.Position, 6f, 30f, 12f, index, false);
                 boss.IsInvulnerable = false;
+            }
+            if (boss.BossPhase >= 1 && specialTimer[index] < float.MaxValue && t >= specialTimer[index])
+            {
+                boss.ArmorMultiplier = 1f;
+                specialTimer[index] = float.MaxValue;
             }
 
             // Attack based on distance

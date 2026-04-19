@@ -122,5 +122,81 @@ namespace Baboomz.Tests.Editor
             Assert.AreEqual(1.5f, state.Players[1].ArmorMultiplier, 0.01f,
                 "Armor modification after reset should not be overwritten by repeated reset");
         }
+        [Test]
+        public void BaronCogsworth_MassiveDamage_DoesNotSkipPhase_Issue267()
+        {
+            var config = SmallConfig();
+            config.MineCount = 0;
+            config.BarrelCount = 0;
+            var state = GameSimulation.CreateMatch(config, 42);
+
+            state.Players[1].BossType = "baron_cogsworth";
+            state.Players[1].IsMob = true;
+            state.Players[1].IsAI = true;
+            state.Players[1].MaxHealth = 240f;
+            state.Players[1].Health = 240f;
+            state.Players[1].BossPhase = 0;
+
+            BossLogic.Reset(42, state.Players.Length);
+
+            state.Players[1].Health = 10f;
+            state.Phase = MatchPhase.Playing;
+            GameSimulation.Tick(state, 0.016f);
+
+            Assert.AreEqual(1, state.Players[1].BossPhase,
+                "Boss should transition to Phase 1 only, not skip to Phase 2");
+        }
+
+        [Test]
+        public void GlacialCannon_MassiveDamage_DoesNotSkipShield_Issue267()
+        {
+            var config = SmallConfig();
+            config.MineCount = 0;
+            config.BarrelCount = 0;
+            var state = GameSimulation.CreateMatch(config, 42);
+
+            state.Players[1].BossType = "glacial_cannon";
+            state.Players[1].IsMob = true;
+            state.Players[1].IsAI = true;
+            state.Players[1].MaxHealth = 200f;
+            state.Players[1].Health = 200f;
+            state.Players[1].BossPhase = 0;
+
+            BossLogic.Reset(42, state.Players.Length);
+
+            state.Players[1].Health = 10f;
+            state.Phase = MatchPhase.Playing;
+            GameSimulation.Tick(state, 0.016f);
+
+            Assert.AreEqual(1, state.Players[1].BossPhase,
+                "Boss should transition to Phase 1 (frost) only, not skip shield phase");
+        }
+
+        [Test]
+        public void ForgeColossus_MassiveDamage_DoesNotSkipArmor_Issue267()
+        {
+            var config = SmallConfig();
+            config.MineCount = 0;
+            config.BarrelCount = 0;
+            var state = GameSimulation.CreateMatch(config, 42);
+
+            state.Players[1].BossType = "forge_colossus";
+            state.Players[1].IsMob = true;
+            state.Players[1].IsAI = true;
+            state.Players[1].MaxHealth = 200f;
+            state.Players[1].Health = 200f;
+            state.Players[1].BossPhase = 0;
+
+            BossLogic.Reset(42, state.Players.Length);
+
+            state.Players[1].Health = 10f;
+            state.Phase = MatchPhase.Playing;
+            GameSimulation.Tick(state, 0.016f);
+
+            Assert.AreEqual(1, state.Players[1].BossPhase,
+                "Boss should transition to Phase 1 (armor) only, not skip to stomp");
+            Assert.AreEqual(2f, state.Players[1].ArmorMultiplier, 0.01f,
+                "Armor phase must activate before stomp");
+        }
     }
 }
