@@ -32,6 +32,7 @@ namespace Baboomz
             GameHUDArt.AddGearDecor(bar);
 
             BuildWeaponSlots(bar, ref refs);
+            BuildWeaponPagination(bar, ref refs);
             BuildSkillSlots(bar, ref refs);
             BuildFireButton(bar, ref refs);
         }
@@ -98,6 +99,26 @@ namespace Baboomz
                 slot.Visible = i < VisibleWeaponSlots;
                 label.Visible = i < VisibleWeaponSlots;
             }
+        }
+
+        private static void BuildWeaponPagination(Control bar, ref GameHUDRefs refs)
+        {
+            var label = new Label();
+            label.Name = "WeaponPagination";
+            label.Text = "";
+            label.AddThemeFontSizeOverride("font_size", 11);
+            label.AddThemeColorOverride("font_color", new Color(0.8f, 0.75f, 0.6f, 0.7f));
+            label.HorizontalAlignment = HorizontalAlignment.Center;
+
+            label.AnchorLeft = 0.3f;
+            label.AnchorTop = 1f;
+            label.AnchorRight = 0.7f;
+            label.AnchorBottom = 1f;
+            label.OffsetTop = -16f;
+            label.OffsetBottom = 0f;
+
+            bar.AddChild(label);
+            refs.WeaponPaginationLabel = label;
         }
 
         private static void BuildSkillSlots(Control bar, ref GameHUDRefs refs)

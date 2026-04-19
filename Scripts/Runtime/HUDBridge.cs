@@ -11,6 +11,7 @@ namespace Baboomz
     {
         private GameState _state;
         private GameHUD _hud;
+        private DamageDirectionOverlay _damageOverlay;
         private int _lastWeaponSlot = -1;
         private float _weaponNameTimer;
         private const float WeaponNameDuration = 1.5f;
@@ -24,6 +25,8 @@ namespace Baboomz
 
             for (int i = 0; i < _cachedAmmo.Length; i++)
                 _cachedAmmo[i] = int.MinValue;
+
+            _damageOverlay = hud.GetDamageOverlay();
 
             // Tell the HUD how many weapon slots to manage
             if (state?.Players != null && state.Players.Length > 0
@@ -178,6 +181,22 @@ namespace Baboomz
                 && _state.Phase == MatchPhase.Ended)
             {
                 _hud.SetMatchState($"GAME OVER — Wave {_state.Survival.WaveNumber}  Score: {_state.Survival.Score}");
+            }
+
+            // Damage direction indicators
+            if (_damageOverlay != null)
+            {
+                ref PlayerState local = ref _state.Players[0];
+                foreach (var evt in _state.DamageEvents)
+                {
+                    if (evt.TargetIndex != 0) continue;
+                    if (evt.SourceIndex < 0 || evt.SourceIndex >= _state.Players.Length) continue;
+                    Vec2 src = _state.Players[evt.SourceIndex].Position;
+                    float dx = src.x - local.Position.x;
+                    float dy = src.y - local.Position.y;
+                    float angle = Mathf.Atan2(-dy, dx); // negate Y for Godot screen coords
+                    _damageOverlay.AddHit(angle);
+                }
             }
 
             // Match end

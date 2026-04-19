@@ -30,10 +30,14 @@ namespace Baboomz
         // Bottom bar
         public ColorRect[] WeaponSlots;
         public Label[] WeaponLabels;
+        public Label WeaponPaginationLabel;
         public ColorRect[] SkillSlotRects;
         public Label[] SkillSlotLabels;
         public Label[] SkillCooldownLabels;
         public Button FireButton;
+
+        // Overlays
+        public DamageDirectionOverlay DamageDirectionOverlay;
     }
 
     /// <summary>
@@ -64,6 +68,7 @@ namespace Baboomz
             BuildTopCenterPanel(root, ref refs);
             BuildMatchStateText(root, ref refs);
             BuildBottomBar(root, ref refs);
+            BuildDamageDirectionOverlay(root, ref refs);
 
             return refs;
         }
@@ -161,5 +166,14 @@ namespace Baboomz
                 HorizontalAlignment.Center);
         }
 
+        private static void BuildDamageDirectionOverlay(Control parent, ref GameHUDRefs refs)
+        {
+            var overlay = new DamageDirectionOverlay();
+            overlay.Name = "DamageDirectionOverlay";
+            overlay.MouseFilter = Control.MouseFilterEnum.Ignore;
+            UIBuilder.SetAnchors(overlay, Vector2.Zero, Vector2.One);
+            parent.AddChild(overlay);
+            refs.DamageDirectionOverlay = overlay;
+        }
     }
 }
