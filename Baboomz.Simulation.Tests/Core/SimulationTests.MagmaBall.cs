@@ -271,5 +271,27 @@ namespace Baboomz.Tests.Editor
             Assert.Less(state.Players[1].Position.x, healerStartX,
                 "Healer should move toward most-wounded ally (left), not nearest healthy ally (right)");
         }
+
+        [Test]
+        public void WindBlast_SkipsInvulnerablePlayers()
+        {
+            var config = SmallConfig();
+            var state = GameSimulation.CreateMatch(config, 42);
+            state.Phase = MatchPhase.Playing;
+
+            state.Players[0].Position = new Vec2(0f, 15f);
+            state.Players[1].Position = new Vec2(1f, 15f);
+            state.Players[1].IsInvulnerable = true;
+
+            Vec2 velBefore = state.Players[1].Velocity;
+            float healthBefore = state.Players[1].Health;
+
+            CombatResolver.ApplyWindBlast(state, state.Players[0].Position, 4f, 30f, 0);
+
+            Assert.AreEqual(velBefore, state.Players[1].Velocity,
+                "Invulnerable player should not receive knockback from wind blast");
+            Assert.AreEqual(healthBefore, state.Players[1].Health,
+                "Invulnerable player should not take damage from wind blast");
+        }
     }
 }

@@ -14,6 +14,7 @@ namespace Baboomz.Simulation
             {
                 ref PlayerState p = ref state.Players[i];
                 if (p.IsDead) continue;
+                if (p.IsInvulnerable) continue;
                 if (i == ownerIndex) continue;
 
                 float dist = Vec2.Distance(pos, p.Position);
