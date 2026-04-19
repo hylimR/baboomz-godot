@@ -108,6 +108,11 @@ namespace Baboomz.Simulation
             for (int pi = 0; pi < state.Players.Length; pi++)
             {
                 if (state.Players[pi].IsDead) continue;
+                if (state.Players[pi].IsInvulnerable) continue;
+                if (state.Config.TeamMode && proj.OwnerIndex >= 0 && proj.OwnerIndex < state.Players.Length
+                    && state.Players[proj.OwnerIndex].TeamIndex >= 0
+                    && state.Players[pi].TeamIndex == state.Players[proj.OwnerIndex].TeamIndex
+                    && pi != proj.OwnerIndex) continue;
 
                 Vec2 playerCenter = state.Players[pi].Position + new Vec2(0f, 0.5f);
                 Vec2 diff = proj.Position - playerCenter;
