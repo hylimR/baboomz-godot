@@ -375,6 +375,22 @@ namespace Baboomz.Tests.Editor
         }
 
         [Test]
+        public void AIPickLoadout_CanIncludePetrify()
+        {
+            // Regression: #302 — Petrify (index 19) was missing from the utility array,
+            // so Normal/Hard AI could never equip it
+            var config = SmallConfig();
+            config.AIDifficultyLevel = 1; // Normal — picks from utility pool
+            bool hasPetrify = false;
+            for (int seed = 0; seed < 500; seed++)
+            {
+                int[] loadout = AILogic.PickLoadout(config, seed);
+                if (loadout[0] == 19 || loadout[1] == 19) { hasPetrify = true; break; }
+            }
+            Assert.IsTrue(hasPetrify, "Petrify (index 19) should appear in AI loadouts on Normal difficulty");
+        }
+
+        [Test]
         public void AI_SelectsGustCannon_AtCloseRange()
         {
             var config = SmallConfig();
