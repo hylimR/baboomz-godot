@@ -304,5 +304,34 @@ namespace Baboomz.Tests.Editor
             Assert.AreNotEqual(0, state.Players[0].WeaponSlots[rocketSlot].Ammo,
                 "Rocket ammo should be restored after respawn (issue #84)");
         }
+        [Test]
+        public void Headhunter_Respawn_ResetsSkillCooldowns_Issue272()
+        {
+            var config = HhConfig();
+            config.HeadhunterRespawnDelay = 0.01f;
+            var state = GameSimulation.CreateMatch(config, 42);
+            state.Phase = MatchPhase.Playing;
+            AILogic.Reset(42, state.Players.Length);
+            BossLogic.Reset(42, state.Players.Length);
+
+            state.Players[0].SkillSlots = new SkillSlotState[]
+            {
+                new SkillSlotState { SkillId = "war_cry", Type = SkillType.WarCry, CooldownRemaining = 10f },
+                new SkillSlotState { SkillId = "shield", Type = SkillType.Shield, CooldownRemaining = 5f }
+            };
+
+            state.Players[0].Health = 0f;
+            state.Players[0].IsDead = true;
+            GameSimulation.SpawnHeadhunterTokens(state, 0);
+
+            for (int i = 0; i < 200; i++)
+                GameSimulation.Tick(state, 0.016f);
+
+            Assert.IsFalse(state.Players[0].IsDead, "Player should have respawned");
+            Assert.AreEqual(0f, state.Players[0].SkillSlots[0].CooldownRemaining,
+                "Skill cooldowns should reset to 0 on respawn");
+            Assert.AreEqual(0f, state.Players[0].SkillSlots[1].CooldownRemaining,
+                "All skill cooldowns should reset on respawn");
+        }
     }
 }

@@ -124,6 +124,7 @@ namespace Baboomz.Simulation
 
             // Restore weapon ammo from config to prevent progressive weapon starvation
             RestoreWeaponAmmo(ref p, config);
+            ResetSkillCooldowns(ref p);
         }
 
         static void CompactTokens(ref HeadhunterState hh)
