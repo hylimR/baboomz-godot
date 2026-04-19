@@ -209,6 +209,12 @@ namespace Baboomz.Simulation
             if (p.FreezeTimer > 0f) p.FreezeTimer -= dt;
             if (p.DeflectTimer > 0f) p.DeflectTimer -= dt;
             if (p.FirecrackerCooldown > 0f) p.FirecrackerCooldown -= dt;
+            if (p.LastDamagedByTimer > 0f)
+            {
+                p.LastDamagedByTimer -= dt;
+                if (p.LastDamagedByTimer <= 0f)
+                    p.LastDamagedByIndex = -1;
+            }
 
             TickBuffTimers(state, ref p, dt);
         }

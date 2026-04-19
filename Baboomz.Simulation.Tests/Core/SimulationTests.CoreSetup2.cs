@@ -209,5 +209,46 @@ namespace Baboomz.Tests.Editor
                     "Terrain at explosion center should be destroyed");
             }
         }
+        [Test]
+        public void KnockbackKill_CreditsAttacker_Issue271()
+        {
+            var config = SmallConfig();
+            config.MineCount = 0;
+            config.BarrelCount = 0;
+            config.SwimDuration = 0.1f;
+            var state = GameSimulation.CreateMatch(config, 42);
+
+            state.Players[1].Position = new Vec2(0f, state.WaterLevel - 1f);
+            state.Players[1].LastDamagedByIndex = 0;
+            state.Players[1].LastDamagedByTimer = 5f;
+
+            state.Players[0].TotalKills = 0;
+
+            for (int i = 0; i < 20; i++)
+                GameSimulation.Tick(state, 0.016f);
+
+            Assert.IsTrue(state.Players[1].IsDead, "Player should drown");
+            Assert.AreEqual(1, state.Players[0].TotalKills,
+                "Knockback kill should credit attacker with TotalKills");
+        }
+
+        [Test]
+        public void KnockbackKill_NoCredit_AfterGraceWindow_Issue271()
+        {
+            var config = SmallConfig();
+            config.MineCount = 0;
+            config.BarrelCount = 0;
+            config.SwimDuration = 0.1f;
+            var state = GameSimulation.CreateMatch(config, 42);
+
+            state.Players[1].LastDamagedByIndex = 0;
+            state.Players[1].LastDamagedByTimer = 0.01f;
+
+            for (int i = 0; i < 400; i++)
+                GameSimulation.Tick(state, 0.016f);
+
+            Assert.AreEqual(-1, state.Players[1].LastDamagedByIndex,
+                "LastDamagedByIndex should clear after grace window expires");
+        }
     }
 }

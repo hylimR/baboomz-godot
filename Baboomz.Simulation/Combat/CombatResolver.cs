@@ -128,6 +128,12 @@ namespace Baboomz.Simulation
                 if (damage > 0f && ownerIndex >= 0 && ownerIndex < state.Players.Length && i != ownerIndex)
                     GameSimulation.OnArmsRaceDamage(state, ownerIndex, i);
 
+                if (ownerIndex >= 0 && ownerIndex < state.Players.Length && i != ownerIndex)
+                {
+                    p.LastDamagedByIndex = ownerIndex;
+                    p.LastDamagedByTimer = 5f;
+                }
+
                 // Knockback (biome modifier scales force)
                 if (knockback > 0f && dist > 0.01f)
                 {

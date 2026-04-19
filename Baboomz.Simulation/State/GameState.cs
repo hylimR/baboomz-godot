@@ -204,6 +204,10 @@ namespace Baboomz.Simulation
         public bool FreezeToHitCombo;       // hit a frozen enemy (for Freeze Tag)
         public bool GravityBombVoidKill;    // kill via gravity bomb pull into void (for Gravity Master)
 
+        // Knockback kill attribution
+        public int LastDamagedByIndex;     // player who last dealt damage/knockback (-1 = none)
+        public float LastDamagedByTimer;   // grace window — clears after 5s of no new damage
+
         // Combo tracking
         public int ConsecutiveHits;        // consecutive projectile hits without a miss
         public int KillsInWindow;          // kills within the kill-streak time window
