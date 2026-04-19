@@ -114,6 +114,126 @@ namespace Baboomz.Tests.Editor
         }
 
         [Test]
+        public void Hitscan_FreezeShatter_BonusDamage()
+        {
+            // Regression: #304 — hitscan skipped freeze-shatter bonus damage
+            var config = SmallConfig();
+            var state = GameSimulation.CreateMatch(config, 42);
+            AILogic.Reset(42);
+
+            state.Players[0].Position = new Vec2(0f, 5f);
+            state.Players[0].FacingDirection = 1;
+            state.Players[1].Position = new Vec2(5f, 5f);
+            state.Players[1].FreezeTimer = 3f; // frozen
+
+            float healthBefore = state.Players[1].Health;
+
+            state.Players[0].ActiveWeaponSlot = 14;
+            state.Players[0].AimAngle = 0f;
+            state.Players[0].AimPower = 20f;
+            state.Players[0].Energy = 100f;
+            GameSimulation.Fire(state, 0);
+
+            float damageTaken = healthBefore - state.Players[1].Health;
+            float baseDamage = config.Weapons[14].MaxDamage; // 40
+            float expectedMin = baseDamage * state.Config.ShatterMultiplier * 0.9f; // allow small variance from armor
+
+            Assert.Greater(damageTaken, expectedMin,
+                "Hitscan should deal shatter bonus damage to frozen targets");
+            Assert.AreEqual(0f, state.Players[1].FreezeTimer, 0.01f,
+                "FreezeTimer should be cleared on shatter");
+        }
+
+        [Test]
+        public void Hitscan_FreezeShatter_ClearsFreezeTimer()
+        {
+            // Regression: #304 — freeze timer was not cleared on hitscan shatter
+            var config = SmallConfig();
+            var state = GameSimulation.CreateMatch(config, 42);
+            AILogic.Reset(42);
+
+            state.Players[0].Position = new Vec2(0f, 5f);
+            state.Players[0].FacingDirection = 1;
+            state.Players[1].Position = new Vec2(5f, 5f);
+            state.Players[1].FreezeTimer = 5f;
+
+            state.Players[0].ActiveWeaponSlot = 14;
+            state.Players[0].AimAngle = 0f;
+            state.Players[0].AimPower = 20f;
+            state.Players[0].Energy = 100f;
+            GameSimulation.Fire(state, 0);
+
+            Assert.AreEqual(0f, state.Players[1].FreezeTimer, 0.01f,
+                "Hitscan shatter should clear FreezeTimer");
+        }
+
+        [Test]
+        public void Hitscan_FreezeShatter_ChainTarget()
+        {
+            // Regression: #304 — chain lightning also skipped freeze-shatter
+            var config = SmallConfig();
+            var state = GameSimulation.CreateMatch(config, 42);
+            AILogic.Reset(42);
+
+            var players = new PlayerState[3];
+            players[0] = state.Players[0];
+            players[1] = state.Players[1];
+            players[2] = state.Players[1];
+            players[2].Name = "Player3";
+            state.Players = players;
+
+            state.Players[0].Position = new Vec2(-10f, 5f);
+            state.Players[0].FacingDirection = 1;
+            state.Players[1].Position = new Vec2(0f, 5f);
+            state.Players[2].Position = new Vec2(4f, 5f);
+            state.Players[2].FreezeTimer = 3f; // chain target is frozen
+
+            float health2Before = state.Players[2].Health;
+
+            state.Players[0].ActiveWeaponSlot = 14;
+            state.Players[0].AimAngle = 0f;
+            state.Players[0].AimPower = 20f;
+            state.Players[0].Energy = 100f;
+            GameSimulation.Fire(state, 0);
+
+            float chainDamageTaken = health2Before - state.Players[2].Health;
+            float baseChainDamage = config.Weapons[14].ChainDamage; // 20
+            float expectedChainMin = baseChainDamage * state.Config.ShatterMultiplier * 0.9f;
+
+            Assert.Greater(chainDamageTaken, expectedChainMin,
+                "Chain hitscan should deal shatter bonus damage to frozen targets");
+            Assert.AreEqual(0f, state.Players[2].FreezeTimer, 0.01f,
+                "Chain target FreezeTimer should be cleared on shatter");
+        }
+
+        [Test]
+        public void Hitscan_FreezeShatter_SetsDamageEventIsShatter()
+        {
+            // Regression: #304 — DamageEvent.IsShatter was never set for hitscan
+            var config = SmallConfig();
+            var state = GameSimulation.CreateMatch(config, 42);
+            AILogic.Reset(42);
+
+            state.Players[0].Position = new Vec2(0f, 5f);
+            state.Players[0].FacingDirection = 1;
+            state.Players[1].Position = new Vec2(5f, 5f);
+            state.Players[1].FreezeTimer = 3f;
+
+            state.Players[0].ActiveWeaponSlot = 14;
+            state.Players[0].AimAngle = 0f;
+            state.Players[0].AimPower = 20f;
+            state.Players[0].Energy = 100f;
+            GameSimulation.Fire(state, 0);
+
+            Assert.IsTrue(state.DamageEvents.Count > 0, "Should have damage events");
+            bool foundShatter = false;
+            for (int i = 0; i < state.DamageEvents.Count; i++)
+                if (state.DamageEvents[i].IsShatter) { foundShatter = true; break; }
+            Assert.IsTrue(foundShatter,
+                "Hitscan shatter hit should set IsShatter on DamageEvent");
+        }
+
+        [Test]
         public void Hitscan_ShieldFullyAbsorbs_DoesNotCountDirectHit()
         {
             var config = SmallConfig();
