@@ -15,6 +15,7 @@ namespace Baboomz.Simulation
         // Per-match tracking counters
         static float _fireDamageTotal;
         static int _warCryKills;
+        static readonly HashSet<int> _warCryCountedTargets = new HashSet<int>();
         static bool _playerTookDamage;
         static int _playerShotsFiredAtStart;
         static int _lastTerrainPixels; // for cm_5 per-tick delta detection
@@ -101,14 +102,17 @@ namespace Baboomz.Simulation
                 TryUnlock("sm_4", state, 0);
 
             // sm_7: War Machine — kills during WarCry
+            // Track unique targets to avoid multi-hit weapons inflating kill count
             if (state.Players[0].WarCryTimer > 0f)
             {
+                _warCryCountedTargets.Clear();
                 for (int i = 0; i < state.DamageEvents.Count; i++)
                 {
                     var dmg = state.DamageEvents[i];
                     if (dmg.SourceIndex == 0 && dmg.TargetIndex != 0 &&
                         dmg.TargetIndex < state.Players.Length &&
-                        state.Players[dmg.TargetIndex].IsDead)
+                        state.Players[dmg.TargetIndex].IsDead &&
+                        _warCryCountedTargets.Add(dmg.TargetIndex))
                     {
                         _warCryKills++;
                         if (_warCryKills >= 3)
