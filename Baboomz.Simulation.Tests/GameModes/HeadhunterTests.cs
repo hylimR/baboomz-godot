@@ -333,5 +333,22 @@ namespace Baboomz.Tests.Editor
             Assert.AreEqual(0f, state.Players[0].SkillSlots[1].CooldownRemaining,
                 "All skill cooldowns should reset on respawn");
         }
+        [Test]
+        public void HeadhunterTokens_DeactivatedByRisingWater()
+        {
+            var state = GameSimulation.CreateMatch(HhConfig(), 42);
+            state.Phase = MatchPhase.Playing;
+
+            ref HeadhunterState hh = ref state.Headhunter;
+            hh.Tokens[0] = new TokenPickup { Position = new Vec2(0f, -20f), Active = true };
+            hh.TokenCount = 1;
+
+            state.WaterLevel = -15f;
+
+            GameSimulation.Tick(state, 0.016f);
+
+            Assert.AreEqual(0, hh.TokenCount,
+                "Tokens below water level should be deactivated and compacted");
+        }
     }
 }
