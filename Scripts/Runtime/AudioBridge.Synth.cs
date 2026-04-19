@@ -24,6 +24,10 @@ namespace Baboomz
             _fireSniperClip = GenerateTone(0.08f, 1400f, 700f, 0.5f);  // sharp crack
             _fireTossClip = GenerateTone(0.12f, 350f, 250f, 0.3f);     // soft toss arc
             _fireSpecialClip = GenerateTone(0.15f, 600f, 900f, 0.4f);  // unique rising chirp
+            _fireEnergyClip = GenerateBuzz(0.2f, 440f, 0.4f);             // electric crackle + hum
+            _fireHhgClip = GenerateBell(0.5f, 220f, 0.5f);                // deep bell toll
+            _fireDrillClip = GenerateDrill(0.3f, 300f, 0.4f);             // mechanical whir
+            _fireAnimalClip = GenerateBoing(0.2f, 250f, 0.4f);            // bouncy bleat
 
             // Per-skill activation sounds (#175)
             _skillTeleportClip = GenerateTone(0.1f, 1800f, 600f, 0.4f);  // high-pitched pop
