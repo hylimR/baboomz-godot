@@ -153,5 +153,20 @@ namespace Baboomz.Tests.Editor
             Assert.AreEqual(1, state.Players[0].TotalKills,
                 "Explosion kill should still track TotalKills (regression check)");
         }
+
+        [Test]
+        public void PierceDamage_TracksShieldDamageBlocked()
+        {
+            var state = CreateState();
+            state.Players[1].ShieldHP = 20f;
+            state.Players[1].MaxShieldHP = 20f;
+            state.Players[1].FacingDirection = -1;
+
+            CombatResolver.ApplyPierceDamage(state, 1, 15f, 5f,
+                state.Players[1].Position + new Vec2(-1f, 0f), 0);
+
+            Assert.AreEqual(15f, state.Players[1].ShieldDamageBlocked, 0.01f,
+                "Pierce damage absorbed by shield must track ShieldDamageBlocked");
+        }
     }
 }
