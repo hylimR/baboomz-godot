@@ -253,5 +253,19 @@ namespace Baboomz.Tests.Editor
                 "Dynamite MaxDamage must stay within the 65-70 target range");
         }
 
+        [Test]
+        public void LightningRodBalance_CostAndCooldownReduced_Issue270()
+        {
+            var config = new GameConfig();
+            WeaponDef lr = default;
+            foreach (var w in config.Weapons)
+                if (w.WeaponId == "lightning_rod") { lr = w; break; }
+
+            Assert.AreEqual(22f, lr.EnergyCost, 0.01f,
+                "Lightning Rod EnergyCost should be 22 after #270 rebalance");
+            Assert.AreEqual(3.5f, lr.ShootCooldown, 0.01f,
+                "Lightning Rod ShootCooldown should be 3.5s after #270 rebalance");
+        }
+
     }
 }
