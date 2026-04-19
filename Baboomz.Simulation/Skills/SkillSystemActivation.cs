@@ -143,18 +143,7 @@ namespace Baboomz.Simulation
                 SourceIndex = ci
             });
 
-            // Track stats
-            p.TotalDamageDealt += finalDamage;
-            p.DirectHits++;
-            if (finalDamage > p.MaxSingleDamage)
-                p.MaxSingleDamage = finalDamage;
-            GameSimulation.OnArmsRaceDamage(state, ci, target);
-
-            // Track knockback attribution for environmental kills
-            t.LastDamagedByIndex = ci;
-            t.LastDamagedByTimer = 5f;
-            if (state.FirstBloodPlayerIndex < 0)
-                state.FirstBloodPlayerIndex = ci;
+            CombatResolver.TrackDamageStats(state, ci, target, finalDamage);
 
             // Pull target toward caster
             Vec2 direction = p.Position - t.Position;

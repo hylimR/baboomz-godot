@@ -21,22 +21,13 @@ namespace Baboomz.Simulation
                 target.Health -= applied;
                 target.TotalDamageTaken += applied;
                 target.Velocity.y = 5f; // bounce players up
-                target.LastDamagedByIndex = casterIndex;
-                target.LastDamagedByTimer = 5f;
                 state.DamageEvents.Add(new DamageEvent
                 {
                     TargetIndex = i, Amount = applied, Position = target.Position,
                     SourceIndex = casterIndex
                 });
 
-                // Track stats
-                state.Players[casterIndex].TotalDamageDealt += applied;
-                state.Players[casterIndex].DirectHits++;
-                if (applied > state.Players[casterIndex].MaxSingleDamage)
-                    state.Players[casterIndex].MaxSingleDamage = applied;
-                GameSimulation.OnArmsRaceDamage(state, casterIndex, i);
-                if (state.FirstBloodPlayerIndex < 0)
-                    state.FirstBloodPlayerIndex = casterIndex;
+                CombatResolver.TrackDamageStats(state, casterIndex, i, applied);
 
                 if (target.Health <= 0f)
                 {

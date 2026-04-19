@@ -178,6 +178,31 @@ namespace Baboomz.Simulation
             GameSimulation.ApplyPayloadPush(state, pos, radius, knockback);
         }
 
+        public static void TrackDamageStats(GameState state, int ownerIndex, int targetIndex,
+            float damage, string sourceWeaponId = null)
+        {
+            if (ownerIndex < 0 || ownerIndex >= state.Players.Length || targetIndex == ownerIndex)
+                return;
+
+            ref PlayerState owner = ref state.Players[ownerIndex];
+            owner.TotalDamageDealt += damage;
+            owner.DirectHits++;
+            if (damage > owner.MaxSingleDamage)
+                owner.MaxSingleDamage = damage;
+
+            if (state.FirstBloodPlayerIndex < 0)
+                state.FirstBloodPlayerIndex = ownerIndex;
+
+            state.Players[targetIndex].LastDamagedByIndex = ownerIndex;
+            state.Players[targetIndex].LastDamagedByTimer = 5f;
+
+            GameSimulation.OnArmsRaceDamage(state, ownerIndex, targetIndex);
+
+            TrackWeaponHit(state, ownerIndex, sourceWeaponId);
+            TrackWeaponDamage(state, ownerIndex, sourceWeaponId, damage);
+            TrackHit(state, ownerIndex);
+        }
+
         public static void TrackHit(GameState state, int ownerIndex)
         {
             ref PlayerState owner = ref state.Players[ownerIndex];
