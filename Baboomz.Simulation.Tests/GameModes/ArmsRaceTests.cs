@@ -286,5 +286,50 @@ namespace Baboomz.Tests.Editor
             Assert.AreEqual(MatchPhase.Ended, state.Phase);
             Assert.AreEqual(0, state.WinnerIndex);
         }
+        [Test]
+        public void HookShot_ArmsRace_AdvancesWeapon()
+        {
+            var config = ArmsRaceConfig();
+            config.MineCount = 0;
+            config.BarrelCount = 0;
+            var state = GameSimulation.CreateMatch(config, 42);
+
+            state.Players[0].SkillSlots[0] = new SkillSlotState
+            {
+                SkillId = "hookshot", Type = SkillType.HookShot,
+                EnergyCost = 0f, Cooldown = 0f, Range = 20f, Value = 10f
+            };
+            state.Players[0].Energy = 100f;
+            state.Players[1].Position = state.Players[0].Position + new Vec2(8f, 0f);
+
+            int weaponBefore = state.ArmsRace.CurrentWeaponIndex[0];
+            SkillSystem.ActivateSkill(state, 0, 0);
+
+            Assert.AreEqual(weaponBefore + 1, state.ArmsRace.CurrentWeaponIndex[0],
+                "HookShot damage should advance weapon in Arms Race");
+        }
+
+        [Test]
+        public void Earthquake_ArmsRace_AdvancesWeapon()
+        {
+            var config = ArmsRaceConfig();
+            config.MineCount = 0;
+            config.BarrelCount = 0;
+            var state = GameSimulation.CreateMatch(config, 42);
+
+            state.Players[0].SkillSlots[0] = new SkillSlotState
+            {
+                SkillId = "earthquake", Type = SkillType.Earthquake,
+                EnergyCost = 0f, Cooldown = 0f, Value = 20f
+            };
+            state.Players[0].Energy = 100f;
+            state.Players[1].IsGrounded = true;
+
+            int weaponBefore = state.ArmsRace.CurrentWeaponIndex[0];
+            SkillSystem.ActivateSkill(state, 0, 0);
+
+            Assert.AreEqual(weaponBefore + 1, state.ArmsRace.CurrentWeaponIndex[0],
+                "Earthquake damage should advance weapon in Arms Race");
+        }
     }
 }

@@ -148,6 +148,7 @@ namespace Baboomz.Simulation
             p.DirectHits++;
             if (finalDamage > p.MaxSingleDamage)
                 p.MaxSingleDamage = finalDamage;
+            GameSimulation.OnArmsRaceDamage(state, ci, target);
 
             // Track knockback attribution for environmental kills
             t.LastDamagedByIndex = ci;
