@@ -35,6 +35,8 @@ namespace Baboomz.Simulation
                 if (applied > state.Players[casterIndex].MaxSingleDamage)
                     state.Players[casterIndex].MaxSingleDamage = applied;
                 GameSimulation.OnArmsRaceDamage(state, casterIndex, i);
+                if (state.FirstBloodPlayerIndex < 0)
+                    state.FirstBloodPlayerIndex = casterIndex;
 
                 if (target.Health <= 0f)
                 {

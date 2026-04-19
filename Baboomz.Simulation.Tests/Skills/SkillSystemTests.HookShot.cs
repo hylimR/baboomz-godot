@@ -171,5 +171,21 @@ namespace Baboomz.Tests.Editor
             Assert.AreEqual(5f, state.Players[1].LastDamagedByTimer, 0.01f,
                 "HookShot should set LastDamagedByTimer grace window");
         }
+
+        [Test]
+        public void HookShot_SetsFirstBloodPlayerIndex()
+        {
+            var state = CreateState();
+            SetSkillSlot(ref state.Players[0].SkillSlots[0],
+                state.Config.Skills[14]);
+            state.Players[0].Energy = 100f;
+            state.Players[1].Position = state.Players[0].Position + new Vec2(8f, 0f);
+            state.FirstBloodPlayerIndex = -1;
+
+            SkillSystem.ActivateSkill(state, 0, 0);
+
+            Assert.AreEqual(0, state.FirstBloodPlayerIndex,
+                "HookShot should set FirstBloodPlayerIndex when it deals the first hit");
+        }
     }
 }
