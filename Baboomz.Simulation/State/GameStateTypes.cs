@@ -60,6 +60,7 @@ namespace Baboomz.Simulation
         public float Amount;
         public Vec2 Position;
         public int SourceIndex; // player who dealt the damage (-1 = environmental)
+        public bool IsShatter;
     }
 
     public struct MineState

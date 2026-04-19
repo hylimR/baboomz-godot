@@ -47,6 +47,14 @@ namespace Baboomz.Simulation
                 damage *= (1f / MathF.Max(p.ArmorMultiplier, 0.01f));
                 if (damage <= 0f) continue;
 
+                // Freeze Shatter — bonus damage to frozen/petrified targets (not self-damage)
+                bool isShatter = p.FreezeTimer > 0f && i != ownerIndex;
+                if (isShatter)
+                {
+                    damage *= state.Config.ShatterMultiplier;
+                    p.FreezeTimer = 0f;
+                }
+
                 // Shield absorption — Shielders absorb frontal damage with shield
                 if (p.ShieldHP > 0f && p.MaxShieldHP > 0f)
                 {
@@ -60,13 +68,13 @@ namespace Baboomz.Simulation
 
                         if (damage <= 0f)
                         {
-                            // Fully absorbed by shield — still emit event for VFX
                             state.DamageEvents.Add(new DamageEvent
                             {
                                 TargetIndex = i,
                                 Amount = 0f,
                                 Position = p.Position,
-                                SourceIndex = ownerIndex
+                                SourceIndex = ownerIndex,
+                                IsShatter = isShatter
                             });
                             continue;
                         }
@@ -80,7 +88,8 @@ namespace Baboomz.Simulation
                     TargetIndex = i,
                     Amount = damage,
                     Position = p.Position,
-                    SourceIndex = ownerIndex
+                    SourceIndex = ownerIndex,
+                    IsShatter = isShatter
                 });
 
                 // Track stats

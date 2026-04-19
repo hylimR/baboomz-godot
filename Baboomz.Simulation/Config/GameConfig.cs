@@ -26,6 +26,7 @@ namespace Baboomz.Simulation
         public float DefaultDamageMultiplier = 1f;
         public float DefaultArmorMultiplier = 1f;
         public float DefaultCooldownMultiplier = 1f;
+        public float ShatterMultiplier = 1.5f;
 
         // Aim defaults
         public float DefaultMinPower = 10f;
