@@ -98,6 +98,10 @@ namespace Baboomz.Simulation
                             {
                                 CombatResolver.TrackKill(state, zone.OwnerIndex);
                                 CombatResolver.TrackWeaponKill(state, zone.OwnerIndex, zone.SourceWeaponId);
+                                state.Players[zone.OwnerIndex].TotalKills++;
+                                float killDist = Vec2.Distance(state.Players[zone.OwnerIndex].Position, player.Position);
+                                if (killDist <= 5f)
+                                    state.Players[zone.OwnerIndex].CloseRangeKills++;
                             }
                         }
                     }
